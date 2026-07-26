@@ -18,7 +18,7 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 ## How the player works
 
 The document stays on this origin; `assets/player.js` pulls the build from
-`s3://prod-nicapotato-public-software/games/released/rocknroller/<ver>/web/`:
+`s3://prod-nicapotato-public-software/apps/released/rocknroller/<ver>/web/`:
 
 1. `coi-serviceworker.min.js` (committed here, must be same-origin) injects the
    COOP/COEP headers GitHub Pages cannot send — required for

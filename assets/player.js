@@ -19,7 +19,7 @@
   "use strict";
 
   var S3_BASE =
-    "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com/games/released/rocknroller";
+    "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com/apps/released/rocknroller";
 
   var statusEl = document.getElementById("status");
   var badgeEl = document.getElementById("versionBadge");
