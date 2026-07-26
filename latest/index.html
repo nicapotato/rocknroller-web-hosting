@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RockNRoller — latest</title>
+    <link rel="icon" type="image/svg+xml" href="/nb-icon.svg" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #0b0b0f;
+        overflow: hidden;
+      }
+      #canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+      }
+      #status {
+        position: absolute;
+        top: 45%;
+        width: 100%;
+        text-align: center;
+        color: #ddd;
+        font-family: monospace;
+        font-size: 15px;
+        pointer-events: none;
+      }
+      #status.player-status--error {
+        color: #e53935;
+        pointer-events: auto;
+      }
+      #versionBadge {
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        color: #555;
+        font-family: monospace;
+        font-size: 11px;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- COOP/COEP via service worker: GitHub Pages cannot set response headers,
+         and SharedArrayBuffer (pthreads) needs them. Root path = origin-wide
+         scope. First visit reloads once after registration. -->
+    <script src="/coi-serviceworker.min.js"></script>
+    <div id="status">loading…</div>
+    <div id="versionBadge" hidden></div>
+    <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+    <script>
+      window.RNR_VERSION = "latest";
+    </script>
+    <script src="/assets/player.js"></script>
+  </body>
+</html>

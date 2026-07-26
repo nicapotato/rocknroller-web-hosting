@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RockNRoller</title>
+    <link rel="icon" type="image/svg+xml" href="/nb-icon.svg" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #0b0b0f;
+        overflow: hidden;
+        color: #ddd;
+        font-family: monospace;
+      }
+      #canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+      }
+      #status {
+        position: absolute;
+        top: 45%;
+        width: 100%;
+        text-align: center;
+        color: #ddd;
+        font-size: 15px;
+        pointer-events: none;
+      }
+      #status.player-status--error {
+        color: #e53935;
+        pointer-events: auto;
+      }
+      #versionBadge {
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        color: #555;
+        font-size: 11px;
+        pointer-events: none;
+      }
+      #notfound {
+        padding: 3rem 1.5rem;
+      }
+      #notfound a {
+        color: #ffde44;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- GitHub Pages serves this for unknown paths. If the first path segment
+         looks like a version (e.g. /0.1.33/), boot the player pinned to it, so
+         rocknroller.nicapotato.com/0.1.33 works without a directory per
+         release. Anything else gets a plain not-found note. -->
+    <script src="/coi-serviceworker.min.js"></script>
+    <script>
+      (function () {
+        var seg = window.location.pathname.split("/").filter(Boolean)[0] || "";
+        if (/^[0-9]+\.[0-9]+(\.[0-9A-Za-z.-]+)?$/.test(seg)) {
+          window.RNR_VERSION = seg;
+        }
+      })();
+    </script>
+    <div id="status">loading…</div>
+    <div id="versionBadge" hidden></div>
+    <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+    <script>
+      if (window.RNR_VERSION) {
+        var s = document.createElement("script");
+        s.src = "/assets/player.js";
+        document.body.appendChild(s);
+      } else {
+        document.getElementById("status").remove();
+        document.getElementById("canvas").remove();
+        document.body.insertAdjacentHTML(
+          "beforeend",
+          '<div id="notfound"><p>404 — nothing here.</p>' +
+            '<p><a href="/">home</a> · <a href="/latest/">play latest</a> · ' +
+            '<a href="/version/">versions</a></p></div>'
+        );
+      }
+    </script>
+  </body>
+</html>
