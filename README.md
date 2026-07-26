@@ -8,7 +8,7 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 
 | Route | What |
 | --- | --- |
-| `/` | landing |
+| `/` | redirects to `/latest/` |
 | `/latest/` | play the newest published build |
 | `/play/?v=0.1.33` | play a specific version |
 | `/0.1.33/` | same as above (served via `404.html` path routing) |

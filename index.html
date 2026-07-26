@@ -2,47 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Root routes straight to the player; project info lives at /about/. -->
+    <meta http-equiv="refresh" content="0; url=/latest/" />
     <title>Rock N Roller — nicapotato</title>
     <link rel="icon" type="image/svg+xml" href="nb-icon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="assets/site.css" />
+    <script>
+      window.location.replace("/latest/");
+    </script>
   </head>
   <body>
-    <main class="page">
-      <h1 class="page__title">Rock N Roller</h1>
-      <nav class="page__nav">
-        <a href="/latest/">Play</a>
-        <a href="/version/">Versions</a>
-        <a href="/about/">About</a>
-      </nav>
-
-      <p>
-        A freeware guitar-practice app that plays Rocksmith-format
-        <code>.psarc</code> charts — built around freeware CDLC from the
-        <a href="https://customsforge.com" rel="noopener">CustomsForge</a>
-        community. Runs entirely in your browser (Chromium recommended); a demo
-        song is preloaded, and you can grant a local folder of your own CDLC.
-      </p>
-
-      <a class="btn-play" href="/latest/">▶ Play latest</a>
-
-      <p>
-        Desktop builds for macOS and Windows are on the
-        <a href="/version/">versions page</a> and
-        <a href="https://nicapotato.itch.io/rock-n-roller" rel="noopener">itch.io</a>.
-      </p>
-
-      <p class="fineprint">
-        Not affiliated with Ubisoft or Rocksmith. No official DLC is hosted or
-        distributed here. Your song files never leave your machine — the web
-        app reads granted folders locally in the browser.
-      </p>
-    </main>
+    <p style="color: #e8eaed; background: #0d0d0d; font-family: monospace; padding: 2rem">
+      Redirecting to <a href="/latest/" style="color: #ffde44">/latest/</a>…
+    </p>
   </body>
 </html>
