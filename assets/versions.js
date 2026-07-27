@@ -4,6 +4,7 @@
  * download straight from S3. Fails loudly if the catalog cannot be fetched.
  * Narrow screens: one table-level "Toggle SHA Key" expands/collapses all
  * SHA-256 values (truncated by default). Wide screens show full hashes.
+ * Zip cells show size like the stuff catalog ("zip · 5.2 MB").
  */
 (function () {
   "use strict";
@@ -27,6 +28,20 @@
     });
   }
 
+  /** 38200000 -> "38.2 MB". Returns "" for missing/invalid input. */
+  function formatBytes(n) {
+    if (typeof n !== "number" || !isFinite(n) || n < 0) return "";
+    if (n < 1024) return n + " B";
+    var units = ["KB", "MB", "GB"];
+    var v = n;
+    var u = -1;
+    do {
+      v /= 1024;
+      u++;
+    } while (v >= 1024 && u < units.length - 1);
+    return (v >= 100 ? Math.round(v) : v.toFixed(1)) + " " + units[u];
+  }
+
   function shaBlock(sha) {
     if (!sha) return "";
     return (
@@ -40,11 +55,17 @@
 
   function zipCell(entry) {
     if (!entry || !entry.zip_url) return '<td class="na">—</td>';
+    var sizeText = formatBytes(entry.size_bytes);
+    var sizeHtml = sizeText
+      ? '<span class="zip-size"> · ' + sizeText + "</span>"
+      : "";
     return (
       "<td>" +
-      '<a href="' +
+      '<a class="zip-link" href="' +
       entry.zip_url +
-      '">zip</a>' +
+      '">zip' +
+      sizeHtml +
+      "</a>" +
       shaBlock(entry.sha256) +
       "</td>"
     );

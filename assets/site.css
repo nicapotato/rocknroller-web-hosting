@@ -182,6 +182,25 @@ table.versions td.na {
   color: var(--rnr-yellow);
 }
 
+table.versions .zip-link {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0;
+  max-width: 100%;
+}
+
+table.versions .zip-size {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #9aa0a6;
+  white-space: nowrap;
+}
+
+table.versions .zip-link:hover .zip-size {
+  color: inherit;
+}
+
 /* SHA-256 under each artifact. */
 table.versions .sha {
   font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
