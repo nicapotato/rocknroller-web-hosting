@@ -15,7 +15,15 @@
   </head>
   <body>
     <main class="page">
-      <h1 class="page__title">Rock N Roller</h1>
+      <h1 class="page__title">
+        <img
+          class="page__logo"
+          src="/rocknroller-logo.png"
+          alt="Rock N Roller"
+          width="810"
+          height="160"
+        />
+      </h1>
       <nav class="page__nav">
         <a href="/latest/">Play</a>
         <a href="/version/">Versions</a>
@@ -23,30 +31,85 @@
 
       <p>
         A freeware guitar-practice app that plays Rocksmith-format
-        <code>.psarc</code> charts — built around freeware CDLC from the
+        <code>.psarc</code> charts from your own computer — files stay on your
+        disk; the app never hosts or uploads your song library. Built around
+        freeware CDLC from the
         <a href="https://customsforge.com" rel="noopener">CustomsForge</a>
-        community. Runs entirely in your browser (Chromium recommended); a demo
-        song is preloaded, and you can grant a local folder of your own CDLC.
+        community. Grant a local folder of your own CDLC to play.
       </p>
 
-      <a class="btn-play" href="/latest/">▶ Play latest</a>
+      <div class="btn-row">
+        <a class="btn" href="/latest/">
+          <img
+            class="btn__icon"
+            src="/rocknroller-icon.png"
+            alt=""
+            width="32"
+            height="32"
+          />
+          Play latest on web
+        </a>
+        <a class="btn" href="/version/">
+          <span class="btn__icons" aria-hidden="true">
+            <img
+              class="btn__icon"
+              src="/assets/icons/windows.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+            <img
+              class="btn__icon"
+              src="/assets/icons/apple.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+          </span>
+          Get app
+        </a>
+        <a
+          class="btn"
+          href="https://nicapotato.itch.io/rock-n-roller"
+          rel="noopener"
+        >
+          <img
+            class="btn__icon"
+            src="/assets/icons/itchdotio.svg"
+            alt=""
+            width="24"
+            height="24"
+          />
+          Itch.io managed app
+        </a>
+      </div>
 
       <h2>What it does</h2>
       <p>
-        Point it at a folder of CDLC <code>.psarc</code> files and it renders
-        the charts on a 3D highway with audio, practice speed control
+        Point it at a folder of CDLC <code>.psarc</code> files on your disk and
+        it renders the charts on a 3D highway with audio, practice speed control
         (pitch-preserving time stretch), per-arrangement tuning info, playlists
-        and profiles. The web version ships with one demo song —
-        <em>Deadwing</em> by Porcupine Tree, a freeware community chart — so
-        there is something to play before you add your own library.
+        and profiles.
       </p>
 
-      <h2>Your files stay yours</h2>
+      <h2>Your files stay on disk</h2>
       <p>
-        In the browser, the app asks for read access to a local folder using
-        the browser folder picker. Files are read locally in the page; nothing
-        is uploaded. Saved state (profiles, playlists, scan cache) lives in
-        your browser's local storage for this site.
+        Charts live on your machine. In the browser, the app asks for
+        <strong>read-only</strong> access to a local folder via the folder
+        picker; <code>.psarc</code> bytes are read in the page and never
+        uploaded. Saved state (profiles, playlists, scan cache) lives in your
+        browser's local storage for this site.
+      </p>
+
+      <h2>Chromium required (web)</h2>
+      <p>
+        The browser build needs a Chromium-based browser (Chrome or Edge).
+        Folder access uses the File System Access API
+        (<code>showDirectoryPicker</code>), which Firefox and Safari do not
+        support. The build also runs multithreaded WebAssembly (Emscripten
+        pthreads via <code>SharedArrayBuffer</code>), which needs a
+        cross-origin-isolated page — something the site sets up automatically,
+        but Chromium is still the supported target for the full library flow.
       </p>
 
       <h2>What it is not</h2>
@@ -60,15 +123,13 @@
       <h2>Platforms</h2>
       <p>
         Play in the browser at <a href="/latest/">/latest</a> (Chromium
-        recommended), or grab desktop builds for macOS (Apple Silicon and
+        required), or grab desktop builds for macOS (Apple Silicon and
         Intel) and Windows from the <a href="/version/">versions page</a> or
         <a href="https://nicapotato.itch.io/rock-n-roller" rel="noopener">itch.io</a>.
+        Desktop builds read <code>.psarc</code> folders from disk without the
+        browser folder API.
       </p>
 
-      <p class="fineprint">
-        Your song files never leave your machine — the web app reads granted
-        folders locally in the browser.
-      </p>
     </main>
   </body>
 </html>

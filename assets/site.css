@@ -46,6 +46,13 @@ body {
   color: var(--rnr-yellow);
 }
 
+.page__logo {
+  display: block;
+  width: min(100%, 28rem);
+  height: auto;
+  image-rendering: pixelated;
+}
+
 .page__nav {
   margin: 0.5rem 0 2rem;
   font-size: 0.9rem;
@@ -65,20 +72,46 @@ a {
   color: var(--rnr-yellow);
 }
 
-.btn-play {
-  display: inline-block;
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
   background: var(--rnr-yellow);
   color: var(--rnr-ink);
   border: var(--rnr-border);
   padding: 0.8rem 1.6rem;
   font-family: "Press Start 2P", monospace;
-  font-size: 0.85rem;
+  font-size: 0.7rem;
+  line-height: 1.4;
   text-transform: uppercase;
   text-decoration: none;
-  margin: 1rem 0;
 }
 
-.btn-play:hover {
+.btn__icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.btn__icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex-shrink: 0;
+}
+
+img.btn__icon[src$=".png"] {
+  image-rendering: pixelated;
+}
+
+.btn:hover {
   background: #fff;
 }
 
