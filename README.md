@@ -9,11 +9,18 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 | Route | What |
 | --- | --- |
 | `/` | redirects to `/latest/` |
-| `/latest/` | play the newest published build |
+| `/latest/` | play the newest published build (song-free; Add Folder) |
+| `/latest/?demo=true` | same build + curated demo PSARCs from S3 |
 | `/play/?v=0.1.33` | play a specific version |
+| `/play/?v=0.1.33&demo=true` | specific version + demos |
 | `/0.1.33/` | same as above (served via `404.html` path routing) |
 | `/version/` | version × platform table (web play + desktop zips) |
 | `/about/` | project description |
+
+`?demo=true` / `?demo=True` / `?demo=1` / `?demo=yes` (case-insensitive) makes
+`player.js` fetch `apps/released/rocknroller/demos/catalog.json` and the listed
+`*_p.psarc` files from S3, then grant them into the game via weblib. Without the
+flag, no demo network requests are made.
 
 ## How the player works
 
@@ -29,9 +36,10 @@ The document stays on this origin; `assets/player.js` pulls the build from
 3. Worker scripts must be same-origin, so `RockNRoller.js` is fetched as a Blob
    and handed to `Module.mainScriptUrlOrBlob`; blob: URLs inherit this origin.
 
-Publishing is unchanged: the rocknroller CI (`publish-s3-web` job) writes the
-versioned prefix, overwrites `latest/`, and merges the catalogs. This site
-picks all of that up with zero changes here.
+Publishing: the rocknroller CI (`publish-s3-web` job) writes the versioned
+engine prefix, overwrites `latest/`, syncs curated demos to
+`apps/released/rocknroller/demos/`, and merges the apps catalog. This site picks
+that up when `player.js` / pages here are deployed.
 
 ## Local dev
 

@@ -31,11 +31,13 @@
 
       <p>
         A freeware guitar-practice app that plays Rocksmith-format
-        <code>.psarc</code> charts from your own computer — files stay on your
-        disk; the app never hosts or uploads your song library. Built around
-        freeware CDLC from the
+        <code>.psarc</code> charts from your own computer — your personal library
+        stays on disk; the app never uploads it. Built around freeware CDLC from
+        the
         <a href="https://customsforge.com" rel="noopener">CustomsForge</a>
-        community. Grant a local folder of your own CDLC to play.
+        community. Grant a local folder of your own CDLC to play. Optional curated
+        demos load from our CDN only when you open Play with
+        <code>?demo=true</code>.
       </p>
 
       <div class="btn-row">
@@ -48,6 +50,16 @@
             height="32"
           />
           Play latest on web
+        </a>
+        <a class="btn" href="/latest/?demo=true">
+          <img
+            class="btn__icon"
+            src="/rocknroller-icon.png"
+            alt=""
+            width="32"
+            height="32"
+          />
+          Play with demos
         </a>
         <a class="btn" href="/version/">
           <span class="btn__icons" aria-hidden="true">
@@ -70,7 +82,7 @@
         </a>
         <a
           class="btn"
-          href="https://nicapotato.itch.io/rock-n-roller"
+          href="https://nicapotato.itch.io/rocknroller"
           rel="noopener"
         >
           <img
@@ -125,7 +137,7 @@
         Play in the browser at <a href="/latest/">/latest</a> (Chromium
         required), or grab desktop builds for macOS (Apple Silicon and
         Intel) and Windows from the <a href="/version/">versions page</a> or
-        <a href="https://nicapotato.itch.io/rock-n-roller" rel="noopener">itch.io</a>.
+        <a href="https://nicapotato.itch.io/rocknroller" rel="noopener">itch.io</a>.
         Desktop builds read <code>.psarc</code> folders from disk without the
         browser folder API.
       </p>

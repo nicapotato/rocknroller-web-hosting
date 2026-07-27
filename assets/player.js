@@ -13,6 +13,8 @@
  *    page's origin. One download serves the main thread and every worker.
  *
  * Version resolution: window.RNR_VERSION (pinned pages) > ?v= query > "latest".
+ * Demo pack: ?demo=true|True|1|yes fetches apps/released/rocknroller/demos/ after
+ * weblib init; without the flag the engine stays song-free (Add Folder).
  * Fails loudly on any error - no fallbacks.
  */
 (function () {
@@ -20,12 +22,21 @@
 
   var S3_BASE =
     "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com/apps/released/rocknroller";
+  var DEMOS_BASE = S3_BASE + "/demos/";
 
   var statusEl = document.getElementById("status");
   var badgeEl = document.getElementById("versionBadge");
+  var params = new URLSearchParams(window.location.search);
 
   function setStatus(text) {
     if (statusEl) statusEl.textContent = text || "";
+  }
+
+  function clearStatus() {
+    if (statusEl) {
+      statusEl.remove();
+      statusEl = null;
+    }
   }
 
   function fail(msg) {
@@ -37,9 +48,18 @@
     throw new Error(msg);
   }
 
+  function demoEnabled() {
+    var raw = params.get("demo");
+    if (raw == null) return false;
+    var v = String(raw).trim().toLowerCase();
+    return v === "true" || v === "1" || v === "yes";
+  }
+
+  var wantDemo = demoEnabled();
+
   var ver =
     window.RNR_VERSION ||
-    new URLSearchParams(window.location.search).get("v") ||
+    params.get("v") ||
     "latest";
   ver = String(ver).trim();
   if (!/^[0-9A-Za-z.-]+$/.test(ver)) {
@@ -71,6 +91,42 @@
     showBadge(ver);
   }
 
+  function loadDemos() {
+    setStatus("downloading demos\u2026");
+    return fetch(DEMOS_BASE + "catalog.json", { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) {
+          fail("could not fetch demo catalog (HTTP " + r.status + ")");
+        }
+        return r.json();
+      })
+      .then(function (catalog) {
+        if (!catalog || !Array.isArray(catalog.songs) || catalog.songs.length === 0) {
+          fail("demo catalog has no songs");
+        }
+        var urls = catalog.songs.map(function (s) {
+          if (!s || typeof s.file !== "string" || !s.file) {
+            fail("demo catalog entry missing file");
+          }
+          if (!/^[A-Za-z0-9._-]+_p\.psarc$/i.test(s.file)) {
+            fail("demo catalog invalid file: " + s.file);
+          }
+          return DEMOS_BASE + s.file;
+        });
+        var lib = window.Module && window.Module.rnrWebLib;
+        var grant =
+          lib &&
+          (lib.grantRemoteFolder || lib.testGrant);
+        if (typeof grant !== "function") {
+          fail("rnrWebLib.grantRemoteFolder unavailable (need a build with weblib remote grant)");
+        }
+        return grant.call(lib, "Demos", urls);
+      })
+      .then(function () {
+        clearStatus();
+      });
+  }
+
   // Same Module shape as the build's own shell.html.
   window.Module = {
     canvas: (function () {
@@ -86,12 +142,30 @@
     },
     setStatus: setStatus,
     onRuntimeInitialized: function () {
-      if (statusEl) {
-        statusEl.remove();
-        statusEl = null;
+      if (!wantDemo) {
+        clearStatus();
       }
+      /* Demo load waits for onRnrWebLibReady (after rnr_weblib_init in main). */
     },
   };
+
+  if (wantDemo) {
+    var demosStarted = false;
+    window.Module.onRnrWebLibReady = function () {
+      if (demosStarted) return;
+      demosStarted = true;
+      loadDemos().catch(function (e) {
+        fail(e && e.message ? e.message : "demo download failed");
+      });
+    };
+    setTimeout(function () {
+      if (!demosStarted) {
+        fail(
+          "weblib never became ready for demos (need a build that calls onRnrWebLibReady)"
+        );
+      }
+    }, 45000);
+  }
 
   setStatus("downloading " + ver + "\u2026");
   fetch(ASSET_BASE + "RockNRoller.js")
