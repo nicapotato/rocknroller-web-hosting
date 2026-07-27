@@ -2,8 +2,8 @@
  * entry): wasm (browser play) + desktop zips (macOS arm64/x86_64, Windows).
  * Browser play links use path style (/0.1.35/, /latest/); desktop zips
  * download straight from S3. Fails loudly if the catalog cannot be fetched.
- * SHA-256 uses the same narrow-screen truncation + Show SHA toggle as the
- * stuff catalog table.
+ * Narrow screens: one table-level "Toggle SHA Key" expands/collapses all
+ * SHA-256 values (truncated by default). Wide screens show full hashes.
  */
 (function () {
   "use strict";
@@ -11,7 +11,8 @@
   var BASE = "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com";
   var tbody = document.getElementById("versionsBody");
   var errEl = document.getElementById("versionsError");
-  var shaSeq = 0;
+  var wrap = document.getElementById("versionsWrap");
+  var shaToggle = document.getElementById("versionsShaToggle");
 
   function fail(msg) {
     errEl.textContent = "ERROR: " + msg;
@@ -28,19 +29,12 @@
 
   function shaBlock(sha) {
     if (!sha) return "";
-    var id = "rnr-sha-" + shaSeq++;
     return (
       '<div class="sha cell-sha">' +
-      '<div class="cell-sha-inner">' +
-      '<button type="button" class="sha-toggle js-sha-toggle" aria-expanded="false" aria-controls="' +
-      id +
-      '">Show SHA</button>' +
-      '<code id="' +
-      id +
-      '" class="sha-full js-sha-full">' +
+      '<code class="sha-full js-sha-full">' +
       sha +
       "</code>" +
-      "</div></div>"
+      "</div>"
     );
   }
 
@@ -67,6 +61,13 @@
       "</td>"
     );
   }
+
+  if (!wrap || !shaToggle) fail("versions page missing Toggle SHA Key controls");
+
+  shaToggle.addEventListener("click", function () {
+    var expanded = wrap.classList.toggle("sha-expanded");
+    shaToggle.setAttribute("aria-pressed", expanded ? "true" : "false");
+  });
 
   getJSON(BASE + "/apps/released/catalog.json").then(function (doc) {
     var versions = ((doc.apps || {}).rocknroller || {}).versions || {};
@@ -96,15 +97,5 @@
     });
 
     tbody.innerHTML = rows.join("");
-  });
-
-  tbody.addEventListener("click", function (ev) {
-    var tbtn = ev.target.closest("button.js-sha-toggle");
-    if (!tbtn || tbtn.hidden) return;
-    var cell = tbtn.closest(".cell-sha");
-    if (!cell) return;
-    var expanded = cell.classList.toggle("sha-expanded");
-    tbtn.setAttribute("aria-expanded", expanded ? "true" : "false");
-    tbtn.textContent = expanded ? "Hide SHA" : "Show SHA";
   });
 })();

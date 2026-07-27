@@ -29,20 +29,32 @@
       </p>
 
       <div id="versionsError" class="fineprint" hidden></div>
-      <div class="versions-scroll">
-        <table class="versions">
-          <thead>
-            <tr>
-              <th>Version</th>
-              <th>Released</th>
-              <th>Web</th>
-              <th>macOS (Apple&nbsp;Silicon)</th>
-              <th>macOS (Intel)</th>
-              <th>Windows</th>
-            </tr>
-          </thead>
-          <tbody id="versionsBody"></tbody>
-        </table>
+      <div id="versionsWrap" class="versions-wrap">
+        <div class="versions-toolbar">
+          <button
+            type="button"
+            id="versionsShaToggle"
+            class="versions-sha-toggle"
+            aria-pressed="false"
+          >
+            Toggle SHA Key
+          </button>
+        </div>
+        <div class="versions-scroll">
+          <table class="versions">
+            <thead>
+              <tr>
+                <th>Version</th>
+                <th>Released</th>
+                <th>Web</th>
+                <th>macOS (Apple&nbsp;Silicon)</th>
+                <th>macOS (Intel)</th>
+                <th>Windows</th>
+              </tr>
+            </thead>
+            <tbody id="versionsBody"></tbody>
+          </table>
+        </div>
       </div>
     </main>
     <script src="/assets/versions.js"></script>

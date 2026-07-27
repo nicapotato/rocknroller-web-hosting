@@ -154,7 +154,35 @@ table.versions td.na {
   color: #555;
 }
 
-/* SHA-256: same truncate / Show SHA pattern as stuff catalog table. */
+.versions-wrap {
+  margin-top: 1rem;
+}
+
+.versions-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.6rem;
+}
+
+.versions-sha-toggle {
+  margin: 0;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #444;
+  background: #17171c;
+  color: #e8eaed;
+  font-family: inherit;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.versions-sha-toggle:hover,
+.versions-sha-toggle[aria-pressed="true"] {
+  border-color: var(--rnr-yellow);
+  color: var(--rnr-yellow);
+}
+
+/* SHA-256 under each artifact. */
 table.versions .sha {
   font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
   font-size: 0.75rem;
@@ -171,50 +199,9 @@ table.versions .sha-full {
   padding: 0;
 }
 
-table.versions .cell-sha {
-  vertical-align: top;
-}
-
-table.versions .cell-sha-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 0.35rem;
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-}
-
-table.versions .sha-toggle {
-  flex: 0 0 auto;
-  align-self: flex-start;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  min-height: 0;
-  margin: 0;
-  padding: 0.2rem 0.45rem;
-  border: 1px solid #444;
-  background: #17171c;
-  color: #e8eaed;
-  font-family: inherit;
-  font-size: 0.7rem;
-  line-height: 1.25;
-  text-transform: none;
-  white-space: nowrap;
-  cursor: pointer;
-  box-sizing: border-box;
-}
-
-table.versions .sha-toggle:hover {
-  border-color: var(--rnr-yellow);
-  color: var(--rnr-yellow);
-}
-
-/* Narrow / medium: keep one-line truncated SHA so rows stay short. */
+/* Narrow / medium: truncated by default; one table Toggle SHA Key expands all. */
 @media (max-width: 1199.98px) {
-  table.versions .cell-sha:not(.sha-expanded) .js-sha-full {
+  .versions-wrap:not(.sha-expanded) table.versions .js-sha-full {
     display: block;
     max-width: 9ch;
     overflow: hidden;
@@ -223,7 +210,7 @@ table.versions .sha-toggle:hover {
     word-break: normal;
   }
 
-  table.versions .cell-sha.sha-expanded .js-sha-full {
+  .versions-wrap.sha-expanded table.versions .js-sha-full {
     display: block;
     width: 100%;
     max-width: 100%;
@@ -235,11 +222,11 @@ table.versions .sha-toggle:hover {
 
 /* Wide: always show full hash; no toggle needed. */
 @media (min-width: 1200px) {
-  table.versions .cell-sha .sha-toggle {
-    display: none !important;
+  .versions-toolbar {
+    display: none;
   }
 
-  table.versions .cell-sha .js-sha-full {
+  table.versions .js-sha-full {
     display: block !important;
     max-width: none;
     white-space: normal;
