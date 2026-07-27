@@ -10,18 +10,22 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 | --- | --- |
 | `/` | redirects to `/latest/` |
 | `/latest/` | play the newest published build (song-free; Add Folder) |
-| `/latest/?demo=true` | same build + curated demo PSARCs from S3 |
+| `/latest/?demo=songs` | same build + curated demo PSARCs from S3 |
+| `/latest/?demo=stems` | demos + 6-stem MP3 trees (large extra download) |
 | `/0.1.35/` | play a specific version (via `404.html` path routing) |
-| `/0.1.35/?demo=true` | specific version + demos |
+| `/0.1.35/?demo=songs` | specific version + demo PSARCs |
 | `/versions/` | version × platform table (web play + desktop zips) |
 | `/about/` | project description |
 | `/play/?v=…` | **legacy redirect** → `/<ver>/` (preserves `?demo=`) |
 | `/version/` | **legacy redirect** → `/versions/` |
 
-`?demo=true` / `?demo=True` / `?demo=1` / `?demo=yes` (case-insensitive) makes
-`player.js` fetch `apps/released/rocknroller/demos/catalog.json` and the listed
-`*_p.psarc` files from S3, then grant them into the game via weblib. Without the
-flag, no demo network requests are made.
+`?demo=songs` or `?demo=stems` (case-insensitive) makes `player.js` fetch
+`apps/released/rocknroller/demos/catalog.json` and the listed `*_p.psarc`
+files. `?demo=stems` also downloads the 6-stem MP3 trees under
+`demos/stems/{psarc_basename}/` into MEMFS at `/weblib/stems/` before the
+PSARCs are granted (so library sync can probe them like the desktop stems
+folder). Any other `?demo=` value fails loudly. Without the flag, no demo
+network requests are made.
 
 ## How the player works
 

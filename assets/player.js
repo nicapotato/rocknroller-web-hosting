@@ -14,8 +14,10 @@
  *
  * Version resolution: window.RNR_VERSION (from /latest/ or /0.1.35/ via 404)
  *   > legacy ?v= > "latest". Preferred URLs: /latest/, /0.1.35/.
- * Demo pack: ?demo=true|True|1|yes fetches apps/released/rocknroller/demos/ after
- * weblib init; without the flag the engine stays song-free (Add Folder).
+ * Demo pack (after weblib init):
+ *   ?demo=songs  — curated demo PSARCs only
+ *   ?demo=stems  — PSARCs + 6-stem MP3 trees (~large extra download)
+ * Without the flag the engine stays song-free (Add Folder).
  * Fails loudly on any error - no fallbacks.
  */
 (function () {
@@ -24,6 +26,15 @@
   var S3_BASE =
     "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com/apps/released/rocknroller";
   var DEMOS_BASE = S3_BASE + "/demos/";
+  var STEMS_VROOT = "/weblib/stems";
+  var STEM_NAMES = [
+    "drums.mp3",
+    "bass.mp3",
+    "other.mp3",
+    "vocals.mp3",
+    "guitar.mp3",
+    "piano.mp3",
+  ];
 
   var statusEl = document.getElementById("status");
   var badgeEl = document.getElementById("versionBadge");
@@ -49,14 +60,20 @@
     throw new Error(msg);
   }
 
-  function demoEnabled() {
+  /* null = no demos; "songs" = PSARCs; "stems" = PSARCs + stem MP3s. */
+  function parseDemoMode() {
     var raw = params.get("demo");
-    if (raw == null) return false;
+    if (raw == null) return null;
     var v = String(raw).trim().toLowerCase();
-    return v === "true" || v === "1" || v === "yes";
+    if (v === "") return null;
+    if (v === "songs") return "songs";
+    if (v === "stems") return "stems";
+    fail("invalid ?demo= value (use songs or stems): " + raw);
   }
 
-  var wantDemo = demoEnabled();
+  var demoMode = parseDemoMode();
+  var wantDemo = demoMode !== null;
+  var wantStems = demoMode === "stems";
 
   var ver =
     window.RNR_VERSION ||
@@ -92,8 +109,86 @@
     showBadge(ver);
   }
 
+  function psarcBasename(file) {
+    if (typeof file !== "string" || !file.toLowerCase().endsWith(".psarc")) {
+      fail("demo catalog invalid psarc file: " + file);
+    }
+    return file.slice(0, -6);
+  }
+
+  function setStemsDir() {
+    if (typeof Module.ccall !== "function") {
+      fail("Module.ccall unavailable for rnr_weblib_set_stems_dir");
+    }
+    Module.ccall("rnr_weblib_set_stems_dir", null, ["string"], [STEMS_VROOT]);
+  }
+
+  function memfs() {
+    /* Emscripten may expose FS as a global (typical) or Module.FS. */
+    var fs = typeof FS !== "undefined" ? FS : Module.FS;
+    if (!fs || typeof fs.writeFile !== "function" || typeof fs.mkdirTree !== "function") {
+      fail("Emscripten FS.writeFile unavailable for demo stems");
+    }
+    return fs;
+  }
+
+  function writeStemFile(vpath, bytes) {
+    var fs = memfs();
+    var slash = vpath.lastIndexOf("/");
+    if (slash > 0) {
+      fs.mkdirTree(vpath.slice(0, slash));
+    }
+    fs.writeFile(vpath, new Uint8Array(bytes));
+  }
+
+  function loadDemoStems(songs) {
+    var jobs = [];
+    for (var i = 0; i < songs.length; i++) {
+      var s = songs[i];
+      if (!s.stems || !Array.isArray(s.stems) || s.stems.length === 0) {
+        fail("demo catalog missing stems[] for " + s.file + " (required by ?demo=stems)");
+      }
+      var base = psarcBasename(s.file);
+      for (var k = 0; k < STEM_NAMES.length; k++) {
+        if (s.stems.indexOf(STEM_NAMES[k]) < 0) {
+          fail("demo catalog missing required stem " + STEM_NAMES[k] + " for " + s.file);
+        }
+      }
+      for (var j = 0; j < s.stems.length; j++) {
+        var name = s.stems[j];
+        if (typeof name !== "string" || STEM_NAMES.indexOf(name) < 0) {
+          fail("demo catalog invalid stem filename: " + name);
+        }
+        jobs.push({
+          url: DEMOS_BASE + "stems/" + base + "/" + name,
+          vpath: STEMS_VROOT + "/" + base + "/" + name,
+          label: base + "/" + name,
+        });
+      }
+    }
+    if (jobs.length === 0) {
+      fail("demo catalog has no stem files (?demo=stems)");
+    }
+    var done = 0;
+    setStatus("loading stems (0/" + jobs.length + ")\u2026");
+    return jobs.reduce(function (chain, job) {
+      return chain.then(function () {
+        return fetch(job.url, { cache: "no-store" }).then(function (r) {
+          if (!r.ok) {
+            fail("could not fetch stem " + job.label + " (HTTP " + r.status + ")");
+          }
+          return r.arrayBuffer();
+        }).then(function (ab) {
+          writeStemFile(job.vpath, ab);
+          done += 1;
+          setStatus("loading stems (" + done + "/" + jobs.length + ")\u2026");
+        });
+      });
+    }, Promise.resolve());
+  }
+
   function loadDemos() {
-    setStatus("loading psarcs\u2026");
+    setStatus("loading demos\u2026");
     return fetch(DEMOS_BASE + "catalog.json", { cache: "no-store" })
       .then(function (r) {
         if (!r.ok) {
@@ -114,17 +209,24 @@
           }
           return DEMOS_BASE + s.file;
         });
-        var total = urls.length;
-        setStatus("loading psarcs (0/" + total + ")\u2026");
-        var lib = window.Module && window.Module.rnrWebLib;
-        var grant =
-          lib &&
-          (lib.grantRemoteFolder || lib.testGrant);
-        if (typeof grant !== "function") {
-          fail("rnrWebLib.grantRemoteFolder unavailable (need a build with weblib remote grant)");
+        var stemReady = Promise.resolve();
+        if (wantStems) {
+          setStemsDir();
+          stemReady = loadDemoStems(catalog.songs);
         }
-        return grant.call(lib, "Demos", urls, function (done, n) {
-          setStatus("loading psarcs (" + done + "/" + n + ")\u2026");
+        return stemReady.then(function () {
+          var total = urls.length;
+          setStatus("loading psarcs (0/" + total + ")\u2026");
+          var lib = window.Module && window.Module.rnrWebLib;
+          var grant =
+            lib &&
+            (lib.grantRemoteFolder || lib.testGrant);
+          if (typeof grant !== "function") {
+            fail("rnrWebLib.grantRemoteFolder unavailable (need a build with weblib remote grant)");
+          }
+          return grant.call(lib, "Demos", urls, function (done, n) {
+            setStatus("loading psarcs (" + done + "/" + n + ")\u2026");
+          });
         });
       })
       .then(function () {

@@ -2,6 +2,8 @@
  * entry): wasm (browser play) + desktop zips (macOS arm64/x86_64, Windows).
  * Browser play links use path style (/0.1.35/, /latest/); desktop zips
  * download straight from S3. Fails loudly if the catalog cannot be fetched.
+ * SHA-256 uses the same narrow-screen truncation + Show SHA toggle as the
+ * stuff catalog table.
  */
 (function () {
   "use strict";
@@ -9,6 +11,7 @@
   var BASE = "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com";
   var tbody = document.getElementById("versionsBody");
   var errEl = document.getElementById("versionsError");
+  var shaSeq = 0;
 
   function fail(msg) {
     errEl.textContent = "ERROR: " + msg;
@@ -23,10 +26,46 @@
     });
   }
 
+  function shaBlock(sha) {
+    if (!sha) return "";
+    var id = "rnr-sha-" + shaSeq++;
+    return (
+      '<div class="sha cell-sha">' +
+      '<div class="cell-sha-inner">' +
+      '<button type="button" class="sha-toggle js-sha-toggle" aria-expanded="false" aria-controls="' +
+      id +
+      '">Show SHA</button>' +
+      '<code id="' +
+      id +
+      '" class="sha-full js-sha-full">' +
+      sha +
+      "</code>" +
+      "</div></div>"
+    );
+  }
+
   function zipCell(entry) {
     if (!entry || !entry.zip_url) return '<td class="na">—</td>';
-    var title = entry.sha256 ? ' title="sha256: ' + entry.sha256 + '"' : "";
-    return '<td><a href="' + entry.zip_url + '"' + title + ">zip</a></td>";
+    return (
+      "<td>" +
+      '<a href="' +
+      entry.zip_url +
+      '">zip</a>' +
+      shaBlock(entry.sha256) +
+      "</td>"
+    );
+  }
+
+  function playCell(version, wasm) {
+    if (!wasm) return '<td class="na">—</td>';
+    return (
+      "<td>" +
+      '<a href="/' +
+      encodeURIComponent(version) +
+      '/">play</a>' +
+      shaBlock(wasm.sha256) +
+      "</td>"
+    );
   }
 
   getJSON(BASE + "/apps/released/catalog.json").then(function (doc) {
@@ -41,11 +80,6 @@
       var entry = versions[v] || {};
       var released = (entry.released_at || "").slice(0, 10);
       var p = entry.platforms || {};
-      var wasm = p.wasm;
-
-      var playCell = wasm
-        ? '<td><a href="/' + encodeURIComponent(v) + '/">play</a></td>'
-        : '<td class="na">—</td>';
 
       return (
         "<tr><td>" +
@@ -53,7 +87,7 @@
         "</td><td>" +
         (released || "—") +
         "</td>" +
-        playCell +
+        playCell(v, p.wasm) +
         zipCell(p.macos_arm64 || p.macos) +
         zipCell(p.macos_x86_64) +
         zipCell(p.windows_x86_64 || p.windows) +
@@ -62,5 +96,15 @@
     });
 
     tbody.innerHTML = rows.join("");
+  });
+
+  tbody.addEventListener("click", function (ev) {
+    var tbtn = ev.target.closest("button.js-sha-toggle");
+    if (!tbtn || tbtn.hidden) return;
+    var cell = tbtn.closest(".cell-sha");
+    if (!cell) return;
+    var expanded = cell.classList.toggle("sha-expanded");
+    tbtn.setAttribute("aria-expanded", expanded ? "true" : "false");
+    tbtn.textContent = expanded ? "Hide SHA" : "Show SHA";
   });
 })();
