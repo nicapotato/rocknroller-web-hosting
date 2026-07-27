@@ -2,56 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RockNRoller</title>
-    <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
-    <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background: #0b0b0f;
-        overflow: hidden;
-      }
-      #canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-        outline: none;
-      }
-      #status {
-        position: absolute;
-        top: 45%;
-        width: 100%;
-        text-align: center;
-        color: #ddd;
-        font-family: monospace;
-        font-size: 15px;
-        pointer-events: none;
-      }
-      #status.player-status--error {
-        color: #e53935;
-        pointer-events: auto;
-      }
-      #versionBadge {
-        position: absolute;
-        top: 6px;
-        right: 8px;
-        color: #555;
-        font-family: monospace;
-        font-size: 11px;
-        pointer-events: none;
-      }
-    </style>
+    <title>Redirecting…</title>
+    <script>
+      /* Legacy /play/?v=X.Y.Z → /X.Y.Z/ (preserves ?demo= and other params). */
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var v = params.get("v");
+        params.delete("v");
+        var dest =
+          v && /^[0-9A-Za-z.-]+$/.test(v) ? "/" + v + "/" : "/latest/";
+        var q = params.toString();
+        if (q) dest += "?" + q;
+        window.location.replace(dest);
+      })();
+    </script>
   </head>
   <body>
-    <!-- Version comes from ?v=X.Y.Z (see /version for the list); defaults to latest. -->
-    <script src="/coi-serviceworker.min.js"></script>
-    <div id="status">loading…</div>
-    <div id="versionBadge" hidden></div>
-    <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
-    <script src="/assets/player.js"></script>
+    <p style="color: #e8eaed; background: #0d0d0d; font-family: monospace; padding: 2rem">
+      Redirecting…
+    </p>
   </body>
 </html>

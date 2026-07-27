@@ -23,17 +23,29 @@
       }
       #status {
         position: absolute;
-        top: 45%;
-        width: 100%;
+        inset: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 1.25rem;
+        box-sizing: border-box;
         text-align: center;
-        color: #ddd;
+        color: #eee;
         font-family: monospace;
-        font-size: 15px;
+        font-size: 16px;
+        letter-spacing: 0.02em;
         pointer-events: none;
+        background: rgba(11, 11, 15, 0.72);
+      }
+      #status:empty {
+        display: none;
       }
       #status.player-status--error {
         color: #e53935;
         pointer-events: auto;
+        background: rgba(11, 11, 15, 0.88);
       }
       #versionBadge {
         position: absolute;

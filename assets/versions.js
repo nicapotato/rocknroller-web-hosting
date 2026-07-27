@@ -1,7 +1,7 @@
 /* Builds the versions table from the apps S3 catalog (single Rock N Roller
  * entry): wasm (browser play) + desktop zips (macOS arm64/x86_64, Windows).
- * Browser play links stay on this domain (/play/?v=); desktop zips download
- * straight from S3. Fails loudly if the catalog cannot be fetched.
+ * Browser play links use path style (/0.1.35/, /latest/); desktop zips
+ * download straight from S3. Fails loudly if the catalog cannot be fetched.
  */
 (function () {
   "use strict";
@@ -44,7 +44,7 @@
       var wasm = p.wasm;
 
       var playCell = wasm
-        ? '<td><a href="/play/?v=' + encodeURIComponent(v) + '">play</a></td>'
+        ? '<td><a href="/' + encodeURIComponent(v) + '/">play</a></td>'
         : '<td class="na">—</td>';
 
       return (

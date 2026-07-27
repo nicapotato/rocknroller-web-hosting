@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Versions — Rock N Roller</title>
+    <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/site.css" />
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="page__title">Versions</h1>
+      <nav class="page__nav">
+        <a href="/latest/">Play latest</a>
+        <a href="/about/">About</a>
+      </nav>
+
+      <p>
+        Browser play uses path URLs (<code>/0.1.35/</code>,
+        <code>/latest/</code>; add <code>?demo=true</code> for curated demos).
+        Desktop zips download directly from S3.
+      </p>
+
+      <div id="versionsError" class="fineprint" hidden></div>
+      <table class="versions">
+        <thead>
+          <tr>
+            <th>Version</th>
+            <th>Released</th>
+            <th>Web</th>
+            <th>macOS (Apple&nbsp;Silicon)</th>
+            <th>macOS (Intel)</th>
+            <th>Windows</th>
+          </tr>
+        </thead>
+        <tbody id="versionsBody"></tbody>
+      </table>
+    </main>
+    <script src="/assets/versions.js"></script>
+  </body>
+</html>

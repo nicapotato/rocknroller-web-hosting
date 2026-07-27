@@ -12,7 +12,8 @@
  *    Blob and handed to Module.mainScriptUrlOrBlob; blob: URLs inherit this
  *    page's origin. One download serves the main thread and every worker.
  *
- * Version resolution: window.RNR_VERSION (pinned pages) > ?v= query > "latest".
+ * Version resolution: window.RNR_VERSION (from /latest/ or /0.1.35/ via 404)
+ *   > legacy ?v= > "latest". Preferred URLs: /latest/, /0.1.35/.
  * Demo pack: ?demo=true|True|1|yes fetches apps/released/rocknroller/demos/ after
  * weblib init; without the flag the engine stays song-free (Add Folder).
  * Fails loudly on any error - no fallbacks.
@@ -92,7 +93,7 @@
   }
 
   function loadDemos() {
-    setStatus("downloading demos\u2026");
+    setStatus("loading psarcs\u2026");
     return fetch(DEMOS_BASE + "catalog.json", { cache: "no-store" })
       .then(function (r) {
         if (!r.ok) {
@@ -113,6 +114,8 @@
           }
           return DEMOS_BASE + s.file;
         });
+        var total = urls.length;
+        setStatus("loading psarcs (0/" + total + ")\u2026");
         var lib = window.Module && window.Module.rnrWebLib;
         var grant =
           lib &&
@@ -120,7 +123,9 @@
         if (typeof grant !== "function") {
           fail("rnrWebLib.grantRemoteFolder unavailable (need a build with weblib remote grant)");
         }
-        return grant.call(lib, "Demos", urls);
+        return grant.call(lib, "Demos", urls, function (done, n) {
+          setStatus("loading psarcs (" + done + "/" + n + ")\u2026");
+        });
       })
       .then(function () {
         clearStatus();
