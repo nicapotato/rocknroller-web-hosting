@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Features — Rock N Roller</title>
+    <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <style>
+      .toc {
+        columns: 2;
+        column-gap: 2rem;
+        padding-left: 1.2rem;
+        margin: 0.5rem 0 1.5rem;
+        font-size: 0.9rem;
+      }
+      .toc li {
+        margin: 0.2rem 0;
+      }
+      @media (max-width: 560px) {
+        .toc {
+          columns: 1;
+        }
+      }
+      h2 {
+        margin-top: 2.5rem;
+        color: var(--rnr-yellow);
+      }
+      table.specs {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.85rem;
+        margin: 0.75rem 0 1rem;
+      }
+      table.specs th,
+      table.specs td {
+        border: 1px solid #333;
+        padding: 0.45rem 0.65rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      table.specs th {
+        background: #17171c;
+        color: var(--rnr-yellow);
+        font-weight: 600;
+      }
+      code {
+        background: #17171c;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="page__title">
+        <img
+          class="page__logo"
+          src="/rocknroller-logo.png"
+          alt="Rock N Roller"
+          width="810"
+          height="160"
+        />
+      </h1>
+      <nav class="page__nav">
+        <a href="/latest/">Play</a>
+        <a href="/about/">About</a>
+        <a href="/versions/">Versions</a>
+      </nav>
+
+      <h1>Features</h1>
+      <p>
+        How Rock N Roller solves its harder problems: local CDLC in the
+        browser, pitch-preserving practice speed, stem mixing, long charts,
+        and a 3D highway that stays in sync with the audio — all from one C
+        + raylib codebase that ships to macOS, Windows, and WebAssembly.
+      </p>
+
+      <ol class="toc">
+        <li><a href="#stack">Stack &amp; platforms</a></li>
+        <li><a href="#library">Library that stays on your disk</a></li>
+        <li><a href="#web-files">Browser library access</a></li>
+        <li><a href="#wasm">Multithreaded wasm</a></li>
+        <li><a href="#speed">Practice speed without pitch shift</a></li>
+        <li><a href="#stems">Six-stem mixing</a></li>
+        <li><a href="#long-songs">Long songs without blowing RAM</a></li>
+        <li><a href="#highway">3D highway</a></li>
+        <li><a href="#threading">Keeping the UI smooth</a></li>
+        <li><a href="#size">What ships</a></li>
+      </ol>
+
+      <h2 id="stack">Stack &amp; platforms</h2>
+      <p>
+        The app is C17 (plus one C++17 wrapper for
+        <a href="https://signalsmith-audio.co.uk/code/stretch/" rel="noopener">Signalsmith Stretch</a>)
+        on <a href="https://www.raylib.com" rel="noopener">raylib 6.0</a>.
+        One CMake project builds macOS (Apple Silicon and Intel), Windows x64,
+        and Emscripten wasm from the same commit — platform differences stay
+        in small shims for paths, dialogs, and threading.
+      </p>
+      <p>
+        Heavy lifting is a short list of libraries: SQLite for state and the
+        song catalog, an in-repo PSARC/SNG reader, vgmstream for Wwise audio
+        (no FFmpeg), ogg/vorbis, and Signalsmith for time stretch. The UI is
+        drawn in-app; there is no separate toolkit.
+      </p>
+
+      <h2 id="library">Library that stays on your disk</h2>
+      <p>
+        Opening every <code>.psarc</code> on every launch would be slow. Instead,
+        a local SQLite DB caches each song's metadata (title, artist, tunings,
+        arrangements, length) keyed by file size and mtime. Startup loads the
+        catalog from the DB; a background rescan only re-parses files that
+        changed. Profiles, playlists, play history, and settings live in the
+        same database.
+      </p>
+      <p>
+        Charts are Rocksmith's binary SNG — parsed once when you pick a song,
+        not from XML at runtime. On the web, that DB is mounted through IDBFS
+        into IndexedDB, so your catalog and profiles survive reloads without
+        ever leaving the browser.
+      </p>
+
+      <h2 id="web-files">Browser library access</h2>
+      <p>
+        The browser has no filesystem, but the app needs a folder of your CDLC.
+        The solution:
+      </p>
+      <ul>
+        <li>
+          Chromium's File System Access API grants <strong>read-only</strong>
+          access to a local folder; the handle is remembered in IndexedDB so
+          you don't re-pick every visit.
+        </li>
+        <li>
+          The folder is mirrored into wasm MEMFS as
+          <strong>zero-byte skeleton files</strong> with real names, sizes, and
+          mtimes. Desktop scan/cache logic runs unchanged — and because the
+          cache keys on size + mtime, cataloging never needs the file bytes.
+        </li>
+        <li>
+          Opening a song stages the real PSARC on demand: a worker parks while
+          the main thread copies bytes into a bounded LRU cache (512&nbsp;MiB),
+          then wakes. Large libraries stream through a fixed footprint.
+        </li>
+      </ul>
+      <p>
+        Bytes go disk → page memory only. Nothing is uploaded. This (and
+        folder picking) is why the web build needs Chrome or Edge.
+      </p>
+
+      <h2 id="wasm">Multithreaded wasm</h2>
+      <p>
+        The web build is the same C, compiled with Emscripten as multithreaded
+        wasm: pthreads → Web Workers sharing memory via
+        <code>SharedArrayBuffer</code>. That requires a
+        <strong>cross-origin-isolated</strong> page (COOP/COEP headers). GitHub
+        Pages can't send those, so a same-origin
+        <code>coi-serviceworker</code> injects them (one reload on first
+        visit). The ~4&nbsp;MB engine then streams from CDN; the site itself
+        stays a thin shell.
+      </p>
+
+      <h2 id="speed">Practice speed without pitch shift</h2>
+      <p>
+        Slowing audio naively drops pitch. Practice mode needs
+        <strong>0.3×–3.0×</strong> with pitch held steady. Inside the audio
+        callback, Signalsmith Stretch time-stretches each period: pull
+        <code>rate ×</code> source frames, emit device-rate frames at original
+        pitch. At 1.0× the stretcher is bypassed. The chart clock compensates
+        for stretch latency so notes stay locked to what you hear; speed and
+        seek reset the engine atomically. Saved per profile.
+      </p>
+
+      <h2 id="stems">Six-stem mixing</h2>
+      <p>
+        Optional practice mix: drums, bass, other, vocals, guitar, piano —
+        each with its own fader (mute the guitar and play over the band, or
+        solo it). Separation is offline via Demucs
+        (<code>htdemucs_6s</code>; the app finds six MP3s next to the PSARC by
+        path convention, indexes them in SQLite, and only enables stem mode
+        when all six exist.
+      </p>
+      <p>
+        Playback runs six streaming MP3 decoders under one mixer that shares
+        the same time-stretch path as normal audio, so stems get pitch-correct
+        speed too. Seek tables keep scrubbing snappy; the mixer opens on a
+        background thread. On the web, <code>?demo=stems</code> loads curated
+        stem trees into the same flow.
+      </p>
+
+      <h2 id="long-songs">Long songs without blowing RAM</h2>
+      <p>
+        A long chart can be huge if kept fully renderer-ready. Songs over
+        <strong>10 minutes</strong> keep the parsed chart in a compact cache
+        and only expose a <strong>3-minute window</strong> to the highway. As
+        you near the edge (with preload that scales with practice speed), the
+        window slides and refills. Shorter songs drop the cache after the
+        first fill.
+      </p>
+      <p>
+        Audio streams similarly: OGG from disk, stems as MP3 with seek points,
+        and long WEM-only tracks decode in the background while the chart
+        starts. Memory stays flat for a three-minute song or a forty-minute
+        one.
+      </p>
+
+      <h2 id="highway">3D highway</h2>
+      <p>
+        Each instrument pane gets its own scissored 3D viewport (raylib
+        <code>rlgl</code>) with an asymmetric projection so the camera can sit
+        high without keystoning the frets. Camera modes track the active fret
+        region on a 24-fret neck; zoom, runway grade, and lookahead are
+        adjustable.
+      </p>
+      <p>
+        Notes are Rocksmith-style gems (halo / body / edge), with sustains as
+        bendable ribbons and SDF fret labels on top. Each frame batches only
+        the notes in the visible time window and draws them in a fixed depth
+        order. Target is 60&nbsp;FPS with four panes up — CI benches a
+        four-quarter Stairway layout.
+      </p>
+
+      <h2 id="threading">Keeping the UI smooth</h2>
+      <p>
+        The main thread renders; workers handle library sync, song load, WEM
+        decode, stem mixer open, and album art. They finish via atomic flags
+        the frame loop polls — no blocking joins on the hot path. Speed, seek,
+        and volume cross into the audio callback with atomics only, so the UI
+        can't stall playback. The same model runs on web as the pthread pool
+        above.
+      </p>
+
+      <h2 id="size">What ships</h2>
+      <p>
+        Desktop is roughly an <strong>8&nbsp;MB</strong> binary; the web
+        package is about <strong>1.8&nbsp;MB zipped</strong> (~4&nbsp;MB wasm
+        + JS + a ~420&nbsp;KB preload of fonts/shaders/logo — songs never
+        ride along). That size is mostly “link only what Rocksmith content
+        needs” and keep assets out of the download, not a separate size
+        project.
+      </p>
+
+      <p class="fineprint">
+        Numbers move with releases. See <a href="/versions/">versions</a> or
+        <a href="/latest/">press play</a>.
+      </p>
+    </main>
+  </body>
+</html>

@@ -37,7 +37,6 @@
   ];
 
   var statusEl = document.getElementById("status");
-  var badgeEl = document.getElementById("versionBadge");
   var params = new URLSearchParams(window.location.search);
 
   function setStatus(text) {
@@ -85,29 +84,6 @@
   }
 
   var ASSET_BASE = S3_BASE + "/" + ver + "/web/";
-
-  // Badge shows what is actually running; for "latest" the concrete version
-  // comes from VERSION.txt, written next to the build by the publish step.
-  function showBadge(text) {
-    if (badgeEl) {
-      badgeEl.textContent = text;
-      badgeEl.hidden = false;
-    }
-  }
-  if (ver === "latest") {
-    fetch(ASSET_BASE + "VERSION.txt", { cache: "no-store" })
-      .then(function (r) {
-        return r.ok ? r.text() : "";
-      })
-      .then(function (t) {
-        showBadge("latest" + (t ? " (" + t.trim() + ")" : ""));
-      })
-      .catch(function () {
-        showBadge("latest");
-      });
-  } else {
-    showBadge(ver);
-  }
 
   function psarcBasename(file) {
     if (typeof file !== "string" || !file.toLowerCase().endsWith(".psarc")) {

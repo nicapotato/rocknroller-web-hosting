@@ -16,6 +16,7 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 | `/0.1.35/?demo=songs` | specific version + demo PSARCs |
 | `/versions/` | version × platform table (web play + desktop zips) |
 | `/about/` | project description |
+| `/features/` | technical feature breakdown (language, wasm, threading, …) |
 | `/play/?v=…` | **legacy redirect** → `/<ver>/` (preserves `?demo=`) |
 | `/version/` | **legacy redirect** → `/versions/` |
 
