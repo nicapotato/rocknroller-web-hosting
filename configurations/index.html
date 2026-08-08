@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Settings — Rock N Roller</title>
+    <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <style>
+      .toc {
+        columns: 2;
+        column-gap: 2rem;
+        padding-left: 1.2rem;
+        margin: 0.5rem 0 1.5rem;
+        font-size: 0.9rem;
+      }
+      .toc li {
+        margin: 0.2rem 0;
+      }
+      @media (max-width: 560px) {
+        .toc {
+          columns: 1;
+        }
+      }
+      h2 {
+        margin-top: 2.5rem;
+        color: var(--rnr-yellow);
+        scroll-margin-top: 1.25rem;
+      }
+      h2:target {
+        outline: 1px solid var(--rnr-yellow);
+        outline-offset: 0.35rem;
+      }
+      h3 {
+        margin-top: 1.5rem;
+        font-size: 1rem;
+        color: #e8eaed;
+      }
+      table.specs {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.85rem;
+        margin: 0.75rem 0 1rem;
+      }
+      table.specs th,
+      table.specs td {
+        border: 1px solid #333;
+        padding: 0.45rem 0.65rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      table.specs th {
+        background: #17171c;
+        color: var(--rnr-yellow);
+        font-weight: 600;
+      }
+      code {
+        background: #17171c;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="page__title">
+        <img
+          class="page__logo"
+          src="/rocknroller-logo.png"
+          alt="Rock N Roller"
+          width="810"
+          height="160"
+        />
+      </h1>
+      <nav class="page__nav">
+        <a href="/latest/">Play</a>
+        <a href="/about/">About</a>
+        <a href="/features/">Features</a>
+        <a href="/keybinds/">Keybinds</a>
+        <a href="/versions/">Versions</a>
+      </nav>
+
+      <h1>Settings</h1>
+      <p>
+        What the different options mean — library folders and stems in the
+        catalog Settings screen, autoplay, and the per-cell highway / lyrics
+        controls while a song is open.
+      </p>
+
+      <ol class="toc">
+        <li><a href="#library">Library &amp; stems</a></li>
+        <li><a href="#autoplay">Autoplay</a></li>
+        <li><a href="#profiles">Profiles &amp; volume</a></li>
+        <li><a href="#play">While playing</a></li>
+        <li><a href="#cell">Cell Settings</a></li>
+        <li><a href="#layout">Layout, source &amp; viz</a></li>
+        <li><a href="#stems-mix">Stem mixer</a></li>
+      </ol>
+
+      <h2 id="library">Library &amp; stems</h2>
+      <p>
+        Open <strong>Settings</strong> in the catalog nav. This is where you
+        point the app at your CDLC (and optional stem) folders.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Control</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PSARC folders</td>
+            <td>
+              Up to <strong>10</strong> library roots. The first is the primary
+              content folder; the rest are extras. Remove drops a root and
+              resyncs the catalog.
+            </td>
+          </tr>
+          <tr>
+            <td>Add PSARC folder</td>
+            <td>
+              Pick a folder of <code>*_p.psarc</code> files. On the web this
+              uses Chromium’s folder picker (read-only).
+            </td>
+          </tr>
+          <tr>
+            <td>Restore library (web)</td>
+            <td>
+              Re-request access to a folder you granted before (browser
+              permission).
+            </td>
+          </tr>
+          <tr>
+            <td>Resync library</td>
+            <td>
+              Rescan PSARCs (and stems). Unchanged files are skipped via the
+              size/mtime cache; new or modified charts are re-parsed.
+            </td>
+          </tr>
+          <tr>
+            <td>Add STEMS folder</td>
+            <td>
+              Add a Demucs-style stems root (up to 10, like PSARC folders):
+              <code>{folder}/{psarc_basename}/drums.mp3</code> …
+              <code>piano.mp3</code> (six stems). Web mounts each under
+              <code>/weblib/&lt;folder name&gt;</code>;
+              <code>?demo=stems</code> adds
+              <code>/weblib/DemoStems</code> without replacing user folders.
+            </td>
+          </tr>
+          <tr>
+            <td>Reset</td>
+            <td>
+              Wipe profiles, playlists, and the library cache after confirm.
+              Destructive — your PSARC files on disk are not deleted.
+            </td>
+          </tr>
+          <tr>
+            <td>Set all to Default / Inverted</td>
+            <td>
+              Apply string orientation for all cell size classes: default =
+              red/low-E at <strong>top</strong>; inverted = red at
+              <strong>bottom</strong>. Same invert flag as Cell Settings.
+            </td>
+          </tr>
+          <tr>
+            <td>Set all to Right-handed / Left-handed</td>
+            <td>
+              Apply handedness for all cell size classes. Left-handed mirrors
+              fret positions about the neck midpoint (Rocksmith-style lefty).
+              Same <code>left_hand</code> flag as Cell Settings.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="autoplay">Autoplay</h2>
+      <p>
+        Cycled from the catalog Settings <strong>Auto: …</strong> button or
+        the play footer <strong>Auto</strong> control. Controls what happens
+        when a track ends.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Mode</th>
+            <th>Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Auto: off</td>
+            <td>Stop at the end of the track</td>
+          </tr>
+          <tr>
+            <td>Auto: loop</td>
+            <td>Restart the current song</td>
+          </tr>
+          <tr>
+            <td>Auto: next</td>
+            <td>Play the next song in the filtered queue (default)</td>
+          </tr>
+          <tr>
+            <td>Auto: shuf</td>
+            <td>Pick a random next song</td>
+          </tr>
+          <tr>
+            <td>Auto: shuf*</td>
+            <td>Shuffle without immediately repeating the same song</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="profiles">Profiles &amp; volume</h2>
+      <p>
+        The <strong>Profile</strong> button opens a popout to switch, create,
+        or delete profiles. Each profile stores its own playlists, cell
+        settings, and master volume.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Setting</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Game volume (Vol)</td>
+            <td>
+              Master playback level, 0–1 (default 1). Adjusted with the play
+              footer Vol slider; saved to the active profile when you release
+              the slider.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="play">While playing</h2>
+      <p>
+        Footer and cell-header controls that aren’t on the catalog Settings
+        page:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Control</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Speed</td>
+            <td>
+              Practice tempo without changing pitch, <strong>0.3×–3.0×</strong>
+              (default 1.0). Slider, typed field, footer <strong>1x</strong>
+              reset, or <code>[</code> / <code>]</code> keys. See
+              <a href="/keybinds/">keybinds</a>.
+            </td>
+          </tr>
+          <tr>
+            <td>Loop</td>
+            <td>
+              Section loop on/off — same as <code>P</code>. Needs chart
+              sections; loops the section under the playhead. Drag loop edges
+              on the seek bar when enabled. <code>Enter</code>/<code>O</code>
+              jumps to loop start. See <a href="/features/#loop">features § loop</a>.
+            </td>
+          </tr>
+          <tr>
+            <td>Transport</td>
+            <td>
+              Previous / play-pause / restart / next, plus Catalog to leave
+              the song.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="cell">Cell Settings</h2>
+      <p>
+        Opened from a cell’s <strong>CELL SETTINGS</strong> header. Values
+        apply to that cell’s <strong>size class</strong> (Quarter / Tall /
+        Wide / Full) for the current profile — not just the one song.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Control</th>
+            <th>Meaning</th>
+            <th>Range</th>
+            <th>Default</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Zoom</td>
+            <td>Camera distance / highway scale</td>
+            <td>0.5–2.5</td>
+            <td>1.0</td>
+          </tr>
+          <tr>
+            <td>Runway angle</td>
+            <td>How steep the highway grade feels (camera elevation)</td>
+            <td>0.35–2.2</td>
+            <td>1.0</td>
+          </tr>
+          <tr>
+            <td>Render distance</td>
+            <td>How many seconds of notes are drawn ahead of the strike line</td>
+            <td>1.5–6.0 s</td>
+            <td>3.0 s</td>
+          </tr>
+          <tr>
+            <td>Lyric size</td>
+            <td>Font scale for lyric strips / lyric cells</td>
+            <td>0.6–2.0</td>
+            <td>1.0</td>
+          </tr>
+          <tr>
+            <td>Lyric lines</td>
+            <td>How many lyric rows are visible</td>
+            <td>1–8</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>Inverted (red at bottom)</td>
+            <td>
+              String order. Off: red / low-E at top (Rocksmith-style default).
+              On: red at bottom.
+            </td>
+            <td>off / on</td>
+            <td>off</td>
+          </tr>
+          <tr>
+            <td>Left-handed</td>
+            <td>
+              Mirror frets about the neck midpoint for lefty players. Off =
+              right-handed (default).
+            </td>
+            <td>off / on</td>
+            <td>off</td>
+          </tr>
+          <tr>
+            <td>Reset (per row)</td>
+            <td>Restore that field’s default</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Quarter instrument cells expose zoom / angle / render / invert /
+        left-handed. Lyrics-only cells expose lyric size and lines. Larger
+        instrument cells expose the full set. Also see
+        <a href="/features/#lefty">features § lefty</a>.
+      </p>
+
+      <h2 id="layout">Layout, source &amp; viz</h2>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Control</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Layout</td>
+            <td>
+              Chart grid template, e.g. Full; vertical/horizontal split; 4
+              Quarter; 3 highways + lyrics; tall/wide + quarter mixes. Optional
+              <strong>Auto-fill cells</strong> assigns arrangements into empty
+              slots. Saved with chart layout meta.
+            </td>
+          </tr>
+          <tr>
+            <td>Cell source</td>
+            <td>
+              What that pane shows: Empty, Lead, Rhythm, Bass, or Lyrics.
+            </td>
+          </tr>
+          <tr>
+            <td>Cell viz</td>
+            <td>
+              How the arrangement is drawn: <strong>2D</strong>,
+              <strong>3D</strong>, or <strong>3D + Lyrics</strong>.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="stems-mix">Stem mixer</h2>
+      <p>
+        When a song has all six stem MP3s indexed, the <strong>Stems</strong>
+        popup can turn stem mode on and set per-stem levels
+        (drums, bass, other, vocals, guitar, piano). Each fader runs
+        <strong>0–2.0</strong> (default 1.0) so you can boost or mute parts
+        for practice. Stem separation itself is offline (Demucs); the app only
+        mixes what it finds. See <a href="/features/#stems">features</a>.
+      </p>
+
+      <p class="fineprint">
+        Keyboard shortcuts:
+        <a href="/keybinds/">keybinds</a>. How the pieces fit together:
+        <a href="/features/">features</a>.
+      </p>
+    </main>
+  </body>
+</html>

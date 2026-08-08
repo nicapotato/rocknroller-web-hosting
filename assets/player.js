@@ -16,7 +16,7 @@
  *   > legacy ?v= > "latest". Preferred URLs: /latest/, /0.1.35/.
  * Demo pack (after weblib init):
  *   ?demo=songs  — curated demo PSARCs only
- *   ?demo=stems  — PSARCs + 6-stem MP3 trees (~large extra download)
+ *   ?demo=stems  — PSARCs + 6-stem MP3 trees under /weblib/DemoStems (additive)
  * Without the flag the engine stays song-free (Add Folder).
  * Fails loudly on any error - no fallbacks.
  */
@@ -26,7 +26,7 @@
   var S3_BASE =
     "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com/apps/released/rocknroller";
   var DEMOS_BASE = S3_BASE + "/demos/";
-  var STEMS_VROOT = "/weblib/stems";
+  var STEMS_VROOT = "/weblib/DemoStems";
   var STEM_NAMES = [
     "drums.mp3",
     "bass.mp3",
@@ -92,11 +92,11 @@
     return file.slice(0, -6);
   }
 
-  function setStemsDir() {
+  function addDemoStemsRoot() {
     if (typeof Module.ccall !== "function") {
-      fail("Module.ccall unavailable for rnr_weblib_set_stems_dir");
+      fail("Module.ccall unavailable for rnr_weblib_add_stems_root");
     }
-    Module.ccall("rnr_weblib_set_stems_dir", null, ["string"], [STEMS_VROOT]);
+    Module.ccall("rnr_weblib_add_stems_root", null, ["string", "string"], [STEMS_VROOT, "DemoStems"]);
   }
 
   function memfs() {
@@ -187,8 +187,9 @@
         });
         var stemReady = Promise.resolve();
         if (wantStems) {
-          setStemsDir();
-          stemReady = loadDemoStems(catalog.songs);
+          stemReady = loadDemoStems(catalog.songs).then(function () {
+            addDemoStemsRoot();
+          });
         }
         return stemReady.then(function () {
           var total = urls.length;

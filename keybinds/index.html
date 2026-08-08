@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Keybinds — Rock N Roller</title>
+    <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <style>
+      h2 {
+        margin-top: 2.5rem;
+        color: var(--rnr-yellow);
+      }
+      h3 {
+        margin-top: 1.5rem;
+        font-size: 1rem;
+        color: #e8eaed;
+      }
+      table.specs {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.85rem;
+        margin: 0.75rem 0 1rem;
+      }
+      table.specs th,
+      table.specs td {
+        border: 1px solid #333;
+        padding: 0.45rem 0.65rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      table.specs th {
+        background: #17171c;
+        color: var(--rnr-yellow);
+        font-weight: 600;
+      }
+      table.specs td.k {
+        font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+        white-space: nowrap;
+        color: var(--rnr-yellow);
+        width: 11rem;
+      }
+      code {
+        background: #17171c;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-size: 0.9em;
+      }
+      .cheat {
+        margin: 1rem 0 1.5rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid #333;
+        background: #17171c;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+      .cheat kbd {
+        font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+        color: var(--rnr-yellow);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="page__title">
+        <img
+          class="page__logo"
+          src="/rocknroller-logo.png"
+          alt="Rock N Roller"
+          width="810"
+          height="160"
+        />
+      </h1>
+      <nav class="page__nav">
+        <a href="/latest/">Play</a>
+        <a href="/about/">About</a>
+        <a href="/features/">Features</a>
+        <a href="/configurations/">Settings</a>
+        <a href="/versions/">Versions</a>
+      </nav>
+
+      <h1>Keybinds</h1>
+      <p>
+        Keyboard shortcuts for the song library and — most usefully — for
+        practice inside a song. Mouse handles the rest (seek bar, volume,
+        layout, stems, cell settings).
+      </p>
+
+      <div class="cheat">
+        <strong>In song (cheat sheet):</strong>
+        <kbd>Space</kbd>/<kbd>K</kbd> pause ·
+        <kbd>J</kbd>/<kbd>L</kbd> ±10s ·
+        <kbd>←</kbd>/<kbd>→</kbd> hold scrub ·
+        <kbd>P</kbd> section loop ·
+        <kbd>Enter</kbd>/<kbd>O</kbd> jump to loop start ·
+        <kbd>[</kbd>/<kbd>]</kbd> speed ·
+        <kbd>Esc</kbd> back
+      </div>
+
+      <h2 id="play">Inside a song</h2>
+      <p>
+        These apply while a chart is open. Most transport keys are ignored
+        while you’re dragging a seek, loop, volume, or speed slider (or a
+        cell-settings slider). Pause always works.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">Space or K</td>
+            <td>Pause / resume</td>
+          </tr>
+          <tr>
+            <td class="k">J</td>
+            <td>Seek backward 10 seconds</td>
+          </tr>
+          <tr>
+            <td class="k">L</td>
+            <td>Seek forward 10 seconds</td>
+          </tr>
+          <tr>
+            <td class="k">← / → (hold)</td>
+            <td>Scrub continuously at wall-clock time</td>
+          </tr>
+          <tr>
+            <td class="k">P</td>
+            <td>
+              Toggle <strong>section loop</strong> around the current song
+              section (only if the chart has sections). Turning it on seeks to
+              the loop start.
+            </td>
+          </tr>
+          <tr>
+            <td class="k">Enter, keypad Enter, or O</td>
+            <td>
+              Jump to the loop start and unpause (only when section loop is
+              on)
+            </td>
+          </tr>
+          <tr>
+            <td class="k">[</td>
+            <td>Playback speed −0.1× (clamped 0.3–3.0)</td>
+          </tr>
+          <tr>
+            <td class="k">]</td>
+            <td>Playback speed +0.1× (clamped 0.3–3.0)</td>
+          </tr>
+          <tr>
+            <td class="k">Esc</td>
+            <td>
+              Close an open play popup → else cancel speed typing → else
+              return to the catalog
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Typing a speed value</h3>
+      <p>
+        Click the speed number in the footer to type a rate directly
+        (0.3–3.0). While that field is focused:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">Digits / .</td>
+            <td>Edit the value (one decimal point)</td>
+          </tr>
+          <tr>
+            <td class="k">Backspace</td>
+            <td>Delete last character</td>
+          </tr>
+          <tr>
+            <td class="k">Enter</td>
+            <td>Commit if in range; otherwise discard focus</td>
+          </tr>
+          <tr>
+            <td class="k">Esc</td>
+            <td>Revert to the current speed and unfocus</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Footer buttons and sliders (previous / next / restart, Catalog, Loop,
+        Auto-cycle, Vol, Speed, seek bar, loop edges) are mouse-only, as are
+        cell header menus: Layout, arrangement source, viz mode, Stems, Cell
+        Settings.
+      </p>
+
+      <h2 id="catalog">Catalog (song library)</h2>
+      <h3>Song table</h3>
+      <p>
+        Library nav, browse mode, search field not focused:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">↑ / ↓</td>
+            <td>Move selection (hold to repeat; table auto-scrolls)</td>
+          </tr>
+          <tr>
+            <td class="k">Enter</td>
+            <td>Load / play the hovered song</td>
+          </tr>
+          <tr>
+            <td class="k">Esc</td>
+            <td>
+              Dismiss nested UI in order: playlist edit → playlist popout →
+              profile popout → else leave Albums / Artists / Settings back to
+              Library
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Playlist panel open</h3>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">↑ / ↓</td>
+            <td>Scroll the playlist list</td>
+          </tr>
+          <tr>
+            <td class="k">Page Up / Page Down</td>
+            <td>Scroll by one viewport</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Search field focused</h3>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">Printable keys</td>
+            <td>Insert at caret (or replace selection)</td>
+          </tr>
+          <tr>
+            <td class="k">Backspace / Delete</td>
+            <td>Delete selection or character before/after caret</td>
+          </tr>
+          <tr>
+            <td class="k">← / →</td>
+            <td>Move caret; Shift extends selection</td>
+          </tr>
+          <tr>
+            <td class="k">Home / End</td>
+            <td>Jump to start/end; Shift extends selection</td>
+          </tr>
+          <tr>
+            <td class="k">Ctrl/Cmd+A / C / X / V</td>
+            <td>Select all / copy / cut / paste (ASCII printable)</td>
+          </tr>
+          <tr>
+            <td class="k">Esc</td>
+            <td>Clear search and unfocus</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Albums / Artists filter</h3>
+      <p>
+        When that card’s search is focused: type to filter,
+        <kbd style="color: var(--rnr-yellow)">Backspace</kbd> to delete,
+        <kbd style="color: var(--rnr-yellow)">Esc</kbd> to clear and unfocus.
+      </p>
+
+      <h3>Name / confirm modals</h3>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">Printable keys</td>
+            <td>Type into the name field</td>
+          </tr>
+          <tr>
+            <td class="k">Backspace</td>
+            <td>Delete last character</td>
+          </tr>
+          <tr>
+            <td class="k">Enter</td>
+            <td>OK (empty name is rejected)</td>
+          </tr>
+          <tr>
+            <td class="k">Esc</td>
+            <td>Cancel</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="fineprint">
+        Esc never quits the app — only the window close control does.
+        See also <a href="/configurations/">settings</a> and
+        <a href="/features/">features</a>.
+      </p>
+    </main>
+  </body>
+</html>

@@ -31,6 +31,11 @@
       h2 {
         margin-top: 2.5rem;
         color: var(--rnr-yellow);
+        scroll-margin-top: 1.25rem;
+      }
+      h2:target {
+        outline: 1px solid var(--rnr-yellow);
+        outline-offset: 0.35rem;
       }
       table.specs {
         border-collapse: collapse;
@@ -72,24 +77,36 @@
       <nav class="page__nav">
         <a href="/latest/">Play</a>
         <a href="/about/">About</a>
+        <a href="/keybinds/">Keybinds</a>
+        <a href="/configurations/">Settings</a>
         <a href="/versions/">Versions</a>
       </nav>
 
       <h1>Features</h1>
       <p>
-        How Rock N Roller solves its harder problems: local CDLC in the
-        browser, pitch-preserving practice speed, stem mixing, long charts,
-        and a 3D highway that stays in sync with the audio — all from one C
-        + raylib codebase that ships to macOS, Windows, and WebAssembly.
+        How Rock N Roller solves its harder problems: local CDLC, catalog
+        search, practice speed and section loops, Demucs stems, left-handed /
+        inverted highway layout, and a 3D chart that stays locked to the audio —
+        from one C + raylib codebase on macOS, Windows, and WebAssembly.
+      </p>
+      <p class="fineprint" style="margin-top: 0">
+        Share a section:
+        <code>/features/#stems</code>,
+        <code>/features/#loop</code>,
+        <code>/features/#sqlite</code>, …
       </p>
 
       <ol class="toc">
         <li><a href="#stack">Stack &amp; platforms</a></li>
         <li><a href="#library">Library that stays on your disk</a></li>
+        <li><a href="#sqlite">SQLite on disk (macOS / Windows)</a></li>
+        <li><a href="#search">Catalog search &amp; query language</a></li>
         <li><a href="#web-files">Browser library access</a></li>
         <li><a href="#wasm">Multithreaded wasm</a></li>
         <li><a href="#speed">Practice speed without pitch shift</a></li>
-        <li><a href="#stems">Six-stem mixing</a></li>
+        <li><a href="#loop">Section loop</a></li>
+        <li><a href="#stems">Stems &amp; Demucs MLX</a></li>
+        <li><a href="#lefty">Left-handed &amp; string order</a></li>
         <li><a href="#long-songs">Long songs without blowing RAM</a></li>
         <li><a href="#highway">3D highway</a></li>
         <li><a href="#threading">Keeping the UI smooth</a></li>
@@ -107,7 +124,7 @@
       </p>
       <p>
         Heavy lifting is a short list of libraries: SQLite for state and the
-        song catalog, an in-repo PSARC/SNG reader, vgmstream for Wwise audio
+        song catalog, an in-repo PSARC reader, vgmstream for Wwise audio
         (no FFmpeg), ogg/vorbis, and Signalsmith for time stretch. The UI is
         drawn in-app; there is no separate toolkit.
       </p>
@@ -119,13 +136,141 @@
         arrangements, length) keyed by file size and mtime. Startup loads the
         catalog from the DB; a background rescan only re-parses files that
         changed. Profiles, playlists, play history, and settings live in the
-        same database.
+        same database. Charts are Rocksmith's binary SNG — parsed once when you
+        pick a song, not from XML at runtime.
+      </p>
+
+      <h2 id="sqlite">SQLite on disk (macOS / Windows)</h2>
+      <p>
+        On desktop, the database is a normal file on your machine — not in the
+        cloud, not inside the app bundle. The state directory is created on
+        first launch; the DB file is <code>rocknroller.db</code> (plus SQLite
+        WAL sidecars while the app is open).
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Path</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>macOS / Linux</td>
+            <td>
+              <code>~/.nicapotato-app-saved-state/rocknroller/rocknroller.db</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Windows</td>
+            <td>
+              <code>%LOCALAPPDATA%\nicapotato\rocknroller\rocknroller.db</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Web</td>
+            <td>
+              Same logical path inside an IDBFS mount, persisted to the
+              browser’s IndexedDB for this site (see
+              <a href="#web-files">browser library access</a>)
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        That file holds the song scan cache, profiles, playlists, play history,
+        library folder list, stems folder path, autoplay mode, chart layout, and
+        per-profile cell settings (including left-handed / invert). Your PSARC
+        and stem audio stay wherever you put them — only metadata and prefs are
+        in the DB. Reset in Settings wipes this state, not your media files.
+      </p>
+
+      <h2 id="search">Catalog search &amp; query language</h2>
+      <p>
+        A large CDLC library is useless if you can only scroll it. The catalog
+        search bar accepts plain text <em>or</em> a small query language that
+        filters on the metadata already in SQLite — no reopening PSARCs.
       </p>
       <p>
-        Charts are Rocksmith's binary SNG — parsed once when you pick a song,
-        not from XML at runtime. On the web, that DB is mounted through IDBFS
-        into IndexedDB, so your catalog and profiles survive reloads without
-        ever leaving the browser.
+        Bare words are a global substring match (case-insensitive) across
+        title, artist, album, year, and tuning. Column filters use
+        <code>field="value"</code> and can be mixed with free text:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Clause</th>
+            <th>Filters on</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>title="…"</code></td>
+            <td>Song title</td>
+          </tr>
+          <tr>
+            <td><code>artist="…"</code></td>
+            <td>Artist</td>
+          </tr>
+          <tr>
+            <td><code>album="…"</code></td>
+            <td>Album</td>
+          </tr>
+          <tr>
+            <td><code>year="…"</code></td>
+            <td>Year</td>
+          </tr>
+          <tr>
+            <td><code>tuning="…"</code></td>
+            <td>
+              Tuning (display label or raw offsets), e.g.
+              <code>tuning="Drop D"</code>
+            </td>
+          </tr>
+          <tr>
+            <td><code>instruments="…"</code></td>
+            <td>
+              Arrangements present: <code>v</code> vocals, <code>l</code> lead,
+              <code>r</code> rhythm, <code>b</code> bass. Optional per-arrangement
+              tuning: <code>l-E Standard</code>, <code>b-Drop D</code>
+            </td>
+          </tr>
+          <tr>
+            <td><code>official="true|false"</code></td>
+            <td>Official Rocksmith DLC vs CDLC</td>
+          </tr>
+          <tr>
+            <td><code>stems="true|false"</code></td>
+            <td>Songs with all six external stem MP3s indexed</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Inside the quotes, <strong>comma means AND</strong> and
+        <strong><code>|</code> means OR</strong>. Examples:
+      </p>
+      <ul>
+        <li>
+          <code>stems="true" tuning="E Standard | Drop D"</code> — songs with
+          stems whose tuning matches either string
+        </li>
+        <li>
+          <code>artist="Rush" instruments="l, b"</code> — Rush charts that have
+          both lead and bass
+        </li>
+        <li>
+          <code>instruments="l-E Standard|b-Drop D"</code> — lead in E Standard
+          <em>or</em> bass in Drop D
+        </li>
+        <li>
+          <code>official="false" stairway</code> — CDLC only, plus free-text
+          “stairway”
+        </li>
+      </ul>
+      <p>
+        Clicking an album or artist card fills the bar with matching
+        <code>artist="…"</code> / <code>album="…"</code> clauses. The same
+        query powers the play queue when autoplay advances to the next song.
       </p>
 
       <h2 id="web-files">Browser library access</h2>
@@ -176,24 +321,109 @@
         <code>rate ×</code> source frames, emit device-rate frames at original
         pitch. At 1.0× the stretcher is bypassed. The chart clock compensates
         for stretch latency so notes stay locked to what you hear; speed and
-        seek reset the engine atomically. Saved per profile.
+        seek reset the engine atomically.
       </p>
 
-      <h2 id="stems">Six-stem mixing</h2>
+      <h2 id="loop">Section loop</h2>
       <p>
-        Optional practice mix: drums, bass, other, vocals, guitar, piano —
-        each with its own fader (mute the guitar and play over the band, or
-        solo it). Separation is offline via Demucs
-        (<code>htdemucs_6s</code>; the app finds six MP3s next to the PSARC by
-        path convention, indexes them in SQLite, and only enables stem mode
-        when all six exist.
+        Rocksmith charts tag named <strong>sections</strong> (intro, verse,
+        solo, …). Press <strong>P</strong> or the footer <strong>Loop</strong>
+        button to loop the section under the playhead: the app seeks to that
+        section’s start and repeats until you turn loop off. While loop is on,
+        <strong>Enter</strong> or <strong>O</strong> jumps back to the loop
+        start and unpauses — useful after you scrub away mid-practice.
       </p>
       <p>
-        Playback runs six streaming MP3 decoders under one mixer that shares
-        the same time-stretch path as normal audio, so stems get pitch-correct
-        speed too. Seek tables keep scrubbing snappy; the mixer opens on a
-        background thread. On the web, <code>?demo=stems</code> loads curated
-        stem trees into the same flow.
+        Loop edges show on the seek bar and can be dragged to tighten the
+        span (as long as the chart has sections). Combined with pitch-preserving
+        speed and stem mutes, this is the usual “drill this four bars” workflow.
+        See <a href="/keybinds/">keybinds</a>.
+      </p>
+
+      <h2 id="stems">Stems &amp; Demucs MLX</h2>
+      <p>
+        Stem mode lets you mix six isolated tracks — drums, bass, other,
+        vocals, guitar, piano — each with its own fader (0–200%). Mute the
+        guitar and play over the rest of the band, or solo a part to learn by
+        ear. Separation does <strong>not</strong> run inside Rock N Roller; it
+        is done offline with the companion macOS app
+        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
+          >Demucs MLX Audio Stemmer</a
+        >
+        (Apple Silicon, Demucs <code>htdemucs_6s</code> by default).
+      </p>
+      <p><strong>Stemming workflow</strong></p>
+      <ol>
+        <li>
+          In Demucs MLX, add an MP3/WAV <em>or</em> a Rocksmith
+          <code>*_p.psarc</code> (it extracts the chart’s audio first).
+        </li>
+        <li>
+          Pick an <strong>output folder</strong> — this becomes your Rock N
+          Roller stems root.
+        </li>
+        <li>
+          Run separation. For
+          <code>Eagles_Hotel-California_v1_1_p.psarc</code> it writes:
+          <pre style="margin: 0.5rem 0; padding: 0.75rem; background: #17171c; overflow-x: auto; font-size: 0.8rem">
+{stems_root}/Eagles_Hotel-California_v1_1_p/
+  drums.mp3  bass.mp3  other.mp3
+  vocals.mp3  guitar.mp3  piano.mp3</pre>
+        </li>
+        <li>
+          In Rock N Roller Settings → <strong>Choose stems folder</strong>,
+          point at that same <code>{stems_root}</code>, then resync.
+        </li>
+      </ol>
+      <p>
+        <strong>How they link to PSARCs:</strong> Rock N Roller takes the PSARC
+        filename without <code>.psarc</code>, looks for
+        <code>{stems_root}/{that_name}/</code>, and requires all six MP3s.
+        Only then is the song marked <code>has_stems</code> in SQLite (searchable
+        with <code>stems="true"</code>). Paths are indexed per song; playback
+        opens six streaming MP3 decoders under one mixer that shares the same
+        time-stretch path as normal audio. On the web,
+        <code>?demo=stems</code> loads curated stem trees into the same layout.
+      </p>
+
+      <h2 id="lefty">Left-handed &amp; string order</h2>
+      <p>
+        Two independent highway layout flags, saved per profile and per cell
+        size class (also bulk-set from catalog Settings):
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Setting</th>
+            <th>Default</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>String order (invert)</td>
+            <td>Red / low-E at <strong>top</strong></td>
+            <td>
+              Rocksmith-style default. <strong>Inverted</strong> puts red at
+              the <strong>bottom</strong> of the lane — useful if you prefer
+              that visual mapping.
+            </td>
+          </tr>
+          <tr>
+            <td>Left-handed</td>
+            <td>Right-handed</td>
+            <td>
+              Mirrors fret positions about the neck midpoint (Rocksmith-style
+              lefty), so open/low frets sit on the opposite side of the highway.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Toggle them in Cell Settings while playing, or use Settings →
+        “Set all to Left-handed / Right-handed” and “Set all to Default /
+        Inverted” for every size class at once. Details:
+        <a href="/configurations/#cell">settings</a>.
       </p>
 
       <h2 id="long-songs">Long songs without blowing RAM</h2>
@@ -218,14 +448,14 @@
         <code>rlgl</code>) with an asymmetric projection so the camera can sit
         high without keystoning the frets. Camera modes track the active fret
         region on a 24-fret neck; zoom, runway grade, and lookahead are
-        adjustable.
+        adjustable. Left-handed and invert flags remap frets and strings before
+        draw (see <a href="#lefty">above</a>).
       </p>
       <p>
         Notes are Rocksmith-style gems (halo / body / edge), with sustains as
         bendable ribbons and SDF fret labels on top. Each frame batches only
         the notes in the visible time window and draws them in a fixed depth
-        order. Target is 60&nbsp;FPS with four panes up — CI benches a
-        four-quarter Stairway layout.
+        order. Target is 60&nbsp;FPS with four panes up.
       </p>
 
       <h2 id="threading">Keeping the UI smooth</h2>
@@ -250,7 +480,11 @@
 
       <p class="fineprint">
         Numbers move with releases. See <a href="/versions/">versions</a> or
-        <a href="/latest/">press play</a>.
+        <a href="/latest/">press play</a>. Section links:
+        <a href="#sqlite">#sqlite</a>,
+        <a href="#loop">#loop</a>,
+        <a href="#stems">#stems</a>,
+        <a href="#lefty">#lefty</a>, …
       </p>
     </main>
   </body>
