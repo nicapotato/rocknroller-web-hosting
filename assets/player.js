@@ -149,7 +149,10 @@
     setStatus("loading stems (0/" + jobs.length + ")\u2026");
     return jobs.reduce(function (chain, job) {
       return chain.then(function () {
-        return fetch(job.url, { cache: "no-store" }).then(function (r) {
+        /* Default cache mode: repeat demo visits serve stems from the browser
+           HTTP cache (S3 publishes them with Cache-Control; catalog.json stays
+           no-store as the freshness authority). */
+        return fetch(job.url).then(function (r) {
           if (!r.ok) {
             fail("could not fetch stem " + job.label + " (HTTP " + r.status + ")");
           }

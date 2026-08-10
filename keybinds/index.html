@@ -96,7 +96,7 @@
         <strong>In song (cheat sheet):</strong>
         <kbd>Space</kbd>/<kbd>K</kbd> pause ·
         <kbd>J</kbd>/<kbd>L</kbd> ±10s ·
-        <kbd>←</kbd>/<kbd>→</kbd> hold scrub ·
+        <kbd>←</kbd>/<kbd>→</kbd> speed presets ·
         <kbd>P</kbd> section loop ·
         <kbd>Enter</kbd>/<kbd>O</kbd> jump to loop start ·
         <kbd>[</kbd>/<kbd>]</kbd> speed ·
@@ -130,8 +130,13 @@
             <td>Seek forward 10 seconds</td>
           </tr>
           <tr>
-            <td class="k">← / → (hold)</td>
-            <td>Scrub continuously at wall-clock time</td>
+            <td class="k">← / →</td>
+            <td>
+              Step playback speed along presets
+              0.50 → 0.80 → 1.00 → 1.25 → 1.50 → 2.00
+              (clamp at ends; from a non-preset speed, snap to the next
+              strictly lower/higher step)
+            </td>
           </tr>
           <tr>
             <td class="k">P</td>

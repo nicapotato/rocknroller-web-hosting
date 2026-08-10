@@ -30,6 +30,15 @@ stems root — coexists with any user-picked stems folders) before the PSARCs
 are granted. Any other `?demo=` value fails loudly. Without the flag, no demo
 network requests are made.
 
+Demo content is **session-only**: the engine purges the demo roots
+(`/weblib/Demos`, `/weblib/DemoStems`) and their cached songs from the
+persistent settings DB at every startup, so a demo visit never leaves phantom
+folders or unplayable songs behind on a later plain `/latest/` visit. User-added
+folders, profiles, and scores are untouched. Demo psarcs and stem MP3s are
+published with `Cache-Control: max-age=86400`, so repeat demo visits within a
+day serve the big files from the browser HTTP cache (`catalog.json` stays
+`no-cache` as the freshness authority).
+
 ## How the player works
 
 The document stays on this origin; `assets/player.js` pulls the build from
