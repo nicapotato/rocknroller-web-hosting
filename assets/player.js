@@ -149,9 +149,8 @@
     setStatus("loading stems (0/" + jobs.length + ")\u2026");
     return jobs.reduce(function (chain, job) {
       return chain.then(function () {
-        /* Default cache mode: repeat demo visits serve stems from the browser
-           HTTP cache (S3 publishes them with Cache-Control; catalog.json stays
-           no-store as the freshness authority). */
+        /* Default HTTP caching: stem MP3s are immutable per version, so repeat
+         * ?demo=stems visits hit the browser cache instead of S3. */
         return fetch(job.url).then(function (r) {
           if (!r.ok) {
             fail("could not fetch stem " + job.label + " (HTTP " + r.status + ")");
