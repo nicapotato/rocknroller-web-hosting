@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>RockNRoller — latest</title>
     <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="stylesheet" href="/assets/wasm-loading-wave.css" />
     <style>
       html,
       body {
@@ -27,7 +28,7 @@
       #status {
         position: absolute;
         inset: 0;
-        z-index: 10;
+        z-index: 20;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -57,11 +58,13 @@
          and SharedArrayBuffer (pthreads) needs them. Root path = origin-wide
          scope. First visit reloads once after registration. -->
     <script src="/coi-serviceworker.min.js"></script>
-    <div id="status">loading…</div>
+    <div id="loading"><div class="loading-wave" id="loading-wave" aria-hidden="true"></div><div id="loading-progress" aria-live="polite"></div></div>
+    <div id="status"></div>
     <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     <script>
       window.RNR_VERSION = "latest";
     </script>
+    <script src="/assets/wasm-loading-wave.js"></script>
     <script src="/assets/player.js"></script>
   </body>
 </html>

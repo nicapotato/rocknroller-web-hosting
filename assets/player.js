@@ -40,10 +40,17 @@
   var params = new URLSearchParams(window.location.search);
 
   function setStatus(text) {
+    if (typeof window.__wasmLoadingApplyStatus === "function") {
+      window.__wasmLoadingApplyStatus(text);
+      return;
+    }
     if (statusEl) statusEl.textContent = text || "";
   }
 
   function clearStatus() {
+    if (typeof window.__wasmLoadingApplyStatus === "function") {
+      window.__wasmLoadingApplyStatus("");
+    }
     if (statusEl) {
       statusEl.remove();
       statusEl = null;
@@ -51,7 +58,9 @@
   }
 
   function fail(msg) {
-    setStatus("");
+    if (typeof window.__wasmLoadingApplyStatus === "function") {
+      window.__wasmLoadingApplyStatus("");
+    }
     if (statusEl) {
       statusEl.textContent = "ERROR: " + msg;
       statusEl.classList.add("player-status--error");
@@ -85,6 +94,27 @@
 
   var ASSET_BASE = S3_BASE + "/" + ver + "/web/";
 
+  function loadAssetSizes() {
+    return fetch(ASSET_BASE + "asset-sizes.js", { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) return "";
+        return r.text();
+      })
+      .then(function (src) {
+        if (!src) return;
+        var m = String(src).match(/data\s*:\s*(\d+)\s*,\s*wasm\s*:\s*(\d+)/);
+        if (!m) return;
+        window.__WASM_ASSET_BYTES = {
+          data: parseInt(m[1], 10),
+          wasm: parseInt(m[2], 10),
+        };
+        if (typeof window.__wasmLoadingPaintBytes === "function") {
+          window.__wasmLoadingPaintBytes();
+        }
+      })
+      .catch(function () {});
+  }
+
   function psarcBasename(file) {
     if (typeof file !== "string" || !file.toLowerCase().endsWith(".psarc")) {
       fail("demo catalog invalid psarc file: " + file);
@@ -117,6 +147,41 @@
     fs.writeFile(vpath, new Uint8Array(bytes));
   }
 
+  function contentLength(res, url) {
+    var raw = res.headers.get("Content-Length");
+    if (raw == null || raw === "") {
+      fail("missing Content-Length for " + url);
+    }
+    var n = parseInt(raw, 10);
+    if (!isFinite(n) || n <= 0) {
+      fail("invalid Content-Length for " + url + ": " + raw);
+    }
+    return n;
+  }
+
+  function headTotal(urls) {
+    if (!Array.isArray(urls) || urls.length === 0) {
+      fail("headTotal: no urls");
+    }
+    return urls.reduce(function (chain, url) {
+      return chain.then(function (sum) {
+        return fetch(url, { method: "HEAD" }).then(function (r) {
+          if (!r.ok) {
+            fail("HEAD failed for " + url + " (HTTP " + r.status + ")");
+          }
+          return sum + contentLength(r, url);
+        });
+      });
+    }, Promise.resolve(0));
+  }
+
+  function startTransfer(totalBytes) {
+    if (typeof window.__wasmLoadingStartTransfer !== "function") {
+      fail("__wasmLoadingStartTransfer unavailable");
+    }
+    window.__wasmLoadingStartTransfer(totalBytes);
+  }
+
   function loadDemoStems(songs) {
     var jobs = [];
     for (var i = 0; i < songs.length; i++) {
@@ -145,28 +210,30 @@
     if (jobs.length === 0) {
       fail("demo catalog has no stem files (?demo=stems)");
     }
-    var done = 0;
-    setStatus("loading stems (0/" + jobs.length + ")\u2026");
-    return jobs.reduce(function (chain, job) {
-      return chain.then(function () {
-        /* Default HTTP caching: stem MP3s are immutable per version, so repeat
-         * ?demo=stems visits hit the browser cache instead of S3. */
-        return fetch(job.url).then(function (r) {
-          if (!r.ok) {
-            fail("could not fetch stem " + job.label + " (HTTP " + r.status + ")");
-          }
-          return r.arrayBuffer();
-        }).then(function (ab) {
-          writeStemFile(job.vpath, ab);
-          done += 1;
-          setStatus("loading stems (" + done + "/" + jobs.length + ")\u2026");
+    return headTotal(
+      jobs.map(function (job) {
+        return job.url;
+      })
+    ).then(function (total) {
+      startTransfer(total);
+      return jobs.reduce(function (chain, job) {
+        return chain.then(function () {
+          /* Default HTTP caching: stem MP3s are immutable per version, so repeat
+           * ?demo=stems visits hit the browser cache instead of S3. */
+          return fetch(job.url).then(function (r) {
+            if (!r.ok) {
+              fail("could not fetch stem " + job.label + " (HTTP " + r.status + ")");
+            }
+            return r.arrayBuffer();
+          }).then(function (ab) {
+            writeStemFile(job.vpath, ab);
+          });
         });
-      });
-    }, Promise.resolve());
+      }, Promise.resolve());
+    });
   }
 
   function loadDemos() {
-    setStatus("loading demos\u2026");
     return fetch(DEMOS_BASE + "catalog.json", { cache: "no-store" })
       .then(function (r) {
         if (!r.ok) {
@@ -194,8 +261,6 @@
           });
         }
         return stemReady.then(function () {
-          var total = urls.length;
-          setStatus("loading psarcs (0/" + total + ")\u2026");
           var lib = window.Module && window.Module.rnrWebLib;
           var grant =
             lib &&
@@ -203,8 +268,9 @@
           if (typeof grant !== "function") {
             fail("rnrWebLib.grantRemoteFolder unavailable (need a build with weblib remote grant)");
           }
-          return grant.call(lib, "Demos", urls, function (done, n) {
-            setStatus("loading psarcs (" + done + "/" + n + ")\u2026");
+          return headTotal(urls).then(function (total) {
+            startTransfer(total);
+            return grant.call(lib, "Demos", urls);
           });
         });
       })
@@ -254,7 +320,10 @@
   }
 
   setStatus("downloading " + ver + "\u2026");
-  fetch(ASSET_BASE + "RockNRoller.js")
+  loadAssetSizes()
+    .then(function () {
+      return fetch(ASSET_BASE + "RockNRoller.js");
+    })
     .then(function (r) {
       if (!r.ok) {
         fail("could not fetch RockNRoller.js for '" + ver + "' (HTTP " + r.status + ")");

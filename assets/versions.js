@@ -71,6 +71,24 @@
     );
   }
 
+  function versionCoreAndPre(ver) {
+    var s = String(ver || "");
+    var i = s.indexOf("-");
+    if (i < 0) return { core: s, pre: "" };
+    return { core: s.slice(0, i), pre: s.slice(i + 1) };
+  }
+
+  function compareVersionKeysDesc(a, b) {
+    var pa = versionCoreAndPre(a);
+    var pb = versionCoreAndPre(b);
+    var coreCmp = pa.core.localeCompare(pb.core, undefined, { numeric: true });
+    if (coreCmp !== 0) return -coreCmp;
+    if (!pa.pre && pb.pre) return -1;
+    if (pa.pre && !pb.pre) return 1;
+    if (!pa.pre && !pb.pre) return 0;
+    return pa.pre.localeCompare(pb.pre, undefined, { numeric: true });
+  }
+
   function playCell(version, wasm) {
     if (!wasm) return '<td class="na">—</td>';
     return (
@@ -93,9 +111,7 @@
   getJSON(BASE + "/apps/released/catalog.json").then(function (doc) {
     var versions = ((doc.apps || {}).rocknroller || {}).versions || {};
     var keys = Object.keys(versions);
-    keys.sort(function (a, b) {
-      return b.localeCompare(a, undefined, { numeric: true });
-    });
+    keys.sort(compareVersionKeysDesc);
     if (!keys.length) fail("no published versions found in apps catalog");
 
     var rows = keys.map(function (v) {

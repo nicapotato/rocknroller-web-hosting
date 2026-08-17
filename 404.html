@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>RockNRoller</title>
     <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="stylesheet" href="/assets/wasm-loading-wave.css" />
     <style>
       html,
       body {
@@ -29,7 +30,7 @@
       #status {
         position: absolute;
         inset: 0;
-        z-index: 10;
+        z-index: 20;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -73,14 +74,22 @@
         }
       })();
     </script>
-    <div id="status">loading…</div>
+    <div id="loading"><div class="loading-wave" id="loading-wave" aria-hidden="true"></div><div id="loading-progress" aria-live="polite"></div></div>
+    <div id="status"></div>
     <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     <script>
       if (window.RNR_VERSION) {
-        var s = document.createElement("script");
-        s.src = "/assets/player.js";
-        document.body.appendChild(s);
+        var wave = document.createElement("script");
+        wave.src = "/assets/wasm-loading-wave.js";
+        wave.onload = function () {
+          var s = document.createElement("script");
+          s.src = "/assets/player.js";
+          document.body.appendChild(s);
+        };
+        document.body.appendChild(wave);
       } else {
+        var loading = document.getElementById("loading");
+        if (loading) loading.remove();
         document.getElementById("status").remove();
         document.getElementById("canvas").remove();
         document.body.insertAdjacentHTML(
