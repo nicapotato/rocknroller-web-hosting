@@ -8,14 +8,14 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 
 | Route | What |
 | --- | --- |
-| `/` | redirects to `/latest/` |
+| `/` | project description (landing) |
+| `/about/` | **legacy redirect** → `/` |
 | `/latest/` | play the newest published build (song-free; Add Folder) |
 | `/latest/?demo=songs` | same build + curated demo PSARCs from S3 |
 | `/latest/?demo=stems` | demos + 6-stem MP3 trees (large extra download) |
 | `/0.1.35/` | play a specific version (via `404.html` path routing) |
 | `/0.1.35/?demo=songs` | specific version + demo PSARCs |
 | `/versions/` | version × platform table (web play + desktop zips) |
-| `/about/` | project description |
 | `/features/` | technical feature breakdown (language, wasm, threading, …) |
 | `/demucs-stems/` | Demucs companion app + stem folder layout / mixer |
 | `/keybinds/` | keyboard shortcuts (catalog + in-song) |

@@ -1,5 +1,5 @@
 /* Shared styles for the rocknroller.nicapotato.com content pages
- * (landing / about / version). Player pages carry their own minimal
+ * (landing / versions / docs). Player pages carry their own minimal
  * fullscreen CSS inline, same as the build's shell.html. */
 :root {
   --rnr-yellow: #ffde44;
@@ -71,6 +71,10 @@ body {
   color: var(--rnr-yellow);
   text-decoration: none;
   margin-right: 1.25rem;
+}
+
+.page__nav a[aria-current="page"] {
+  font-weight: 700;
 }
 
 .page__nav a:hover {
