@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stems &amp; Demucs — Rock N Roller</title>
+    <meta
+      name="description"
+      content="Split Rocksmith CDLC into six Demucs stems on Mac (MLX) or Windows (CUDA), then mix them in Rock N Roller."
+    />
+    <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <style>
+      .toc {
+        columns: 2;
+        column-gap: 2rem;
+        padding-left: 1.2rem;
+        margin: 0.5rem 0 1.5rem;
+        font-size: 0.9rem;
+      }
+      .toc li {
+        margin: 0.2rem 0;
+      }
+      @media (max-width: 560px) {
+        .toc {
+          columns: 1;
+        }
+      }
+      h2 {
+        margin-top: 2.5rem;
+        color: var(--rnr-yellow);
+        scroll-margin-top: 1.25rem;
+      }
+      h2:target {
+        outline: 1px solid var(--rnr-yellow);
+        outline-offset: 0.35rem;
+      }
+      table.specs {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.85rem;
+        margin: 0.75rem 0 1rem;
+      }
+      table.specs th,
+      table.specs td {
+        border: 1px solid #333;
+        padding: 0.45rem 0.65rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      table.specs th {
+        background: #17171c;
+        color: var(--rnr-yellow);
+        font-weight: 600;
+      }
+      code {
+        background: #17171c;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="page__title">
+        <img
+          class="page__logo"
+          src="/rocknroller-logo.png"
+          alt="Rock N Roller"
+          width="810"
+          height="160"
+        />
+      </h1>
+      <nav class="page__nav">
+        <a href="/latest/">Play</a>
+        <a href="/about/">About</a>
+        <a href="/features/">Features</a>
+        <a href="/keybinds/">Keybinds</a>
+        <a href="/configurations/">Settings</a>
+        <a href="/versions/">Versions</a>
+      </nav>
+
+      <h1>Stems &amp; Demucs</h1>
+      <p>
+        Stem mode lets you mix six isolated tracks — drums, bass, other,
+        vocals, guitar, piano — each with its own fader (0–200%). Mute the
+        guitar and play over the rest of the band, or solo a part to learn by
+        ear. Combined with pitch-preserving speed and section loops, this is
+        the usual “drill this four bars” workflow.
+      </p>
+      <p>
+        Separation does <strong>not</strong> run inside Rock N Roller. It is
+        done offline with the companion
+        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
+          >Demucs MLX Audio Stemmer</a
+        >, then the game mixes what it finds.
+      </p>
+
+      <div class="btn-row">
+        <a
+          class="btn"
+          href="https://nicapotato.itch.io/demucs-mlx-app"
+          rel="noopener"
+        >
+          <img
+            class="btn__icon"
+            src="/assets/icons/itchdotio.svg"
+            alt=""
+            width="24"
+            height="24"
+          />
+          Get Demucs MLX
+        </a>
+        <a class="btn" href="/latest/?demo=stems">
+          <img
+            class="btn__icon"
+            src="/rocknroller-icon.png"
+            alt=""
+            width="32"
+            height="32"
+          />
+          Play with stems
+        </a>
+      </div>
+
+      <div class="itch-embed">
+        <iframe
+          title="Demucs MLX Audio Stemmer App on itch.io"
+          loading="lazy"
+          frameborder="0"
+          src="https://itch.io/embed/4869317?bg_color=0d0d0d&amp;fg_color=e8eaed&amp;link_color=ffde44&amp;border_color=0d0d0d"
+          width="552"
+          height="167"
+          ><a href="https://nicapotato.itch.io/demucs-mlx-app"
+            >Demucs MLX Audio Stemmer App by nicapotato</a
+          ></iframe
+        >
+      </div>
+
+      <ol class="toc">
+        <li><a href="#companion">Companion app</a></li>
+        <li><a href="#workflow">Stemming workflow</a></li>
+        <li><a href="#layout">How they link to PSARCs</a></li>
+        <li><a href="#mixer">Mixer in Rock N Roller</a></li>
+        <li><a href="#search">Find songs that have stems</a></li>
+        <li><a href="#web">Try it on the web</a></li>
+      </ol>
+
+      <h2 id="companion">Companion app</h2>
+      <p>
+        Same raylib GUI on both platforms; the neural-net worker is what
+        changes. Default model is Demucs <code>htdemucs_6s</code> (the six
+        stems above). Input can be MP3, WAV, OGG, FLAC, M4A, or a Rocksmith
+        <code>*_p.psarc</code> (it extracts the chart’s audio first).
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th></th>
+            <th>macOS Apple Silicon</th>
+            <th>Windows x64</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Backend</td>
+            <td>demucs-mlx (MLX + Metal)</td>
+            <td>Official Meta Demucs + PyTorch CUDA</td>
+          </tr>
+          <tr>
+            <td>Download</td>
+            <td>~132&nbsp;MB</td>
+            <td>~2&nbsp;GB (ships the CUDA runtime)</td>
+          </tr>
+          <tr>
+            <td>Speed</td>
+            <td>
+              Far faster than realtime (about 73× on an M4 Max for 4-stem
+              <code>htdemucs</code>). Unified memory; no extra GPU.
+            </td>
+            <td>
+              NVIDIA GPU recommended (~5–7&nbsp;GB VRAM for 6-stem). CPU works
+              but is slow (a 4-minute track can take about a minute). AMD/Intel
+              GPUs fall back to CPU.
+            </td>
+          </tr>
+          <tr>
+            <td>Needs</td>
+            <td>Apple Silicon Mac. Unsigned: <code>xattr -cr "DemucsMLX.app"</code></td>
+            <td>
+              Recent NVIDIA <strong>driver</strong> (not a CUDA toolkit).
+              SmartScreen: More info → Run anyway.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        The Windows zip is large because MLX does not run on Windows, so the
+        worker bundles PyTorch’s CUDA kernels. You do not install a CUDA
+        toolkit. 3–4&nbsp;GB cards may run out of VRAM on the default 6-stem
+        segments.
+      </p>
+
+      <h2 id="workflow">Stemming workflow</h2>
+      <ol>
+        <li>
+          In Demucs MLX, add an MP3/WAV <em>or</em> a Rocksmith
+          <code>*_p.psarc</code>.
+        </li>
+        <li>
+          Pick an <strong>output folder</strong> — this becomes your Rock N
+          Roller stems root.
+        </li>
+        <li>
+          Run separation. For
+          <code>Eagles_Hotel-California_v1_1_p.psarc</code> it writes:
+          <pre class="codeblock">
+{stems_root}/Eagles_Hotel-California_v1_1_p/
+  drums.mp3  bass.mp3  other.mp3
+  vocals.mp3  guitar.mp3  piano.mp3</pre>
+        </li>
+        <li>
+          In Rock N Roller Settings → <strong>Add STEMS folder</strong>, point
+          at that same <code>{stems_root}</code>, then resync. You can add up
+          to 10 stems roots, same as PSARC folders. Details:
+          <a href="/configurations/#library">settings</a>.
+        </li>
+      </ol>
+
+      <h2 id="layout">How they link to PSARCs</h2>
+      <p>
+        Rock N Roller takes the PSARC filename without <code>.psarc</code>,
+        looks for <code>{stems_root}/{that_name}/</code>, and requires
+        <strong>all six</strong> MP3s. Only then is the song marked
+        <code>has_stems</code> in SQLite. Paths are indexed per song; your
+        PSARC and stem audio stay wherever you put them — the database only
+        stores metadata and the stems-folder list.
+      </p>
+      <p>
+        Folder name must match the PSARC basename exactly. If the chart is
+        <code>Foo_p.psarc</code>, the six files have to live in
+        <code>Foo_p/</code>, not <code>Foo/</code> or a renamed folder.
+      </p>
+
+      <h2 id="mixer">Mixer in Rock N Roller</h2>
+      <p>
+        When a song has all six stem MP3s indexed, the <strong>Stems</strong>
+        popup turns stem mode on and sets per-stem levels. Each fader runs
+        <strong>0–2.0</strong> (shown as 0–200%; default 1.0) so you can mute
+        or boost parts for practice. Playback opens six streaming MP3 decoders
+        under one mixer that shares the same time-stretch path as normal audio,
+        so practice speed still holds pitch. Long songs stream stems with seek
+        points instead of loading them whole.
+      </p>
+      <p>
+        Mixer controls:
+        <a href="/configurations/#stems-mix">settings</a>. Transport and loop
+        keys: <a href="/keybinds/">keybinds</a>.
+      </p>
+
+      <h2 id="search">Find songs that have stems</h2>
+      <p>
+        Catalog search filters on the SQLite flag, not by reopening files:
+      </p>
+      <ul>
+        <li>
+          <code>stems="true"</code> — songs with all six external stem MP3s
+          indexed
+        </li>
+        <li>
+          <code>stems="true" tuning="E Standard | Drop D"</code> — stemmed
+          charts in either tuning
+        </li>
+      </ul>
+      <p>
+        Full query language:
+        <a href="/features/#search">features</a>.
+      </p>
+
+      <h2 id="web">Try it on the web</h2>
+      <p>
+        <a href="/latest/?demo=stems"><code>?demo=stems</code></a> loads curated
+        demo PSARCs plus 6-stem MP3 trees into
+        <code>/weblib/DemoStems</code>. That root is
+        <strong>additive</strong> — it does not replace any stems folders you
+        already granted. It is a larger download than
+        <a href="/latest/?demo=songs"><code>?demo=songs</code></a> (charts
+        only). Chromium required; nothing is uploaded.
+      </p>
+
+      <p class="fineprint">
+        How the rest of the engine fits together:
+        <a href="/features/">features</a>. Desktop builds:
+        <a href="/versions/">versions</a>.
+      </p>
+    </main>
+    <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a7234cc8c2b3478aa4cf798bf9eefd95"}'></script><!-- End Cloudflare Web Analytics -->
+  </body>
+</html>

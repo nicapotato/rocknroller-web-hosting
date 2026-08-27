@@ -17,6 +17,7 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 | `/versions/` | version × platform table (web play + desktop zips) |
 | `/about/` | project description |
 | `/features/` | technical feature breakdown (language, wasm, threading, …) |
+| `/demucs-stems/` | Demucs companion app + stem folder layout / mixer |
 | `/keybinds/` | keyboard shortcuts (catalog + in-song) |
 | `/configurations/` | what Settings / play options mean |
 | `/play/?v=…` | **legacy redirect** → `/<ver>/` (preserves `?demo=`) |

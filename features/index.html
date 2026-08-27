@@ -77,6 +77,7 @@
       <nav class="page__nav">
         <a href="/latest/">Play</a>
         <a href="/about/">About</a>
+        <a href="/demucs-stems/">Stems</a>
         <a href="/keybinds/">Keybinds</a>
         <a href="/configurations/">Settings</a>
         <a href="/versions/">Versions</a>
@@ -89,12 +90,6 @@
         inverted highway layout, and a 3D chart that stays locked to the audio —
         from one C + raylib codebase on macOS, Windows, and WebAssembly.
       </p>
-      <p class="fineprint" style="margin-top: 0">
-        Share a section:
-        <code>/features/#stems</code>,
-        <code>/features/#loop</code>,
-        <code>/features/#sqlite</code>, …
-      </p>
 
       <ol class="toc">
         <li><a href="#stack">Stack &amp; platforms</a></li>
@@ -105,7 +100,7 @@
         <li><a href="#wasm">Multithreaded wasm</a></li>
         <li><a href="#speed">Practice speed without pitch shift</a></li>
         <li><a href="#loop">Section loop</a></li>
-        <li><a href="#stems">Stems &amp; Demucs MLX</a></li>
+        <li><a href="/demucs-stems/">Stems &amp; Demucs</a></li>
         <li><a href="#lefty">Left-handed &amp; string order</a></li>
         <li><a href="#long-songs">Long songs without blowing RAM</a></li>
         <li><a href="#highway">3D highway</a></li>
@@ -342,48 +337,18 @@
 
       <h2 id="stems">Stems &amp; Demucs MLX</h2>
       <p>
-        Stem mode lets you mix six isolated tracks — drums, bass, other,
-        vocals, guitar, piano — each with its own fader (0–200%). Mute the
-        guitar and play over the rest of the band, or solo a part to learn by
-        ear. Separation does <strong>not</strong> run inside Rock N Roller; it
-        is done offline with the companion macOS app
+        Stem mode mixes six isolated tracks (drums, bass, other, vocals,
+        guitar, piano) with per-stem faders. Separation runs offline in the
+        companion
         <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
-          >Demucs MLX Audio Stemmer</a
+          >Demucs MLX</a
         >
-        (Apple Silicon, Demucs <code>htdemucs_6s</code> by default).
-      </p>
-      <p><strong>Stemming workflow</strong></p>
-      <ol>
-        <li>
-          In Demucs MLX, add an MP3/WAV <em>or</em> a Rocksmith
-          <code>*_p.psarc</code> (it extracts the chart’s audio first).
-        </li>
-        <li>
-          Pick an <strong>output folder</strong> — this becomes your Rock N
-          Roller stems root.
-        </li>
-        <li>
-          Run separation. For
-          <code>Eagles_Hotel-California_v1_1_p.psarc</code> it writes:
-          <pre style="margin: 0.5rem 0; padding: 0.75rem; background: #17171c; overflow-x: auto; font-size: 0.8rem">
-{stems_root}/Eagles_Hotel-California_v1_1_p/
-  drums.mp3  bass.mp3  other.mp3
-  vocals.mp3  guitar.mp3  piano.mp3</pre>
-        </li>
-        <li>
-          In Rock N Roller Settings → <strong>Choose stems folder</strong>,
-          point at that same <code>{stems_root}</code>, then resync.
-        </li>
-      </ol>
-      <p>
-        <strong>How they link to PSARCs:</strong> Rock N Roller takes the PSARC
-        filename without <code>.psarc</code>, looks for
-        <code>{stems_root}/{that_name}/</code>, and requires all six MP3s.
-        Only then is the song marked <code>has_stems</code> in SQLite (searchable
-        with <code>stems="true"</code>). Paths are indexed per song; playback
-        opens six streaming MP3 decoders under one mixer that shares the same
-        time-stretch path as normal audio. On the web,
-        <code>?demo=stems</code> loads curated stem trees into the same layout.
+        app (macOS Apple Silicon via MLX, or Windows x64 via NVIDIA CUDA), then
+        Rock N Roller matches
+        <code>{stems_root}/{psarc_basename}/</code> and streams the six MP3s.
+        Full workflow, Mac vs Windows size/speed, folder layout, mixer, and
+        <code>?demo=stems</code>:
+        <a href="/demucs-stems/">stems page</a>.
       </p>
 
       <h2 id="lefty">Left-handed &amp; string order</h2>
@@ -476,15 +441,6 @@
         ride along). That size is mostly “link only what Rocksmith content
         needs” and keep assets out of the download, not a separate size
         project.
-      </p>
-
-      <p class="fineprint">
-        Numbers move with releases. See <a href="/versions/">versions</a> or
-        <a href="/latest/">press play</a>. Section links:
-        <a href="#sqlite">#sqlite</a>,
-        <a href="#loop">#loop</a>,
-        <a href="#stems">#stems</a>,
-        <a href="#lefty">#lefty</a>, …
       </p>
     </main>
     <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a7234cc8c2b3478aa4cf798bf9eefd95"}'></script><!-- End Cloudflare Web Analytics -->
