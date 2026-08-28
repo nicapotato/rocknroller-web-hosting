@@ -38,7 +38,9 @@ The document stays on this origin; `assets/player.js` pulls the build from
 
 1. `coi-serviceworker.min.js` (committed here, must be same-origin) injects the
    COOP/COEP headers GitHub Pages cannot send — required for
-   SharedArrayBuffer/pthreads. First visit reloads once.
+   SharedArrayBuffer/pthreads. Isolation is applied only to player documents
+   (`/latest/`, `/<semver>/`); content pages stay un-isolated so YouTube /
+   itch.io iframes can load. First visit to Play reloads once.
 2. `Module.locateFile` points `.wasm`/`.data` requests at S3. The bucket CORS
    allows GET from `https://rocknroller.nicapotato.com` (and
    `http://localhost:8098` / `http://127.0.0.1:8098` for `make serve`).
