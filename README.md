@@ -20,6 +20,8 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 | `/demucs-stems/` | Demucs companion app + stem folder layout / mixer |
 | `/keybinds/` | keyboard shortcuts (catalog + in-song) |
 | `/configurations/` | what Settings / play options mean |
+| `/manual/` | combined About + Features + Stems + Keybinds + Settings (print source) |
+| `/rocknroller-manual.pdf` | downloadable offline manual (regenerate with `make pdf`) |
 | `/play/?v=…` | **legacy redirect** → `/<ver>/` (preserves `?demo=`) |
 | `/version/` | **legacy redirect** → `/versions/` |
 
@@ -56,6 +58,7 @@ that up when pages here are deployed.
 ## Local dev
 
     make serve   # http://127.0.0.1:8098 (port is allow-listed in bucket CORS)
+    make pdf     # rebuild /manual/ and print rocknroller-manual.pdf (Chrome headless)
 
 ## DNS
 

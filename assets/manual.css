@@ -1,0 +1,207 @@
+/* Combined /manual/ page + print stylesheet for the offline PDF. */
+
+.page--manual h2 {
+  margin-top: 2.5rem;
+  color: var(--rnr-yellow);
+  scroll-margin-top: 1.25rem;
+}
+
+.page--manual h3 {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: #e8eaed;
+}
+
+.page--manual .toc {
+  columns: 2;
+  column-gap: 2rem;
+  padding-left: 1.2rem;
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.9rem;
+}
+
+.page--manual .toc li {
+  margin: 0.2rem 0;
+}
+
+@media (max-width: 560px) {
+  .page--manual .toc {
+    columns: 1;
+  }
+}
+
+.page--manual table.specs {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.page--manual table.specs th,
+.page--manual table.specs td {
+  border: 1px solid #333;
+  padding: 0.45rem 0.65rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.page--manual table.specs th {
+  background: #17171c;
+  color: var(--rnr-yellow);
+  font-weight: 600;
+}
+
+.page--manual table.specs td.k {
+  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+  white-space: nowrap;
+  color: var(--rnr-yellow);
+  width: 11rem;
+}
+
+.page--manual code {
+  background: #17171c;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.page--manual .cheat {
+  margin: 1rem 0 1.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #333;
+  background: #17171c;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.page--manual .cheat kbd,
+.page--manual kbd {
+  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+  color: var(--rnr-yellow);
+}
+
+.manual-lede {
+  margin: 0 0 0.75rem;
+}
+
+.manual-section {
+  margin-top: 2.5rem;
+}
+
+.print-link {
+  display: none;
+}
+
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  :root {
+    --rnr-yellow: #8a6d00;
+    --rnr-ink: #0d0d0d;
+    --rnr-border: 3px solid #0d0d0d;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #121212;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print,
+  .page__nav,
+  iframe,
+  .video-embed,
+  .itch-embed,
+  .btn-row {
+    display: none !important;
+  }
+
+  a[href]:after {
+    content: none !important;
+  }
+
+  .page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page__logo {
+    width: min(100%, 18rem);
+    margin-bottom: 0.6rem;
+  }
+
+  .page--manual h2,
+  .page--manual h3,
+  .page--manual h1 {
+    color: #0d0d0d;
+  }
+
+  .page--manual h2 {
+    border-bottom: 3px solid #ffde44;
+    padding-bottom: 0.2rem;
+  }
+
+  a {
+    color: #0b57d0;
+  }
+
+  .page--manual table.specs th,
+  .page--manual table.specs td,
+  .page--manual .cheat,
+  .page--manual code,
+  .page--manual pre.codeblock {
+    background: #f4f4f0;
+    color: #121212;
+    border-color: #ccc;
+  }
+
+  .page--manual table.specs th {
+    background: #ffde44;
+    color: #0d0d0d;
+  }
+
+  .page--manual table.specs td.k,
+  .page--manual .cheat kbd,
+  .page--manual kbd {
+    color: #6b5400;
+  }
+
+  .print-link {
+    display: block;
+    margin: 0.75rem 0 1.25rem;
+    padding: 0.7rem 0.85rem;
+    border: 3px solid #0d0d0d;
+    background: #fff8cc;
+    color: #0d0d0d;
+    text-decoration: none;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .manual-section + .manual-section {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  tr,
+  .cheat {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
