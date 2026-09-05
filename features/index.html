@@ -88,8 +88,9 @@
       <p>
         How Rock N Roller solves its harder problems: local CDLC, catalog
         search, practice speed and section loops, Demucs stems, left-handed /
-        inverted highway layout, and a 3D chart that stays locked to the audio —
-        from one C + raylib codebase on macOS, Windows, and WebAssembly.
+        inverted highway layout, a 3D chart that stays locked to the audio, and
+        a Chords + Lyrics sheet for following names with the words — from one
+        C + raylib codebase on macOS, Windows, and WebAssembly.
       </p>
 
       <ol class="toc">
@@ -105,6 +106,7 @@
         <li><a href="#lefty">Left-handed &amp; string order</a></li>
         <li><a href="#long-songs">Long songs without blowing RAM</a></li>
         <li><a href="#highway">3D highway</a></li>
+        <li><a href="#chords-lyrics">Chords + Lyrics</a></li>
         <li><a href="#threading">Keeping the UI smooth</a></li>
         <li><a href="#size">What ships</a></li>
       </ol>
@@ -424,6 +426,68 @@
         bendable ribbons and SDF fret labels on top. Each frame batches only
         the notes in the visible time window and draws them in a fixed depth
         order. Target is 60&nbsp;FPS with four panes up.
+      </p>
+
+      <h2 id="chords-lyrics">Chords + Lyrics</h2>
+      <p>
+        A lyrics pane can show the chart’s named chords sitting on the words —
+        Ultimate Guitar-style changes, timed to the same vocal line cache the
+        karaoke panel already uses. This is a <strong>Lyrics cell</strong>
+        viz, not the 3D highway: glass chord frames on the neck stay their
+        usual pale rim; only the sheet’s alphanumeric names are color-coded.
+      </p>
+      <p>
+        Pick a layout that has a lyrics slot (e.g. 3 highways + lyrics, or
+        Full with the cell source set to Lyrics). In that cell’s header, set
+        viz to <strong>Chords + Lyrics</strong> (the other lyrics option is
+        the plain karaoke panel). Lyric size and lyric-line count still come
+        from <a href="/configurations/#cell">Cell Settings</a>.
+      </p>
+      <p>
+        Names are the chart’s chord-template labels (e.g.
+        <code>A7sus4</code>), emitted on each change and restated after a
+        stretch of silence so a verse does not stay unlabeled after a break.
+        The chord track prefers the <strong>rhythm</strong> arrangement, then
+        <strong>lead</strong>. If the song has no named chords (or no rhythm /
+        lead notes), the pane falls back to the regular lyrics panel.
+      </p>
+      <p>
+        Each lyric row gets a chord band above the words. A change anchors
+        above the first word that starts at or after that time; a chord in
+        the second before a line’s first word is a pickup at the line start.
+        Colors are kept apart from karaoke (yellow past / red sweep / white
+        upcoming):
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Chord name</th>
+            <th>Color</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Upcoming</td>
+            <td>Sky blue</td>
+            <td>Not yet sounding</td>
+          </tr>
+          <tr>
+            <td>Active</td>
+            <td>Bright green</td>
+            <td>The last named chord whose time has passed</td>
+          </tr>
+          <tr>
+            <td>Past</td>
+            <td>Dim slate</td>
+            <td>Already superseded</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Instrument cells can still use <strong>3D + Lyrics</strong> for an
+        inline strip on the highway; that strip is lyrics only. Layout and
+        viz details: <a href="/configurations/#layout">settings</a>.
       </p>
 
       <h2 id="threading">Keeping the UI smooth</h2>

@@ -235,8 +235,9 @@
       <p>
         How Rock N Roller solves its harder problems: local CDLC, catalog
         search, practice speed and section loops, Demucs stems, left-handed /
-        inverted highway layout, and a 3D chart that stays locked to the audio —
-        from one C + raylib codebase on macOS, Windows, and WebAssembly.
+        inverted highway layout, a 3D chart that stays locked to the audio, and
+        a Chords + Lyrics sheet for following names with the words — from one
+        C + raylib codebase on macOS, Windows, and WebAssembly.
       </p>
 
       <ol class="toc">
@@ -252,6 +253,7 @@
         <li><a href="#features-lefty">Left-handed &amp; string order</a></li>
         <li><a href="#features-long-songs">Long songs without blowing RAM</a></li>
         <li><a href="#features-highway">3D highway</a></li>
+        <li><a href="#features-chords-lyrics">Chords + Lyrics</a></li>
         <li><a href="#features-threading">Keeping the UI smooth</a></li>
         <li><a href="#features-size">What ships</a></li>
       </ol>
@@ -573,6 +575,68 @@
         order. Target is 60&nbsp;FPS with four panes up.
       </p>
 
+      <h2 id="features-chords-lyrics">Chords + Lyrics</h2>
+      <p>
+        A lyrics pane can show the chart’s named chords sitting on the words —
+        Ultimate Guitar-style changes, timed to the same vocal line cache the
+        karaoke panel already uses. This is a <strong>Lyrics cell</strong>
+        viz, not the 3D highway: glass chord frames on the neck stay their
+        usual pale rim; only the sheet’s alphanumeric names are color-coded.
+      </p>
+      <p>
+        Pick a layout that has a lyrics slot (e.g. 3 highways + lyrics, or
+        Full with the cell source set to Lyrics). In that cell’s header, set
+        viz to <strong>Chords + Lyrics</strong> (the other lyrics option is
+        the plain karaoke panel). Lyric size and lyric-line count still come
+        from <a href="#settings-cell">Cell Settings</a>.
+      </p>
+      <p>
+        Names are the chart’s chord-template labels (e.g.
+        <code>A7sus4</code>), emitted on each change and restated after a
+        stretch of silence so a verse does not stay unlabeled after a break.
+        The chord track prefers the <strong>rhythm</strong> arrangement, then
+        <strong>lead</strong>. If the song has no named chords (or no rhythm /
+        lead notes), the pane falls back to the regular lyrics panel.
+      </p>
+      <p>
+        Each lyric row gets a chord band above the words. A change anchors
+        above the first word that starts at or after that time; a chord in
+        the second before a line’s first word is a pickup at the line start.
+        Colors are kept apart from karaoke (yellow past / red sweep / white
+        upcoming):
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Chord name</th>
+            <th>Color</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Upcoming</td>
+            <td>Sky blue</td>
+            <td>Not yet sounding</td>
+          </tr>
+          <tr>
+            <td>Active</td>
+            <td>Bright green</td>
+            <td>The last named chord whose time has passed</td>
+          </tr>
+          <tr>
+            <td>Past</td>
+            <td>Dim slate</td>
+            <td>Already superseded</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Instrument cells can still use <strong>3D + Lyrics</strong> for an
+        inline strip on the highway; that strip is lyrics only. Layout and
+        viz details: <a href="#settings-layout">settings</a>.
+      </p>
+
       <h2 id="features-threading">Keeping the UI smooth</h2>
       <p>
         The main thread renders; workers handle library sync, song load, WEM
@@ -821,6 +885,8 @@
         <strong>In song (cheat sheet):</strong>
         <kbd>Space</kbd>/<kbd>K</kbd> pause ·
         <kbd>J</kbd>/<kbd>L</kbd> ±10s ·
+        <kbd>,</kbd> restart / previous ·
+        <kbd>.</kbd> next song ·
         <kbd>←</kbd>/<kbd>→</kbd> speed presets ·
         <kbd>P</kbd> section loop ·
         <kbd>Enter</kbd>/<kbd>O</kbd> jump to loop start ·
@@ -854,6 +920,23 @@
           <tr>
             <td class="k">L</td>
             <td>Seek forward 10 seconds</td>
+          </tr>
+          <tr>
+            <td class="k">,</td>
+            <td>
+              Go to the start of the song (or the section-loop start, if loop
+              is on). If you are already within ~2&nbsp;s of that start, or
+              you press <kbd>,</kbd> twice quickly, skip to the previous
+              song in the queue.
+            </td>
+          </tr>
+          <tr>
+            <td class="k">.</td>
+            <td>
+              Play the next song in the queue (same as the footer
+              <strong>&gt;&gt;</strong> button). No-op for a one-shot
+              PLAY FILE / loose track.
+            </td>
           </tr>
           <tr>
             <td class="k">← / →</td>
@@ -937,10 +1020,12 @@
         </tbody>
       </table>
       <p>
-        Footer buttons and sliders (previous / next / restart, Catalog, Loop,
-        Auto-cycle, Vol, Speed, seek bar, loop edges) are mouse-only, as are
-        cell header menus: Layout, arrangement source, viz mode, Stems, Cell
-        Settings.
+        Footer sliders (Vol, Speed, seek bar, loop edges) and the Catalog /
+        Loop / Auto-cycle buttons are mouse-only, as are cell header menus:
+        Layout, arrangement source, viz mode, Stems, Cell Settings. Previous /
+        next also have <kbd>,</kbd> / <kbd>.</kbd>; the footer restart
+        button is still mouse-only (keyboard restart is a single
+        <kbd>,</kbd>).
       </p>
 
       <h2 id="keybinds-catalog">Catalog (song library)</h2>
@@ -1390,8 +1475,13 @@
           <tr>
             <td>Cell viz</td>
             <td>
-              How the arrangement is drawn: <strong>2D</strong>,
-              <strong>3D</strong>, or <strong>3D + Lyrics</strong>.
+              How the pane is drawn. Instrument cells:
+              <strong>2D</strong>, <strong>3D</strong>, or
+              <strong>3D + Lyrics</strong> (inline lyric strip; no chord
+              names). Lyrics cells: <strong>Lyrics</strong> or
+              <strong>Chords + Lyrics</strong> (named chords above the
+              words). See
+              <a href="#features-chords-lyrics">features § Chords + Lyrics</a>.
             </td>
           </tr>
         </tbody>

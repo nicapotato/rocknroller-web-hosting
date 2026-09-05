@@ -98,6 +98,8 @@
         <strong>In song (cheat sheet):</strong>
         <kbd>Space</kbd>/<kbd>K</kbd> pause ·
         <kbd>J</kbd>/<kbd>L</kbd> ±10s ·
+        <kbd>,</kbd> restart / previous ·
+        <kbd>.</kbd> next song ·
         <kbd>←</kbd>/<kbd>→</kbd> speed presets ·
         <kbd>P</kbd> section loop ·
         <kbd>Enter</kbd>/<kbd>O</kbd> jump to loop start ·
@@ -131,6 +133,23 @@
           <tr>
             <td class="k">L</td>
             <td>Seek forward 10 seconds</td>
+          </tr>
+          <tr>
+            <td class="k">,</td>
+            <td>
+              Go to the start of the song (or the section-loop start, if loop
+              is on). If you are already within ~2&nbsp;s of that start, or
+              you press <kbd>,</kbd> twice quickly, skip to the previous
+              song in the queue.
+            </td>
+          </tr>
+          <tr>
+            <td class="k">.</td>
+            <td>
+              Play the next song in the queue (same as the footer
+              <strong>&gt;&gt;</strong> button). No-op for a one-shot
+              PLAY FILE / loose track.
+            </td>
           </tr>
           <tr>
             <td class="k">← / →</td>
@@ -214,10 +233,12 @@
         </tbody>
       </table>
       <p>
-        Footer buttons and sliders (previous / next / restart, Catalog, Loop,
-        Auto-cycle, Vol, Speed, seek bar, loop edges) are mouse-only, as are
-        cell header menus: Layout, arrangement source, viz mode, Stems, Cell
-        Settings.
+        Footer sliders (Vol, Speed, seek bar, loop edges) and the Catalog /
+        Loop / Auto-cycle buttons are mouse-only, as are cell header menus:
+        Layout, arrangement source, viz mode, Stems, Cell Settings. Previous /
+        next also have <kbd>,</kbd> / <kbd>.</kbd>; the footer restart
+        button is still mouse-only (keyboard restart is a single
+        <kbd>,</kbd>).
       </p>
 
       <h2 id="catalog">Catalog (song library)</h2>
