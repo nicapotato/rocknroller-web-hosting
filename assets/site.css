@@ -151,6 +151,35 @@ img.btn__icon[src$=".png"] {
   color: #9aa0a6;
 }
 
+figure.hw-fig {
+  margin: 0.9rem 0 1.2rem;
+  padding: 0.65rem 0.5rem 0.35rem;
+  background: #17171c;
+  border: 1px solid #333;
+}
+
+figure.hw-fig svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+figure.hw-fig figcaption {
+  font-size: 0.8rem;
+  color: #9aa0a6;
+  margin: 0.4rem 0.35rem 0.15rem;
+}
+
+p.formula,
+li.formula {
+  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+  background: #17171c;
+  padding: 0.45rem 0.65rem;
+  border-radius: 3px;
+  overflow-x: auto;
+}
+
 .itch-embed {
   margin: 1rem 0 1.5rem;
   max-width: 552px;

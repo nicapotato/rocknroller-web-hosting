@@ -235,9 +235,10 @@
       <p>
         How Rock N Roller solves its harder problems: local CDLC, catalog
         search, practice speed and section loops, Demucs stems, left-handed /
-        inverted highway layout, a 3D chart that stays locked to the audio, and
-        a Chords + Lyrics sheet for following names with the words — from one
-        C + raylib codebase on macOS, Windows, and WebAssembly.
+        inverted highway layout, a 3D chart whose camera math and note clock
+        stay locked to the audio callback, and a Chords + Lyrics sheet for
+        following names with the words — from one C + raylib codebase on macOS,
+        Windows, and WebAssembly.
       </p>
 
       <ol class="toc">
@@ -252,7 +253,17 @@
         <li><a href="#stems">Stems &amp; Demucs</a></li>
         <li><a href="#features-lefty">Left-handed &amp; string order</a></li>
         <li><a href="#features-long-songs">Long songs without blowing RAM</a></li>
-        <li><a href="#features-highway">3D highway</a></li>
+        <li>
+          <a href="#features-highway">3D highway</a>
+          <ol>
+            <li><a href="#features-highway-world">World space &amp; fret math</a></li>
+            <li><a href="#features-highway-trig">Camera, frustum, trigonometry</a></li>
+            <li><a href="#features-highway-draw">What a frame draws</a></li>
+            <li><a href="#features-highway-psarc">Notes in PSARC / SNG</a></li>
+            <li><a href="#features-highway-threads">Load, audio, and raylib threads</a></li>
+            <li><a href="#features-highway-sync">How the chart locks to audio</a></li>
+          </ol>
+        </li>
         <li><a href="#features-chords-lyrics">Chords + Lyrics</a></li>
         <li><a href="#features-threading">Keeping the UI smooth</a></li>
         <li><a href="#features-size">What ships</a></li>
@@ -462,13 +473,74 @@
 
       <h2 id="features-speed">Practice speed without pitch shift</h2>
       <p>
-        Slowing audio naively drops pitch. Practice mode needs
-        <strong>0.3×–3.0×</strong> with pitch held steady. Inside the audio
-        callback, Signalsmith Stretch time-stretches each period: pull
-        <code>rate ×</code> source frames, emit device-rate frames at original
-        pitch. At 1.0× the stretcher is bypassed. The chart clock compensates
-        for stretch latency so notes stay locked to what you hear; speed and
-        seek reset the engine atomically.
+        Pitch is frequency. An <strong>octave</strong> up means the waveform
+        repeats twice as often: 220&nbsp;Hz (A3) → 440&nbsp;Hz (A4) →
+        880&nbsp;Hz (A5). Twelve equal-tempered semitones make that doubling:
+      </p>
+      <p class="formula">
+        f′ = f · 2<sup>n</sup> &nbsp; (n = octaves)<br />
+        one semitone = 2<sup>1/12</sup> ≈ 1.0595×
+      </p>
+      <p>
+        Playing a buffer slower without processing stretches each period
+        <code>T</code>. Frequency is <code>1/T</code>, so half speed makes
+        every note an octave down and the guitar sounds like a bass. Practice
+        mode needs <strong>0.3×–3.0×</strong> with that frequency held
+        still — the lick lasts longer (or shorter), but A stays A.
+      </p>
+      <p>
+        Inside the miniaudio callback the app does not resample. It asks
+        <a href="https://signalsmith-audio.co.uk/code/stretch/" rel="noopener"
+          >Signalsmith Stretch</a>
+        (cheaper preset, <code>splitComputation</code> on) to emit a
+        device-rate period from a different number of source frames:
+      </p>
+      <p class="formula">
+        in_frames = ceil(device_frames · rate)<br />
+        stretch(in, in_frames) → out[device_frames] at the original pitch
+      </p>
+      <p>
+        At 0.5× it pulls half as much song audio as it plays to the DAC: the
+        lick is twice as long. At 2× it pulls twice as much and compresses it
+        into one period. At <strong>1.0× the stretcher is bypassed</strong>
+        (copy samples straight through) so there is no extra latency or FFT
+        cost when you are not practicing.
+      </p>
+      <p>
+        Stretch keeps pitch by working in the frequency domain, not by
+        scaling the waveform. Overlapping windows (~100&nbsp;ms block,
+        ~40&nbsp;ms hop at 48&nbsp;kHz) go through an STFT. Each bin is a
+        sinusoid with a magnitude and a phase. Time-stretch walks the
+        <em>analysis</em> windows through the input at
+        <code>rate</code> while the <em>synthesis</em> hop stays at the
+        device interval:
+      </p>
+      <p class="formula">
+        input_offset = output_index · (in_frames / out_frames)
+      </p>
+      <p>
+        A classic phase vocoder then advances each bin’s phase so its
+        instantaneous frequency (how fast phase rotates) stays the same as
+        in the source. The note’s harmonics keep their Hz; only how long
+        they ring changes. Signalsmith adds a second prediction that locks
+        phase <em>across neighboring bins</em> (vertical locking), which
+        keeps transients and stacked guitar partials from smearing the way a
+        naive vocoder does. Rock N Roller never transposes: the engine’s
+        frequency multiplier stays 1, so it skips the spectral-peak remap
+        used for pitch shift. Above a 2× stretch ratio it starts
+        randomising some phases; 3.0× is inside that “less clean” region on
+        purpose so fast-forward still works.
+      </p>
+      <p>
+        <code>splitComputation</code> spreads one STFT’s analyse / predict /
+        synthesise steps across the callback period so a 1024-frame quantum
+        does not spike the audio thread. The overlap-add still needs a
+        look-ahead buffer; that
+        <strong>output latency</strong> (synthesis delay plus one hop when
+        split) is subtracted when publishing the heard clock, which is why
+        the <a href="#features-highway-sync">chart clock</a> can lock gems to what
+        you actually hear. Speed and seek reset the stretcher atomically
+        inside the callback so a rate change cannot mix two phase histories.
       </p>
 
       <h2 id="features-loop">Section loop</h2>
@@ -561,18 +633,531 @@
 
       <h2 id="features-highway">3D highway</h2>
       <p>
-        Each instrument pane gets its own scissored 3D viewport (raylib
-        <code>rlgl</code>) with an asymmetric projection so the camera can sit
-        high without keystoning the frets. Camera modes track the active fret
-        region on a 24-fret neck; zoom, runway grade, and lookahead are
-        adjustable. Left-handed and invert flags remap frets and strings before
-        draw (see <a href="#features-lefty">above</a>).
+        Each instrument pane is its own scissored 3D viewport (raylib
+        <code>rlgl</code>). The neck is a real 3D scene — not a 2D strip with
+        fake perspective. Gems live on a guitar-scaled fretboard, time maps to
+        depth, and an off-axis camera looks down the runway without keystoning
+        the fret wires. Zoom, runway grade, and lookahead are per-cell
+        settings. Left-handed and invert flags remap X/Y before draw (see
+        <a href="#features-lefty">left-handed &amp; string order</a>). Target is
+        60&nbsp;FPS with four panes up.
+      </p>
+
+      <h3 id="features-highway-world">World space &amp; fret math</h3>
+      <p>
+        The highway uses a right-handed world with a 24-fret neck:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Axis</th>
+            <th>What it is</th>
+            <th>Increasing toward</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>X</code></td>
+            <td>Along the fretboard</td>
+            <td>Higher frets (open/nut at 0; lefty mirrors this)</td>
+          </tr>
+          <tr>
+            <td><code>Y</code></td>
+            <td>Across the strings</td>
+            <td>
+              Default: high-E at the bottom of the pane, low-E (red) at the
+              top. Invert swaps that.
+            </td>
+          </tr>
+          <tr>
+            <td><code>Z</code></td>
+            <td>Song time, as depth</td>
+            <td>
+              Hit line at <code>z = 0</code>. Upcoming notes sit at
+              <em>negative</em> Z and travel toward the camera.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Fret positions are the equal-tempered guitar formula (the same math as
+        a real neck): each twelve-fret octave halves the remaining string
+        length. With scale length <code>L = 2.25</code> world units:
+      </p>
+      <p class="formula">
+        x(f) = L · (1 − 2<sup>−f/12</sup>) &nbsp; for fret f = 0…12
       </p>
       <p>
-        Notes are Rocksmith-style gems (halo / body / edge), with sustains as
-        bendable ribbons and SDF fret labels on top. Each frame batches only
-        the notes in the visible time window and draws them in a fixed depth
-        order. Target is 60&nbsp;FPS with four panes up.
+        That is <code>L - L / 2^(f/12)</code>. Consecutive fret gaps shrink
+        toward the body the way a physical guitar does. Past fret 12 the
+        remaining gaps would be too tight on screen, so the renderer
+        <strong>stretches</strong> everything beyond the 12th fret by 1.65×
+        around that anchor — high-fret phrases stay readable without breaking
+        the low-fret spacing players already know.
+      </p>
+      <p>
+        A gem’s X is the midpoint of its fret cell; open notes (fret 0) are a
+        wide slab centered on the chart’s current hand-position
+        <em>anchor</em> (the SNG “where is the left hand” window), not on the
+        nut. String Y is evenly spaced. Time becomes depth with a constant
+        seconds-to-world scale <code>TS ≈ 1.5</code> (200 × the neck’s unit
+        <code>K</code>):
+      </p>
+      <p class="formula">
+        Δt = note.time − song_timer<br />
+        z = −Δt · TS
+      </p>
+      <p>
+        A note 2 seconds away sits at <code>z ≈ −3</code>. When
+        <code>Δt ≤ 0</code> the gem is pinned at the strike line
+        (<code>z = 0</code>) for the sustain, then fades. The visible window
+        is about <strong>0.5&nbsp;s behind</strong> the playhead to
+        <strong>lookahead seconds ahead</strong> (default 3&nbsp;s, slider
+        1.5–6). Only that slice is batched.
+      </p>
+
+      <h3 id="features-highway-trig">Camera, frustum, trigonometry</h3>
+      <p>
+        The camera never pitches. Position and look-at share the same Y, so
+        the view direction is straight down <code>−Z</code> — horizontal. Fret
+        wires stay parallel to the window’s top edge; there is no keystone.
+        The “looking down a rising highway” feel comes from two things:
+        the camera sits <em>above</em> the neck, and the projection is an
+        <strong>asymmetric (shift) frustum</strong> that slides the image
+        down so the neck sits low in the pane with a horizon near the top.
+      </p>
+      <figure class="hw-fig">
+        <svg viewBox="0 0 760 320" role="img" aria-labelledby="hw-cam-title hw-cam-desc">
+          <title id="features-hw-cam-title">Side view of the 3D highway camera</title>
+          <desc id="features-hw-cam-desc">
+            Camera sits at positive Z, elevated by cam_h above the neck,
+            looking horizontally toward negative Z. The hit line is at z=0.
+            Upcoming notes recede into −Z. Depression angle to the strike
+            line is atan(cam_h / cam_dist).
+          </desc>
+          <rect width="760" height="320" fill="#17171c"/>
+          <!-- horizon -->
+          <line x1="20" y1="48" x2="740" y2="48" stroke="#333" stroke-dasharray="4 4"/>
+          <text x="28" y="42" fill="#9aa0a6" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">horizon (look axis, pitch = 0)</text>
+          <!-- neck plane receding -->
+          <polygon points="80,250 430,250 390,118 140,118" fill="#1e2430" stroke="#445" stroke-width="1"/>
+          <text x="200" y="268" fill="#9aa0a6" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">neck plane (strings in Y, frets in X)</text>
+          <!-- hit line -->
+          <line x1="140" y1="118" x2="390" y2="118" stroke="#ffde44" stroke-width="3"/>
+          <text x="148" y="112" fill="#ffde44" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">hit line z = 0</text>
+          <!-- upcoming gem -->
+          <circle cx="175" cy="210" r="7" fill="#e53935"/>
+          <text x="188" y="214" fill="#e8eaed" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">upcoming gem  z = −Δt · TS</text>
+          <!-- camera -->
+          <circle cx="620" cy="70" r="8" fill="#ffde44"/>
+          <text x="634" y="66" fill="#ffde44" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">camera</text>
+          <!-- look axis -->
+          <line x1="620" y1="70" x2="80" y2="70" stroke="#ffde44" stroke-width="1.2" stroke-dasharray="6 4"/>
+          <!-- drop to hit -->
+          <line x1="265" y1="70" x2="265" y2="118" stroke="#7ad" stroke-width="1.4"/>
+          <text x="272" y="98" fill="#7ad" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">cam_h</text>
+          <!-- cam_dist -->
+          <line x1="265" y1="128" x2="620" y2="128" stroke="#7ad" stroke-width="1.4"/>
+          <text x="400" y="144" fill="#7ad" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">cam_dist</text>
+          <!-- hypotenuse / view to hit -->
+          <line x1="620" y1="70" x2="265" y2="118" stroke="#e53935" stroke-width="1.5"/>
+          <!-- angle arc -->
+          <path d="M 560 70 A 60 60 0 0 1 548 96" fill="none" stroke="#e53935" stroke-width="1.5"/>
+          <text x="568" y="102" fill="#e53935" font-size="13" font-family="ui-sans-serif,system-ui,sans-serif">θ = atan(cam_h / cam_dist)</text>
+          <!-- frustum hint -->
+          <line x1="620" y1="70" x2="90" y2="28" stroke="#555" stroke-width="1"/>
+          <line x1="620" y1="70" x2="70" y2="280" stroke="#555" stroke-width="1"/>
+          <text x="80" y="300" fill="#9aa0a6" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">+Z (camera) → &nbsp;&nbsp;&nbsp; ← −Z (future notes)</text>
+        </svg>
+        <figcaption>
+          Side view. The camera looks horizontally; the neck sits below the
+          look axis. Depression to the strike line is
+          θ = atan(cam_h / cam_dist). Raising the camera (runway grade)
+          increases θ and the highway looks steeper.
+        </figcaption>
+      </figure>
+      <p>
+        <strong>Runway grade</strong> is that height multiplier. Default 1.0
+        matches the original elevation; the slider (0.35–2.2) scales
+        <code>cam_h</code> only. Higher grade → larger θ → the runway
+        converges toward the horizon faster. The camera still does not pitch.
+      </p>
+      <p>
+        <strong>Zoom</strong> is mostly a dolly: <code>cam_dist</code> is
+        divided by the zoom factor (0.5×–2.5×). Closer camera, larger
+        on-screen neck. A small FOV tweak then fits the residual.
+      </p>
+      <p>
+        Perspective uses the usual half-angle tangent. With vertical field of
+        view <code>fovy</code> and near-plane distance <code>n</code>:
+      </p>
+      <p class="formula">
+        top = n · tan(fovy / 2)<br />
+        right = top · (viewport_width / viewport_height)
+      </p>
+      <p>
+        A symmetric frustum would be
+        <code>[-right, right] × [-top, top]</code>. Instead the renderer
+        shifts the vertical window by a fraction <code>s</code> of
+        <code>top</code> (a shift-lens / off-axis projection):
+      </p>
+      <p class="formula">
+        cy = top · s<br />
+        frustum Y = [cy − top, cy + top]
+      </p>
+      <p>
+        <code>s</code> is not a user slider. After FOV is fitted, it is
+        solved in one closed form so the near-bottom of the neck (fret-number
+        row) pins to a fixed screen Y — about the bottom of the pane —
+        regardless of zoom or grade. A uniform vertical shift moves every
+        projected Y by the same amount, so it cancels out of the FOV height
+        ratio and can be applied last. Pitching the camera would have
+        keystoned the frets; shifting the frustum does not.
+      </p>
+      <p>
+        Half the world-space width visible at the camera’s distance (the
+        quantity the wide-pane pan uses):
+      </p>
+      <p class="formula">
+        visible_half = tan(fovy / 2) · cam_dist · aspect
+      </p>
+      <p>
+        Two camera-follow modes sit on top of that fit. <strong>Center</strong>
+        (tall / quarter cells) keeps the active lane in the middle.
+        <strong>Wide</strong> (full-width cells) holds a deadband: the camera
+        only pans when the required fret span approaches a frustum edge, then
+        glides the minimum amount. Lane extents themselves are a
+        box-filtered average of SNG hand anchors over a short time window, so
+        the pan is piecewise-linear in song time — no hitch when the hand
+        jumps a few frets.
+      </p>
+      <p>
+        Far down the runway, perspective would shrink a constant-size gem
+        below a pixel. World size needed for roughly constant screen size
+        grows linearly with depth, so open bars and thin wires use
+        <code>1 + |z| / cam_dist</code> as a keep-alive scale (capped so the
+        spawn end does not balloon). Approaching gems also rotate: they start
+        ~90° edge-on at lookahead and flatten to the neck as
+        <code>(Δt / ahead) · π/2</code> → 0.
+      </p>
+
+      <h3 id="features-highway-draw">What a frame draws</h3>
+      <p>
+        <code>highway_3d_draw(instrument, song_timer, viewport, …)</code>
+        runs on the raylib thread once per pane, per frame:
+      </p>
+      <ol>
+        <li>
+          Scissor to the cell; rebuild a per-frame cache (lane bounds, note
+          batch) keyed on <code>song_timer</code>.
+        </li>
+        <li>
+          Binary-search the sorted note array for
+          <code>[song_timer − 0.5s, song_timer + ahead]</code>, including
+          sustains that started earlier and still overlap (cap 512 visible
+          notes).
+        </li>
+        <li>
+          Fit / reuse the camera; begin a custom 3D mode with the shifted
+          frustum (not stock <code>BeginMode3D</code>, which cannot scissor
+          per pane or shift the lens).
+        </li>
+        <li>
+          Draw in a fixed depth order: lane surface → hit bar → fret wires →
+          glass chord frames → sustain ribbons (depth-write off) → string
+          wires → gem halos / ghost repeats → solid gem bodies → open slabs
+          (depth test off so far bars do not flicker against the faded
+          lane).
+        </li>
+        <li>
+          Restore the 2D ortho matrix and overlay SDF fret numbers, chord
+          names, and the chord-diagram HUD in screen space
+          (world → clip → NDC → pane pixels, using the same shifted
+          projection).
+        </li>
+      </ol>
+      <p>
+        Gems are halo / body / edge, Rocksmith-style. Sustains are ribbons
+        that can follow a bend envelope. Repeat-chord “ghost” gems travel
+        inside the next identical frame at reduced alpha so they never
+        depth-block the landing chord. Four panes share four small camera
+        contexts so layout A does not steal layout B’s pan state.
+      </p>
+      <p>
+        <strong>60&nbsp;FPS is a 16.7&nbsp;ms budget</strong> for the whole
+        window — every highway, the lyrics pane, headers, and the footer.
+        The bottleneck is almost never “too many triangles.” It is
+        <strong>GPU submissions</strong>: each time GL state changes
+        (texture, shader, blend, depth-write, scissor, viewport, quad vs
+        triangle), raylib’s <code>rlgl</code> must flush the vertex batch
+        and start a new draw call. A naive loop that fully drew each gem
+        (halo + body + edge + icon + label) would flush hundreds of times
+        per pane.
+      </p>
+      <p>
+        The note <strong>batch</strong> exists to stop that. Visible notes
+        are collected once into a <code>Hw3dNoteBatch</code>, then the same
+        array is walked in several cheap passes. Within a pass, gems share
+        one <code>rlBegin(RL_QUADS)</code> (or triangles) so four edge bars
+        and many gem faces land in a single submission instead of a
+        <code>DrawCube</code> per note. Technique icons go into a spritesheet
+        atlas and are drawn after 3D with one texture. Lane/camera caches
+        skip work when <code>song_timer</code> and the viewport have not
+        changed in a way that matters. Depth-write still has to toggle
+        between opaque gems and glass/ribbons — those flushes are
+        deliberate, not accidental — but they happen once per
+        <em>layer</em>, not once per gem.
+      </p>
+      <p>
+        That is why the full kitchen sink is hard. A
+        <strong>four-quarter</strong> layout is four independent 3D
+        viewports: four scissors, four projections, four depth clears, four
+        note batches, four 3D→2D restores, four SDF fret-label passes and
+        chord HUDs. Cost is roughly linear in pane count, and a dense chart
+        at long lookahead can fill all 512 slots in each cell. Put
+        <strong>lyrics</strong> (or <strong>Chords + Lyrics</strong>) in the
+        remaining slot — the “3 highways + lyrics” template, or
+        <strong>3D + Lyrics</strong> as an inline strip on a wide cell —
+        and you add a different tax on the same 16.7&nbsp;ms: the SDF font
+        shader, a <code>DrawTextEx</code> per syllable, karaoke bloom (the
+        active word is drawn five times, center plus four offsets), and
+        chord names drawn twice for weight. Every shader / 2D-vs-3D flip
+        breaks the batch the highways just built. Four quarter highways
+        alone already multiply the 3D path; four cells of highways
+        <em>plus</em> a chords-and-lyrics pane is the worst of both worlds,
+        which is why the 60&nbsp;FPS target is aimed at that layout, not
+        at a single full-window neck.
+      </p>
+
+      <h3 id="features-highway-psarc">Notes in PSARC / SNG</h3>
+      <p>
+        A <code>*_p.psarc</code> is a PlayStation-style archive: magic
+        <code>PSAR</code>, zlib block compression, a table of contents, and a
+        names block. Official DLC sets archive flag 4 and AES-encrypts the
+        TOC; CDLC usually does not. The reader decrypts when needed, inflates
+        each entry on demand, and never needs the XML toolkit files at
+        runtime.
+      </p>
+      <p>
+        Chart data lives in <code>songs/bin/…</code> as binary
+        <strong>SNG</strong> (not XML):
+      </p>
+      <ul>
+        <li><code>*lead*.sng</code>, <code>*rhythm*.sng</code>, <code>*bass*.sng</code></li>
+        <li><code>*vocals*.sng</code> for lyrics</li>
+      </ul>
+      <p>
+        An SNG file on disk is still encrypted. Header magic <code>0x4A</code>,
+        a 16-byte AES-CTR IV, then ciphertext with a platform key (PC for
+        <code>*_p.psarc</code>). After decrypt, a u32 uncompressed size and a
+        zlib stream unpack to the real chart blob: BPM, then one
+        <em>arrangement</em> per dynamic-difficulty tier, each with its own
+        notes and hand anchors, plus song sections (intro / verse / solo),
+        chord templates, and (for vocals) timed lyric syllables.
+      </p>
+      <p>
+        Playback uses the arrangement whose difficulty equals the SNG
+        metadata max — the fully authored chart, not a lower DD tier. Each
+        note row is a packed binary record. The fields the highway actually
+        stores:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Role on the highway</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>time</code> (seconds)</td>
+            <td>When the gem should hit; becomes Z via <code>−Δt · TS</code></td>
+          </tr>
+          <tr>
+            <td><code>string</code> (0 = low E)</td>
+            <td>Lane Y (after invert)</td>
+          </tr>
+          <tr>
+            <td><code>fret</code></td>
+            <td>Lane X (0 = open bar)</td>
+          </tr>
+          <tr>
+            <td><code>sustain</code></td>
+            <td>Ribbon length; gem parks at the hit line while held</td>
+          </tr>
+          <tr>
+            <td><code>note_mask</code></td>
+            <td>
+              Techniques: hopo, bend, slide, mute, harmonic, tap, unpitched
+              slide, …
+            </td>
+          </tr>
+          <tr>
+            <td><code>anchor_fret / width</code></td>
+            <td>Left-hand window; camera framing and open-string bar width</td>
+          </tr>
+          <tr>
+            <td><code>chord_id</code> + templates</td>
+            <td>Named chord frames / HUD; chords expand to per-string gems</td>
+          </tr>
+          <tr>
+            <td>bend times / steps</td>
+            <td>Ribbon shape while the note is held</td>
+          </tr>
+          <tr>
+            <td><code>slide_to</code> / unpitched</td>
+            <td>Trail destination fret</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Those rows are copied into a flat <code>NoteEvent[]</code>, sorted by
+        time then string. Chord SNG rows explode into one gem per sounding
+        string (a “spoke”). Songs longer than 10 minutes keep the full parsed
+        SNG in a compact cache and only expose a 3-minute window to the
+        highway — see <a href="#features-long-songs">long songs</a>. Audio is a
+        separate extract: first <code>*.ogg</code> if present, else the
+        largest <code>audio/*.wem</code>, decoded with vgmstream to a temp
+        WAV.
+      </p>
+
+      <h3 id="features-highway-threads">Load, audio, and raylib threads</h3>
+      <p>
+        Three threads touch a song. They never share OpenGL, and the audio
+        callback never waits on the renderer.
+      </p>
+      <figure class="hw-fig">
+        <svg viewBox="0 0 760 268" role="img" aria-labelledby="hw-th-title hw-th-desc">
+          <title id="features-hw-th-title">PSARC load, audio callback, and raylib main thread</title>
+          <desc id="features-hw-th-desc">
+            Load worker parses PSARC and SNG then sets an atomic done flag.
+            Main thread joins, opens the audio device, and each frame reads
+            published song time. The miniaudio callback pulls samples and
+            stores published_time_sec with atomics.
+          </desc>
+          <rect width="760" height="268" fill="#17171c"/>
+          <rect x="24" y="28" width="210" height="88" fill="#1e2430" stroke="#ffde44" stroke-width="1.5"/>
+          <text x="36" y="52" fill="#ffde44" font-size="13" font-family="ui-sans-serif,system-ui,sans-serif">1. Load worker</text>
+          <text x="36" y="74" fill="#e8eaed" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">open PSARC · decrypt SNG</text>
+          <text x="36" y="92" fill="#e8eaed" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">NoteEvent[] + temp audio</text>
+          <text x="36" y="110" fill="#9aa0a6" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">atomic: pick_load_done</text>
+
+          <rect x="275" y="28" width="210" height="88" fill="#1e2430" stroke="#ffde44" stroke-width="1.5"/>
+          <text x="287" y="52" fill="#ffde44" font-size="13" font-family="ui-sans-serif,system-ui,sans-serif">2. Raylib main</text>
+          <text x="287" y="74" fill="#e8eaed" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">poll flag · join worker</text>
+          <text x="287" y="92" fill="#e8eaed" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">open device · draw highway</text>
+          <text x="287" y="110" fill="#9aa0a6" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">owns Instrument[] + song_timer</text>
+
+          <rect x="526" y="28" width="210" height="88" fill="#1e2430" stroke="#ffde44" stroke-width="1.5"/>
+          <text x="538" y="52" fill="#ffde44" font-size="13" font-family="ui-sans-serif,system-ui,sans-serif">3. Audio callback</text>
+          <text x="538" y="74" fill="#e8eaed" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">miniaudio device thread</text>
+          <text x="538" y="92" fill="#e8eaed" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">pull OGG/WAV · stretch</text>
+          <text x="538" y="110" fill="#9aa0a6" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">atomic: published_time_sec</text>
+
+          <text x="88" y="148" fill="#9aa0a6" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">WEM decode (optional 4th worker) → temp WAV, then same audio path</text>
+
+          <rect x="24" y="168" width="712" height="76" fill="#14141a" stroke="#333"/>
+          <text x="36" y="192" fill="#e8eaed" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">Main → audio (atomics only, no lock): seek_target, speed, volume, pause/play flags</text>
+          <text x="36" y="214" fill="#e8eaed" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">Audio → main: published_time_sec = heard − stretch_latency · rate</text>
+          <text x="36" y="236" fill="#e8eaed" font-size="12" font-family="ui-sans-serif,system-ui,sans-serif">Main → GPU: highway_3d_draw(notes, song_timer) — notes are immutable after join</text>
+        </svg>
+        <figcaption>
+          The PSARC worker never talks to the audio device. Main joins the
+          parse, then starts playback. From then on the callback and the
+          renderer share only atomics.
+        </figcaption>
+      </figure>
+      <p>
+        Picking a song spawns <code>pick_load_thread</code>. That worker is
+        the only place that opens the PSARC, decrypts SNGs, and fills
+        <code>Instrument.notes</code>. The frame loop keeps rendering the
+        catalog (or a loading overlay) until
+        <code>pick_load_done</code> flips; then main <em>joins</em> the
+        worker (so the note arrays are visible) and
+        <code>music_reload</code> opens miniaudio on the <em>main</em>
+        thread. Device creation is not done on the loader — audio APIs want
+        the thread that owns the player.
+      </p>
+      <p>
+        After that, a dedicated <strong>device callback</strong> (miniaudio,
+        not raylib’s audio) runs at the hardware period (~1024 frames). It
+        pulls source samples, optionally time-stretches them, writes the
+        output buffer, and publishes a clock. Seek, speed, and volume from
+        the UI are atomic stores plus a pending flag; the callback consumes
+        them at the start of a period. No mutex, so a hitch in draw cannot
+        underrun the DAC. Long WEM tracks decode on a fourth worker; the
+        chart can start before the WAV exists, then the callback is swapped
+        in when decode finishes (see <a href="#features-threading">keeping the UI
+        smooth</a>).
+      </p>
+      <p>
+        On web this is the same C: pthreads become Workers on
+        <code>SharedArrayBuffer</code> (see <a href="#features-wasm">multithreaded
+        wasm</a>). The “raylib thread” is still the browser’s main thread
+        that owns WebGL.
+      </p>
+
+      <h3 id="features-highway-sync">How the chart locks to audio</h3>
+      <p>
+        The highway does not read the DAC clock every frame. Audio periods
+        are coarser than 60&nbsp;Hz and stretch adds latency, so a raw
+        sample-counter would make gems stutter. Instead main keeps a
+        <strong>chart clock</strong> that is <em>anchored</em> to audio and
+        <em>extrapolated</em> with wall time between samples.
+      </p>
+      <ol>
+        <li>
+          The callback tracks <code>heard</code> (how far the decoder has
+          read into the file). When stretch is active it subtracts
+          <code>(latency_samples · rate) / sample_rate</code> so the
+          published time is “what you are hearing now,” not “what was just
+          pulled into the stretcher.” At 1.0× stretch is bypassed and
+          latency is zero.
+        </li>
+        <li>
+          That value is stored in <code>published_time_sec</code> (relaxed
+          atomic). Main’s <code>play_audio_time_played()</code> is just an
+          atomic load.
+        </li>
+        <li>
+          On play / resume / seek, main snapshots
+          <code>(wall_now, audio_t)</code> as the anchor and sets
+          <code>song_timer = audio_t</code>.
+        </li>
+        <li>
+          Each playing frame:
+          <code>song_timer = audio_t + speed · (GetTime() − wall_anchor)</code>.
+          Gems move smoothly even if the callback has not run this frame.
+        </li>
+        <li>
+          About every <strong>75&nbsp;ms</strong>, or sooner if extrapolated
+          time drifts more than <strong>120&nbsp;ms</strong> from the
+          published clock (or the anchor is older than 100&nbsp;ms), main
+          re-reads the atomic and re-anchors. That corrects stretch,
+          OS scheduling, and speed changes without a visible snap.
+        </li>
+      </ol>
+      <p class="formula">
+        song_timer(t) = audio_anchor + speed · (wall(t) − wall_anchor)<br />
+        resample when |song_timer − published_time| &gt; 0.12 s
+      </p>
+      <p>
+        Seek writes a pending target into the callback; main holds
+        <code>song_timer</code> on the requested time for a short grace so
+        the highway does not jump to stale audio then back. If the published
+        clock stops advancing while the device still claims to be playing
+        (tab freeze, AudioContext stall), the chart clock
+        <strong>holds</strong> at the last audio time instead of running
+        ahead on wall time — that was the old “highway sawtooth” where gems
+        raced then snapped back every resample. Speed changes reset the
+        stretcher and re-anchor in the same frame so notes stay under the
+        hit line at 0.3× and at 3.0×.
+      </p>
+      <p>
+        The draw call is then just geometry:
+        <code>highway_3d_draw(inst, song_timer, pane)</code>. Same
+        <code>song_timer</code> drives lyrics, the seek bar, section loop,
+        and every instrument cell, so four highways cannot drift apart.
       </p>
 
       <h2 id="features-chords-lyrics">Chords + Lyrics</h2>
@@ -644,7 +1229,9 @@
         the frame loop polls — no blocking joins on the hot path. Speed, seek,
         and volume cross into the audio callback with atomics only, so the UI
         can't stall playback. The same model runs on web as the pthread pool
-        above.
+        above. How those three threads hand a song to the 3D highway (PSARC
+        parse → device callback → chart clock) is under
+        <a href="#features-highway-threads">3D highway</a>.
       </p>
 
       <h2 id="features-size">What ships</h2>
