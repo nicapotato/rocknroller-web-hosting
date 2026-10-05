@@ -1,92 +1,5 @@
 /* Combined /manual/ page + print stylesheet for the offline PDF. */
 
-.page--manual h2 {
-  margin-top: 2.5rem;
-  color: var(--rnr-yellow);
-  scroll-margin-top: 1.25rem;
-}
-
-.page--manual h3 {
-  margin-top: 1.5rem;
-  font-size: 1rem;
-  color: #e8eaed;
-}
-
-.page--manual .toc {
-  columns: 2;
-  column-gap: 2rem;
-  padding-left: 1.2rem;
-  margin: 0.5rem 0 1.5rem;
-  font-size: 0.9rem;
-}
-
-.page--manual .toc li {
-  margin: 0.2rem 0;
-}
-
-.page--manual .toc ol {
-  columns: 1;
-  margin: 0.15rem 0 0.35rem;
-  padding-left: 1.1rem;
-  font-size: 0.92em;
-}
-
-@media (max-width: 560px) {
-  .page--manual .toc {
-    columns: 1;
-  }
-}
-
-.page--manual table.specs {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.85rem;
-  margin: 0.75rem 0 1rem;
-}
-
-.page--manual table.specs th,
-.page--manual table.specs td {
-  border: 1px solid #333;
-  padding: 0.45rem 0.65rem;
-  text-align: left;
-  vertical-align: top;
-}
-
-.page--manual table.specs th {
-  background: #17171c;
-  color: var(--rnr-yellow);
-  font-weight: 600;
-}
-
-.page--manual table.specs td.k {
-  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
-  white-space: nowrap;
-  color: var(--rnr-yellow);
-  width: 11rem;
-}
-
-.page--manual code {
-  background: #17171c;
-  padding: 0.1rem 0.3rem;
-  border-radius: 3px;
-  font-size: 0.9em;
-}
-
-.page--manual .cheat {
-  margin: 1rem 0 1.5rem;
-  padding: 0.9rem 1rem;
-  border: 1px solid #333;
-  background: #17171c;
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.page--manual .cheat kbd,
-.page--manual kbd {
-  font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
-  color: var(--rnr-yellow);
-}
-
 .manual-lede {
   margin: 0 0 0.75rem;
 }
@@ -109,6 +22,10 @@
     --rnr-yellow: #8a6d00;
     --rnr-ink: #0d0d0d;
     --rnr-border: 3px solid #0d0d0d;
+    --pixel-shadow: #0d0d0d;
+    --pixel-line: #0d0d0d;
+    --pixel-border: 2px solid #0d0d0d;
+    --surface: #f4f4f0;
   }
 
   html,
@@ -138,7 +55,7 @@
   .page {
     max-width: none;
     margin: 0;
-    padding: 0;
+    padding: 0 3px 0 0;
   }
 
   .page__logo {
@@ -146,61 +63,108 @@
     margin-bottom: 0.6rem;
   }
 
-  .page--manual h2,
-  .page--manual h3,
-  .page--manual h1 {
+  h1:not(.page__title) {
+    color: #0d0d0d;
+    text-shadow: 3px 3px 0 #ffde44;
+  }
+
+  h2 {
+    color: #0d0d0d;
+    --h2-bar-top: #ffde44;
+    --h2-bar-bottom: #0d0d0d;
+  }
+
+  h3 {
     color: #0d0d0d;
   }
 
-  .page--manual h2 {
-    border-bottom: 3px solid #ffde44;
-    padding-bottom: 0.2rem;
+  h3::before {
+    background: #e53935;
+    box-shadow: 2px 2px 0 0 #0d0d0d;
   }
 
   a {
     color: #0b57d0;
   }
 
-  .page--manual table.specs th,
-  .page--manual table.specs td,
-  .page--manual .cheat,
-  .page--manual code,
-  .page--manual pre.codeblock,
-  .page--manual p.formula,
-  .page--manual figure.hw-fig {
-    background: #f4f4f0;
-    color: #121212;
-    border-color: #ccc;
+  table.specs,
+  table.versions,
+  .toc,
+  .cheat,
+  pre.codeblock,
+  figure.hw-fig {
+    box-shadow: 2px 2px 0 0 #0d0d0d;
   }
 
-  .page--manual figure.hw-fig figcaption {
+  p.formula,
+  li.formula {
+    color: #121212;
+    border-left-color: #ffde44;
+    box-shadow: 2px 2px 0 0 #0d0d0d;
+  }
+
+  .cheat {
+    border-color: #0d0d0d;
+  }
+
+  table.specs td,
+  table.versions td,
+  .cheat,
+  code,
+  pre.codeblock,
+  figure.hw-fig {
+    color: #121212;
+  }
+
+  table.specs tbody tr:nth-child(even) td,
+  table.versions tbody tr:nth-child(even) td {
+    background: #fafaf6;
+  }
+
+  code {
+    box-shadow: inset 0 -2px 0 0 #ccc;
+  }
+
+  figure.hw-fig figcaption {
     color: #444;
   }
 
-  figure.hw-fig {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .page--manual table.specs th {
+  table.specs th,
+  table.versions th {
     background: #ffde44;
     color: #0d0d0d;
   }
 
-  .page--manual table.specs td.k,
-  .page--manual .cheat kbd,
-  .page--manual kbd {
+  table.specs td.k,
+  kbd {
     color: #6b5400;
+  }
+
+  kbd {
+    background: #fff8cc;
+    border-color: #0d0d0d;
+    box-shadow: 2px 2px 0 0 #0d0d0d;
+  }
+
+  .toc li::marker {
+    color: #e53935;
   }
 
   .print-link {
     display: block;
-    margin: 0.75rem 0 1.25rem;
+    margin: 0.75rem 3px 1.25rem 0;
     padding: 0.7rem 0.85rem;
-    border: 3px solid #0d0d0d;
+    font-size: 16px;
+    border: 2px solid #0d0d0d;
     background: #fff8cc;
     color: #0d0d0d;
     text-decoration: none;
+    box-shadow: 3px 3px 0 0 #0d0d0d;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  figure.hw-fig {
     break-inside: avoid;
     page-break-inside: avoid;
   }

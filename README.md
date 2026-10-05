@@ -61,6 +61,12 @@ that up when pages here are deployed.
     make serve   # http://127.0.0.1:8098 (port is allow-listed in bucket CORS)
     make pdf     # rebuild /manual/ and print rocknroller-manual.pdf (Chrome headless)
 
+## Fonts
+
+- Headings / nav / table headers: **m6x11** by Daniel Linssen
+  (`assets/fonts/m6x11.ttf`, self-hosted so the PDF print embeds it).
+- Logo title + buttons: **Press Start 2P** (Google Fonts).
+
 ## DNS
 
 `CNAME` file targets `rocknroller.nicapotato.com`; the DNS record is a CNAME
