@@ -159,7 +159,8 @@
         Same raylib GUI on both platforms; the neural-net worker is what
         changes. Default model is Demucs <code>htdemucs_6s</code> (the six
         stems above). Input can be MP3, WAV, OGG, FLAC, M4A, or a Rocksmith
-        <code>*_p.psarc</code> (it extracts the chart’s audio first).
+        <code>*_p.psarc</code> / <code>*_m.psarc</code> (it extracts the
+        chart’s audio first; Mac audio lives under <code>audio/mac</code>).
       </p>
       <table class="specs">
         <thead>
@@ -213,7 +214,7 @@
       <ol>
         <li>
           In Demucs MLX, add an MP3/WAV <em>or</em> a Rocksmith
-          <code>*_p.psarc</code>.
+          <code>*_p.psarc</code> or <code>*_m.psarc</code>.
         </li>
         <li>
           Pick an <strong>output folder</strong> — this becomes your Rock N
@@ -247,7 +248,10 @@
       <p>
         Folder name must match the PSARC basename exactly. If the chart is
         <code>Foo_p.psarc</code>, the six files have to live in
-        <code>Foo_p/</code>, not <code>Foo/</code> or a renamed folder.
+        <code>Foo_p/</code>, not <code>Foo/</code> or a renamed folder. A Mac
+        archive <code>Foo_m.psarc</code> writes <code>Foo_m/</code> the same
+        way, so a PC copy and a Mac copy of one song keep separate stem
+        folders.
       </p>
 
       <h2 id="mixer">Mixer in Rock N Roller</h2>

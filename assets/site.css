@@ -75,6 +75,9 @@ body {
 
 .page__nav a[aria-current="page"] {
   font-weight: 700;
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border: 2px solid var(--rnr-yellow);
 }
 
 .page__nav a:hover {

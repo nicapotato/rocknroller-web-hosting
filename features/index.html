@@ -290,6 +290,15 @@
             <td><code>stems="true|false"</code></td>
             <td>Songs with all six external stem MP3s indexed</td>
           </tr>
+          <tr>
+            <td><code>psarc="m|p"</code></td>
+            <td>
+              Mac (<code>*_m.psarc</code>) or PC (<code>*_p.psarc</code>).
+              <code>psarc="m"</code> is Mac only. A file is only one platform,
+              so <code>psarc="p|m"</code> and <code>psarc="p,m"</code> both
+              show either.
+            </td>
+          </tr>
         </tbody>
       </table>
       <p>
@@ -312,6 +321,10 @@
         <li>
           <code>official="false" stairway</code> — CDLC only, plus free-text
           “stairway”
+        </li>
+        <li>
+          <code>psarc="m"</code> — Mac archives only. <code>psarc="p,m"</code>
+          or <code>psarc="p|m"</code> — PC and Mac
         </li>
       </ul>
       <p>
@@ -822,12 +835,13 @@
 
       <h3 id="highway-psarc">Notes in PSARC / SNG</h3>
       <p>
-        A <code>*_p.psarc</code> is a PlayStation-style archive: magic
-        <code>PSAR</code>, zlib block compression, a table of contents, and a
-        names block. Official DLC sets archive flag 4 and AES-encrypts the
-        TOC; CDLC usually does not. The reader decrypts when needed, inflates
-        each entry on demand, and never needs the XML toolkit files at
-        runtime.
+        A <code>*_p.psarc</code> (PC) or <code>*_m.psarc</code> (Mac) is a
+        PlayStation-style archive: magic <code>PSAR</code>, zlib block
+        compression, a table of contents, and a names block. Official DLC sets
+        archive flag 4 and AES-encrypts the TOC with the same key on both
+        platforms; CDLC usually does not. The reader decrypts when needed,
+        inflates each entry on demand, and never needs the XML toolkit files
+        at runtime. Either file plays on macOS or Windows.
       </p>
       <p>
         Chart data lives in <code>songs/bin/…</code> as binary
@@ -839,9 +853,14 @@
       </ul>
       <p>
         An SNG file on disk is still encrypted. Header magic <code>0x4A</code>,
-        a 16-byte AES-CTR IV, then ciphertext with a platform key (PC for
-        <code>*_p.psarc</code>). After decrypt, a u32 uncompressed size and a
-        zlib stream unpack to the real chart blob: BPM, then one
+        a 16-byte AES-CTR IV, then ciphertext with a platform key: PC for
+        <code>*_p.psarc</code> (charts under <code>songs/bin/generic</code>),
+        Mac for <code>*_m.psarc</code> (charts under
+        <code>songs/bin/macos</code>). Audio follows the same split
+        (<code>audio/windows</code> vs <code>audio/mac</code>). If the same
+        song exists as both files, the catalog lists both and tags only the
+        Mac row with <strong>M</strong>. After decrypt, a u32 uncompressed
+        size and a zlib stream unpack to the real chart blob: BPM, then one
         <em>arrangement</em> per dynamic-difficulty tier, each with its own
         notes and hand anchors, plus song sections (intro / verse / solo),
         chord templates, and (for vocals) timed lyric syllables.

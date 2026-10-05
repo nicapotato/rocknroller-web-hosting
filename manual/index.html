@@ -57,8 +57,10 @@
 <h1>About</h1>
 <p>
         A freeware guitar-practice app that plays Rocksmith-format
-        <code>.psarc</code> charts from your own computer — your personal library
-        stays on disk; the app never uploads it. Built around freeware CDLC from
+        <code>.psarc</code> charts from your own computer — PC
+        <code>*_p.psarc</code> and Mac <code>*_m.psarc</code>, on either
+        operating system. Your personal library stays on disk; the app never
+        uploads it. Built around freeware CDLC from
         the
         <a href="https://customsforge.com" rel="noopener">CustomsForge</a>
         community. Grant a local folder of your own CDLC to play. Optional curated
@@ -399,6 +401,15 @@
             <td><code>stems="true|false"</code></td>
             <td>Songs with all six external stem MP3s indexed</td>
           </tr>
+          <tr>
+            <td><code>psarc="m|p"</code></td>
+            <td>
+              Mac (<code>*_m.psarc</code>) or PC (<code>*_p.psarc</code>).
+              <code>psarc="m"</code> is Mac only. A file is only one platform,
+              so <code>psarc="p|m"</code> and <code>psarc="p,m"</code> both
+              show either.
+            </td>
+          </tr>
         </tbody>
       </table>
       <p>
@@ -421,6 +432,10 @@
         <li>
           <code>official="false" stairway</code> — CDLC only, plus free-text
           “stairway”
+        </li>
+        <li>
+          <code>psarc="m"</code> — Mac archives only. <code>psarc="p,m"</code>
+          or <code>psarc="p|m"</code> — PC and Mac
         </li>
       </ul>
       <p>
@@ -931,12 +946,13 @@
 
       <h3 id="features-highway-psarc">Notes in PSARC / SNG</h3>
       <p>
-        A <code>*_p.psarc</code> is a PlayStation-style archive: magic
-        <code>PSAR</code>, zlib block compression, a table of contents, and a
-        names block. Official DLC sets archive flag 4 and AES-encrypts the
-        TOC; CDLC usually does not. The reader decrypts when needed, inflates
-        each entry on demand, and never needs the XML toolkit files at
-        runtime.
+        A <code>*_p.psarc</code> (PC) or <code>*_m.psarc</code> (Mac) is a
+        PlayStation-style archive: magic <code>PSAR</code>, zlib block
+        compression, a table of contents, and a names block. Official DLC sets
+        archive flag 4 and AES-encrypts the TOC with the same key on both
+        platforms; CDLC usually does not. The reader decrypts when needed,
+        inflates each entry on demand, and never needs the XML toolkit files
+        at runtime. Either file plays on macOS or Windows.
       </p>
       <p>
         Chart data lives in <code>songs/bin/…</code> as binary
@@ -948,9 +964,14 @@
       </ul>
       <p>
         An SNG file on disk is still encrypted. Header magic <code>0x4A</code>,
-        a 16-byte AES-CTR IV, then ciphertext with a platform key (PC for
-        <code>*_p.psarc</code>). After decrypt, a u32 uncompressed size and a
-        zlib stream unpack to the real chart blob: BPM, then one
+        a 16-byte AES-CTR IV, then ciphertext with a platform key: PC for
+        <code>*_p.psarc</code> (charts under <code>songs/bin/generic</code>),
+        Mac for <code>*_m.psarc</code> (charts under
+        <code>songs/bin/macos</code>). Audio follows the same split
+        (<code>audio/windows</code> vs <code>audio/mac</code>). If the same
+        song exists as both files, the catalog lists both and tags only the
+        Mac row with <strong>M</strong>. After decrypt, a u32 uncompressed
+        size and a zlib stream unpack to the real chart blob: BPM, then one
         <em>arrangement</em> per dynamic-difficulty tier, each with its own
         notes and hand anchors, plus song sections (intro / verse / solo),
         chord templates, and (for vocals) timed lyric syllables.
@@ -1317,7 +1338,8 @@
         Same raylib GUI on both platforms; the neural-net worker is what
         changes. Default model is Demucs <code>htdemucs_6s</code> (the six
         stems above). Input can be MP3, WAV, OGG, FLAC, M4A, or a Rocksmith
-        <code>*_p.psarc</code> (it extracts the chart’s audio first).
+        <code>*_p.psarc</code> / <code>*_m.psarc</code> (it extracts the
+        chart’s audio first; Mac audio lives under <code>audio/mac</code>).
       </p>
       <table class="specs">
         <thead>
@@ -1371,7 +1393,7 @@
       <ol>
         <li>
           In Demucs MLX, add an MP3/WAV <em>or</em> a Rocksmith
-          <code>*_p.psarc</code>.
+          <code>*_p.psarc</code> or <code>*_m.psarc</code>.
         </li>
         <li>
           Pick an <strong>output folder</strong> — this becomes your Rock N
@@ -1405,7 +1427,10 @@
       <p>
         Folder name must match the PSARC basename exactly. If the chart is
         <code>Foo_p.psarc</code>, the six files have to live in
-        <code>Foo_p/</code>, not <code>Foo/</code> or a renamed folder.
+        <code>Foo_p/</code>, not <code>Foo/</code> or a renamed folder. A Mac
+        archive <code>Foo_m.psarc</code> writes <code>Foo_m/</code> the same
+        way, so a PC copy and a Mac copy of one song keep separate stem
+        folders.
       </p>
 
       <h2 id="stems-mixer">Mixer in Rock N Roller</h2>
@@ -1786,8 +1811,13 @@
           <tr>
             <td>Add PSARC folder</td>
             <td>
-              Pick a folder of <code>*_p.psarc</code> files. On the web this
-              uses Chromium’s folder picker (read-only).
+              Pick a folder of <code>*_p.psarc</code> (PC) or
+              <code>*_m.psarc</code> (Mac) files. Both play on any computer.
+              If the same song exists as both, the catalog shows two rows and
+              tags the Mac one with <strong>M</strong>. Stems stay in
+              <code>{psarc_basename}/</code>, so <code>Foo_m/</code> and
+              <code>Foo_p/</code> do not share a folder. On the web this uses
+              Chromium’s folder picker (read-only).
             </td>
           </tr>
           <tr>

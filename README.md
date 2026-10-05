@@ -27,7 +27,8 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 
 `?demo=songs` or `?demo=stems` (case-insensitive) makes `player.js` fetch
 `apps/released/rocknroller/demos/catalog.json` and the listed `*_p.psarc`
-files. `?demo=stems` also downloads the 6-stem MP3 trees under
+files. The curated demos stay PC archives; user libraries also accept
+`*_m.psarc`. `?demo=stems` also downloads the 6-stem MP3 trees under
 `demos/stems/{psarc_basename}/` into MEMFS at `/weblib/DemoStems/` (additive
 stems root — coexists with any user-picked stems folders) before the PSARCs
 are granted. Any other `?demo=` value fails loudly. Without the flag, no demo
