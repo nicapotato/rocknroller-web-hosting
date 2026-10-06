@@ -26,20 +26,36 @@
   gap: 0.05em;
   margin: 0 0 1rem;
   line-height: 1;
-  padding: 0.55em 0;
+  padding: 0.85em 0 0.4em;
+  background: #0b0b0f;
+  isolation: isolate;
 }
+/* Split red/gold via a clipped overlay — not background-clip:text.
+ * WebKit leaves white flashes when a clipped-text fill is translated. */
 .loading-wave span {
   display: inline-block;
+  position: relative;
   font-family: "Press Start 2P", monospace;
   font-size: clamp(1.4rem, 5.6vw, 2.3rem);
   letter-spacing: 0.04em;
-  background: linear-gradient(to bottom, var(--wave-top) 0 50%, var(--wave-bottom) 50% 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  -webkit-font-smoothing: none;
+  color: var(--wave-bottom);
+  -webkit-text-fill-color: var(--wave-bottom);
+  -webkit-font-smoothing: antialiased;
   animation: waveBounce 1.15s ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.loading-wave span::before {
+  content: attr(data-ch);
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  color: var(--wave-top);
+  -webkit-text-fill-color: var(--wave-top);
+  pointer-events: none;
 }
 .loading-wave span:nth-child(1) { animation-delay: 0s; }
 .loading-wave span:nth-child(2) { animation-delay: 0.07s; }
@@ -53,9 +69,9 @@
 .loading-wave span:nth-child(10) { animation-delay: 0.63s; }
 .loading-wave span:nth-child(11) { animation-delay: 0.7s; }
 @keyframes waveBounce {
-  0%, 100% { transform: translateY(0); }
-  35% { transform: translateY(-0.55em); }
-  55% { transform: translateY(0); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  35% { transform: translate3d(0, -0.55em, 0); }
+  55% { transform: translate3d(0, 0, 0); }
 }
 #loading-progress {
   font-family: "Press Start 2P", monospace;

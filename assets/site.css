@@ -470,6 +470,40 @@ table.versions td.na {
   color: #555;
 }
 
+table.versions .versions-skel-row td {
+  height: 2.6rem;
+  vertical-align: middle;
+}
+
+table.versions .versions-skel {
+  display: block;
+  height: 12px;
+  background: #6a6a76;
+  box-shadow: 2px 2px 0 0 #3a3a44;
+}
+
+table.versions .versions-skel--v {
+  width: 5.5rem;
+}
+
+table.versions .versions-skel--d {
+  width: 6.2rem;
+}
+
+table.versions .versions-skel--a {
+  width: 3.4rem;
+}
+
+table.versions .versions-skel--sha {
+  width: 7.5rem;
+  height: 8px;
+  margin-top: 0.4rem;
+}
+
+table.versions .versions-skel-row:nth-child(even) .pixel-skeleton {
+  animation-delay: 0.5s;
+}
+
 .versions-wrap {
   margin-top: 1rem;
 }

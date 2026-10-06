@@ -1052,7 +1052,9 @@
       <h3 id="features-highway-threads">Load, audio, and raylib threads</h3>
       <p>
         Three threads touch a song. They never share OpenGL, and the audio
-        callback never waits on the renderer.
+        callback never waits on the renderer. That split is why
+        <a href="#features-threading">Esc back to the catalog</a> can keep the mix
+        playing while you browse Library / Albums / Artists / Settings.
       </p>
       <figure class="hw-fig">
         <svg viewBox="0 0 760 268" role="img" aria-labelledby="hw-th-title hw-th-desc">
@@ -1260,6 +1262,25 @@
         above. How those three threads hand a song to the 3D highway (PSARC
         parse → device callback → chart clock) is under
         <a href="#features-highway-threads">3D highway</a>.
+      </p>
+      <p>
+        The callback is also why you can leave a chart and keep hearing it.
+        <strong>Esc</strong> (or the catalog control) only drops the 3D
+        chrome — the play session stays live, the catalog footer still seeks /
+        pauses / changes speed, and you can switch
+        <strong>Library</strong>, <strong>Albums</strong>,
+        <strong>Artists</strong>, and <strong>Settings</strong> without pausing
+        the DAC. Search, album cards, and settings are raylib-thread work;
+        they never wait on audio.
+      </p>
+      <p>
+        Picking a different song spawns <code>pick_load_thread</code> for the
+        PSARC / SNG parse. Until that worker flips
+        <code>pick_load_done</code> and main calls
+        <code>music_reload</code>, the previous mix keeps playing. Long WEM
+        tracks then decode on a fourth worker
+        (<strong>DECODING AUDIO…</strong>) so a forty-minute chart does not
+        hitch the catalog at 60&nbsp;FPS.
       </p>
 
       <h2 id="features-size">What ships</h2>

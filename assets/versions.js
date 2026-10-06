@@ -11,11 +11,18 @@
 
   var BASE = "https://prod-nicapotato-public-software.s3.eu-west-2.amazonaws.com";
   var tbody = document.getElementById("versionsBody");
+  var table = document.getElementById("versionsTable");
   var errEl = document.getElementById("versionsError");
   var wrap = document.getElementById("versionsWrap");
   var shaToggle = document.getElementById("versionsShaToggle");
 
+  function setBusy(busy) {
+    if (table) table.setAttribute("aria-busy", busy ? "true" : "false");
+  }
+
   function fail(msg) {
+    if (tbody) tbody.innerHTML = "";
+    setBusy(false);
     errEl.textContent = "ERROR: " + msg;
     errEl.hidden = false;
     throw new Error(msg);
@@ -101,6 +108,7 @@
     );
   }
 
+  if (!tbody) fail("versions page missing table body");
   if (!wrap || !shaToggle) fail("versions page missing Toggle SHA Key controls");
 
   shaToggle.addEventListener("click", function () {
@@ -108,31 +116,37 @@
     shaToggle.setAttribute("aria-pressed", expanded ? "true" : "false");
   });
 
-  getJSON(BASE + "/apps/released/catalog.json").then(function (doc) {
-    var versions = ((doc.apps || {}).rocknroller || {}).versions || {};
-    var keys = Object.keys(versions);
-    keys.sort(compareVersionKeysDesc);
-    if (!keys.length) fail("no published versions found in apps catalog");
+  getJSON(BASE + "/apps/released/catalog.json")
+    .then(function (doc) {
+      var versions = ((doc.apps || {}).rocknroller || {}).versions || {};
+      var keys = Object.keys(versions);
+      keys.sort(compareVersionKeysDesc);
+      if (!keys.length) fail("no published versions found in apps catalog");
 
-    var rows = keys.map(function (v) {
-      var entry = versions[v] || {};
-      var released = (entry.released_at || "").slice(0, 10);
-      var p = entry.platforms || {};
+      var rows = keys.map(function (v) {
+        var entry = versions[v] || {};
+        var released = (entry.released_at || "").slice(0, 10);
+        var p = entry.platforms || {};
 
-      return (
-        "<tr><td>" +
-        v +
-        "</td><td>" +
-        (released || "—") +
-        "</td>" +
-        playCell(v, p.wasm) +
-        zipCell(p.macos_arm64 || p.macos) +
-        zipCell(p.macos_x86_64) +
-        zipCell(p.windows_x86_64 || p.windows) +
-        "</tr>"
-      );
+        return (
+          "<tr><td>" +
+          v +
+          "</td><td>" +
+          (released || "—") +
+          "</td>" +
+          playCell(v, p.wasm) +
+          zipCell(p.macos_arm64 || p.macos) +
+          zipCell(p.macos_x86_64) +
+          zipCell(p.windows_x86_64 || p.windows) +
+          "</tr>"
+        );
+      });
+
+      tbody.innerHTML = rows.join("");
+      setBusy(false);
+    })
+    .catch(function (err) {
+      if (errEl && !errEl.hidden) return;
+      fail(err && err.message ? err.message : String(err));
     });
-
-    tbody.innerHTML = rows.join("");
-  });
 })();

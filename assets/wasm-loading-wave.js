@@ -5,7 +5,9 @@
     var word = "DOWNLOADING";
     for (var i = 0; i < word.length; i++) {
       var s = document.createElement("span");
-      s.textContent = word.charAt(i);
+      var ch = word.charAt(i);
+      s.setAttribute("data-ch", ch);
+      s.textContent = ch;
       wave.appendChild(s);
     }
   }
