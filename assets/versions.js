@@ -2,8 +2,7 @@
  * entry): wasm (browser play) + desktop zips (macOS arm64/x86_64, Windows).
  * Browser play links use path style (/0.1.35/, /latest/); desktop zips
  * download straight from S3. Fails loudly if the catalog cannot be fetched.
- * Narrow screens: one table-level "Toggle SHA Key" expands/collapses all
- * SHA-256 values (truncated by default). Wide screens show full hashes.
+ * "Toggle SHA Key" expands/collapses every SHA-256 (truncated by default).
  * Zip cells show size like the stuff catalog ("zip · 5.2 MB").
  */
 (function () {

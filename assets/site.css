@@ -145,10 +145,6 @@ body {
   padding: 1.5rem 1.25rem 3rem;
 }
 
-.page--versions {
-  max-width: 1200px;
-}
-
 .versions-scroll {
   width: 100%;
   overflow-x: auto;
@@ -504,18 +500,25 @@ table.versions .versions-skel-row:nth-child(even) .pixel-skeleton {
   animation-delay: 0.5s;
 }
 
-.versions-wrap {
-  margin-top: 1rem;
+.versions-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+  margin: 0 0 1rem;
 }
 
-.versions-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin: 0 0 0.6rem;
+.versions-head h1 {
+  margin: 0;
+}
+
+.versions-wrap {
+  margin-top: 0;
 }
 
 .versions-sha-toggle {
-  margin: 0;
+  margin: 0 0 0 auto;
   padding: 4px 10px 6px;
   border: 2px solid #444;
   background: var(--surface);
@@ -577,38 +580,21 @@ table.versions .sha-full {
   padding: 0;
 }
 
-/* Narrow / medium: truncated by default; one table Toggle SHA Key expands all. */
-@media (max-width: 1199.98px) {
-  .versions-wrap:not(.sha-expanded) table.versions .js-sha-full {
-    display: block;
-    max-width: 9ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    word-break: normal;
-  }
-
-  .versions-wrap.sha-expanded table.versions .js-sha-full {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    white-space: normal;
-    word-break: break-all;
-    overflow: visible;
-  }
+/* Truncated by default; Toggle SHA Key expands every hash in the table. */
+.versions-wrap:not(.sha-expanded) table.versions .js-sha-full {
+  display: block;
+  max-width: 9ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: normal;
 }
 
-/* Wide: always show full hash; no toggle needed. */
-@media (min-width: 1200px) {
-  .versions-toolbar {
-    display: none;
-  }
-
-  table.versions .js-sha-full {
-    display: block !important;
-    max-width: none;
-    white-space: normal;
-    word-break: break-all;
-    overflow: visible;
-  }
+.versions-wrap.sha-expanded table.versions .js-sha-full {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  white-space: normal;
+  word-break: break-all;
+  overflow: visible;
 }

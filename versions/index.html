@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Versions — Rock N Roller</title>
-    <link rel="icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,8 +14,16 @@
     <link rel="stylesheet" href="/assets/site.css" />
   </head>
   <body>
-    <main class="page page--versions">
-      <h1 class="page__title">Versions</h1>
+    <main class="page">
+      <h1 class="page__title">
+        <img
+          class="page__logo"
+          src="/rocknroller-logo.png"
+          alt="Rock N Roller"
+          width="810"
+          height="160"
+        />
+      </h1>
       <nav class="page__nav">
         <a href="/latest/">Play</a>
         <a href="/">About</a>
@@ -27,18 +34,20 @@
         <a href="/versions/" aria-current="page">Versions</a>
       </nav>
 
+      <div class="versions-head">
+        <h1>Versions</h1>
+        <button
+          type="button"
+          id="versionsShaToggle"
+          class="versions-sha-toggle"
+          aria-pressed="false"
+        >
+          Toggle SHA Key
+        </button>
+      </div>
+
       <div id="versionsError" class="fineprint" hidden></div>
       <div id="versionsWrap" class="versions-wrap">
-        <div class="versions-toolbar">
-          <button
-            type="button"
-            id="versionsShaToggle"
-            class="versions-sha-toggle"
-            aria-pressed="false"
-          >
-            Toggle SHA Key
-          </button>
-        </div>
         <div class="versions-scroll">
           <table class="versions" id="versionsTable" aria-busy="true">
             <thead>
