@@ -36,14 +36,63 @@
 
       <div class="versions-head">
         <h1>Versions</h1>
-        <button
-          type="button"
-          id="versionsShaToggle"
-          class="versions-sha-toggle"
-          aria-pressed="false"
-        >
-          Toggle SHA Key
-        </button>
+        <div class="versions-head__actions">
+          <button
+            type="button"
+            id="versionsGraphToggle"
+            class="versions-sha-toggle"
+            aria-pressed="false"
+            aria-expanded="false"
+            aria-controls="versionsGraph"
+            title="Versions over time"
+          >
+            Graph
+          </button>
+          <button
+            type="button"
+            id="versionsShaToggle"
+            class="versions-sha-toggle"
+            aria-pressed="false"
+          >
+            Toggle SHA Key
+          </button>
+        </div>
+      </div>
+
+      <div id="versionsGraph" class="versions-graph" hidden>
+        <div class="versions-graph__bar">
+          <p class="versions-graph__legend">
+            <span class="versions-graph__swatch versions-graph__swatch--release"></span>Release
+            <span class="versions-graph__swatch versions-graph__swatch--dev"></span>Dev
+          </p>
+          <div class="versions-graph__modes" role="group" aria-label="Graph view">
+            <button
+              type="button"
+              id="versionsGraphDetail"
+              class="versions-sha-toggle"
+              aria-pressed="true"
+            >
+              Detail
+            </button>
+            <button
+              type="button"
+              id="versionsGraphMonth"
+              class="versions-sha-toggle"
+              aria-pressed="false"
+            >
+              By month
+            </button>
+          </div>
+        </div>
+        <div class="versions-graph__canvas-wrap">
+          <canvas
+            id="versionsGraphCanvas"
+            width="800"
+            height="300"
+            aria-label="Rock N Roller versions over time"
+          ></canvas>
+          <div id="versionsGraphTooltip" class="versions-graph__tooltip" hidden></div>
+        </div>
       </div>
 
       <div id="versionsError" class="fineprint" hidden></div>

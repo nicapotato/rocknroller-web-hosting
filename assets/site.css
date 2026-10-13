@@ -513,12 +513,104 @@ table.versions .versions-skel-row:nth-child(even) .pixel-skeleton {
   margin: 0;
 }
 
+.versions-head__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
 .versions-wrap {
   margin-top: 0;
 }
 
+.versions-graph {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 2px solid var(--pixel-line);
+  box-shadow: var(--shadow-lg);
+}
+
+.versions-graph__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.65rem;
+}
+
+.versions-graph__legend {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  -webkit-font-smoothing: none;
+  color: #e8eaed;
+}
+
+.versions-graph__swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  vertical-align: -1px;
+  background: var(--rnr-yellow);
+  box-shadow: 2px 2px 0 0 var(--rnr-ink);
+}
+
+.versions-graph__swatch--dev {
+  margin-left: 0.9rem;
+  background: var(--rnr-red);
+}
+
+.versions-graph__modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.versions-graph__modes .versions-sha-toggle[aria-pressed="true"] {
+  background: var(--rnr-yellow);
+  color: var(--rnr-ink);
+  border-color: var(--rnr-ink);
+}
+
+.versions-graph__canvas-wrap {
+  position: relative;
+  background: var(--rnr-ink);
+  border: 2px solid var(--pixel-line);
+}
+
+.versions-graph__canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 300px;
+}
+
+.versions-graph__tooltip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  padding: 6px 8px;
+  background: var(--rnr-ink);
+  color: var(--rnr-yellow);
+  border: 2px solid var(--rnr-yellow);
+  box-shadow: 3px 3px 0 0 var(--rnr-red);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  -webkit-font-smoothing: none;
+  white-space: nowrap;
+}
+
 .versions-sha-toggle {
-  margin: 0 0 0 auto;
+  margin: 0;
   padding: 4px 10px 6px;
   border: 2px solid #444;
   background: var(--surface);
