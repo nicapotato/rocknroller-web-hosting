@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Changelog — Rock N Roller</title>
+    <meta
+      name="description"
+      content="Rock N Roller library folder: use a Rocksmith 2014 install, or any folder with dlc/ and stems/."
+    />
+    <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/site.css" />
+  </head>
+  <body>
+    <main class="page">
+      <h1 class="page__title">
+        <img
+          class="page__logo"
+          src="/rocknroller-logo.png"
+          alt="Rock N Roller"
+          width="810"
+          height="160"
+        />
+      </h1>
+      <nav class="page__nav">
+        <a href="/latest/">Play</a>
+        <a href="/">About</a>
+        <a href="/features/">Features</a>
+        <a href="/demucs-stems/">Stems</a>
+        <a href="/keybinds/">Keybinds</a>
+        <a href="/configurations/">Settings</a>
+        <a href="/changelog/" aria-current="page">Changelog</a>
+        <a href="/versions/">Versions</a>
+      </nav>
+
+      <h1>Changelog</h1>
+      <p>
+        What changed in the library on disk — one folder, a recursive
+        <code>dlc/</code> scan, and stems that live next to the charts.
+        These folder rules ship in <strong>0.2.0</strong>.
+      </p>
+
+      <ol class="toc">
+        <li><a href="#0.2.0">0.2.0 — One library folder</a></li>
+        <li><a href="#web-folders">Web player folders</a></li>
+        <li><a href="#sync-feedback">Sync and loading feedback</a></li>
+      </ol>
+
+      <h2 id="0.2.0">0.2.0 — One library folder</h2>
+      <p>
+        Version <a href="/0.2.0/">0.2.0</a> stores
+        <strong>one library folder</strong> instead of a list of PSARC roots
+        plus a separate stems picker. Choose that folder once, then
+        <strong>Batch sync</strong> to scan it. The app never copies your
+        charts.
+      </p>
+
+      <h3 id="own-rs">If you own Rocksmith 2014</h3>
+      <p>
+        Point Settings at the game’s install folder — the same directory
+        Steam names <code>Rocksmith2014</code>. The in-app
+        <strong>LIBRARY FOLDER</strong> hint prints the expected Steam path
+        for this OS (table below). On desktop, <strong>Choose library
+        folder</strong> opens in <code>Rocksmith2014</code> itself when the
+        game is installed — the game root, not its <code>dlc/</code>
+        subfolder — or in <code>steamapps/common</code> otherwise
+        (suggestion only; nothing is bound until you pick).
+        <strong>Open folder</strong> reveals that install in Finder or
+        Explorer so you can drop custom <code>.psarc</code> files into
+        <code>dlc/</code>.
+      </p>
+      <p>
+        <strong>Desktop only.</strong> The web player cannot open these
+        Steam folders: Chrome blocks <code>Program Files</code>,
+        <code>AppData</code> and <code>~/Library</code>. In the browser, copy
+        <code>songs.psarc</code> + <code>dlc/</code> (+ <code>stems/</code>)
+        to an ordinary folder and choose that — see
+        <a href="#web-folders">Web player folders</a>.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Expected Steam folder</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>macOS</td>
+            <td>
+              <code>~/Library/Application Support/Steam/steamapps/common/Rocksmith2014</code>
+            </td>
+          </tr>
+          <tr>
+            <td>Windows</td>
+            <td>
+              <code>C:\Program Files (x86)\Steam\steamapps\common\Rocksmith2014</code>
+              (or <code>%ProgramFiles%\Steam\steamapps\common\Rocksmith2014</code>
+              if Steam is not in <code>(x86)</code>)
+            </td>
+          </tr>
+          <tr>
+            <td>Linux</td>
+            <td>
+              <code>~/.steam/steam/steamapps/common/Rocksmith2014</code>
+              (or
+              <code>~/.local/share/Steam/steamapps/common/Rocksmith2014</code>)
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Official DLC already lives in that <code>dlc/</code> tree. Custom
+        charts can sit beside it, or in a subfolder such as
+        <code>dlc/cdlc/</code>. Stem mixes go in <code>stems/</code> next to
+        the game (see below).
+      </p>
+
+      <h3 id="own-folder">If you do not own the game</h3>
+      <p>
+        Create any folder with the same two subdirectories. The app creates
+        <code>dlc/</code> and <code>stems/</code> if they are missing:
+      </p>
+      <pre class="codeblock"><code>MyLibrary/
+  dlc/          # your *_p.psarc / *_m.psarc (subfolders are scanned)
+  stems/        # optional Demucs mixes, one folder per chart</code></pre>
+      <p>
+        Then choose <code>MyLibrary</code> — not <code>dlc/</code> itself — and
+        run Batch sync.
+      </p>
+
+      <h3 id="dlc"><code>dlc/</code> is recursive</h3>
+      <p>
+        Every playable <code>*_p.psarc</code> (PC) and
+        <code>*_m.psarc</code> (Mac) under <code>dlc/</code> is catalogued,
+        including nested folders. Organize however you like:
+      </p>
+      <pre class="codeblock"><code>dlc/
+  some_song_p.psarc
+  cdlc/
+    another_song_m.psarc
+    artist/
+      third_song_p.psarc</code></pre>
+      <p>
+        Hidden folders (names starting with <code>.</code>) are skipped. Root
+        game archives that sit next to <code>dlc/</code> are not catalogued —
+        only files under <code>dlc/</code> count. After you add or move
+        charts, run <strong>Batch sync</strong> again.
+      </p>
+
+      <h3 id="stems"><code>stems/</code> — six MP3s per chart</h3>
+      <p>
+        Stem mixes live under the same library folder, not a second picker.
+        Rock N Roller looks up the chart filename without
+        <code>.psarc</code>, then requires <strong>all six</strong> MP3s:
+      </p>
+      <pre class="codeblock"><code>{library}/stems/{psarc_basename}/
+  drums.mp3
+  bass.mp3
+  other.mp3
+  vocals.mp3
+  guitar.mp3
+  piano.mp3</code></pre>
+      <p>
+        Example: <code>dlc/cdlc/Eagles_Hotel-California_v1_1_p.psarc</code>
+        matches
+        <code>stems/Eagles_Hotel-California_v1_1_p/</code>. The folder name
+        must match the archive basename exactly. A PC file
+        (<code>Foo_p.psarc</code>) and a Mac file (<code>Foo_m.psarc</code>)
+        keep separate stem folders.
+      </p>
+      <p>
+        Separation still runs offline in
+        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
+          >Demucs MLX</a
+        >. Point its output at <code>{library}/stems</code>, or copy the six
+        files into the right basename folder, then Batch sync. Full mixer
+        notes: <a href="/demucs-stems/">stems &amp; Demucs</a>.
+      </p>
+
+      <h3 id="web-folders">Web player folders</h3>
+      <p>
+        Chrome’s File System Access API refuses system and app-data
+        folders — on Windows <code>C:\Windows</code>,
+        <code>C:\Program Files</code>, <code>C:\Program Files (x86)</code>
+        and <code>AppData</code>; on macOS <code>~/Library</code> and the
+        system folders; on Linux <code>/dev</code>, <code>/sys</code> and
+        <code>/proc</code>. Steam installs Rocksmith 2014 inside one of
+        them, so the web player needs a copy of the game files somewhere
+        ordinary, such as <code>Documents/RockNRoller</code>:
+      </p>
+      <pre class="codeblock"><code>Documents/RockNRoller/
+  songs.psarc   # needed for Rocksmith 1 import packs
+  dlc/          # copied from …/Rocksmith2014/dlc
+  stems/        # optional</code></pre>
+      <p>
+        Picking a blocked folder now shows an explanation in the player
+        instead of failing silently. Settings and the empty library screen
+        carry the same note on the web build.
+      </p>
+
+      <h3 id="sync-feedback">Sync and loading feedback</h3>
+      <ul>
+        <li>
+          <strong>Batch sync</strong> opens a progress window: spinning cog,
+          “Song X of N”, the current phase (looking for songs, checking,
+          parsing, removing missing, loading catalog), the file being read,
+          and new / updated / unchanged / removed counts. Hide keeps the
+          scan running in the background; Cancel stops it.
+        </li>
+        <li>
+          The song loading overlay names each step: opening the PSARC,
+          reading arrangements, parsing each chart (“PARSING CHARTS 2/4 —
+          Lead chart”), extracting and decoding audio, and loading stems.
+        </li>
+        <li>
+          Fixed: with autoplay on, the next song could stay on “loading”
+          forever when its audio needed a background decode.
+        </li>
+      </ul>
+
+      <p class="fineprint">
+        Settings controls:
+        <a href="/configurations/#library">settings</a>. Downloads:
+        <a href="/versions/">versions</a>.
+      </p>
+    </main>
+    <script src="/assets/content-pages.js"></script>
+    <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "a7234cc8c2b3478aa4cf798bf9eefd95"}'></script><!-- End Cloudflare Web Analytics -->
+  </body>
+</html>

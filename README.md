@@ -20,6 +20,7 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 | `/demucs-stems/` | Demucs companion app + stem folder layout / mixer |
 | `/keybinds/` | keyboard shortcuts (catalog + in-song) |
 | `/configurations/` | what Settings / play options mean |
+| `/changelog/` | library folder convention (Rocksmith root, `dlc/`, `stems/`) |
 | `/manual/` | combined About + Features + Stems + Keybinds + Settings (print source) |
 | `/rocknroller-manual.pdf` | downloadable offline manual (regenerate with `make pdf`) |
 | `/play/?v=…` | **legacy redirect** → `/<ver>/` (preserves `?demo=`) |

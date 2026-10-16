@@ -170,6 +170,7 @@ def build() -> None:
         <a href="/demucs-stems/">Stems</a>
         <a href="/keybinds/">Keybinds</a>
         <a href="/configurations/">Settings</a>
+        <a href="/changelog/">Changelog</a>
         <a href="/versions/">Versions</a>
       </nav>
 

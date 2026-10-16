@@ -31,6 +31,7 @@
         <a href="/demucs-stems/">Stems</a>
         <a href="/keybinds/">Keybinds</a>
         <a href="/configurations/">Settings</a>
+        <a href="/changelog/">Changelog</a>
         <a href="/versions/">Versions</a>
       </nav>
 
@@ -183,6 +184,16 @@
         pthreads via <code>SharedArrayBuffer</code>), which needs a
         cross-origin-isolated page — something the site sets up automatically,
         but Chromium is still the supported target for the full library flow.
+      </p>
+      <p>
+        Chrome also refuses system and app-data folders
+        (<code>Program Files</code>, <code>AppData</code>,
+        <code>~/Library</code>) — exactly where Steam installs Rocksmith 2014.
+        For the web player, copy <code>songs.psarc</code> and
+        <code>dlc/</code> to an ordinary folder such as
+        <code>Documents/RockNRoller</code> and pick that
+        (<a href="/features/#web-blocked-folders">details</a>). Desktop builds
+        read the Steam folder directly.
       </p>
 
       <h2>What it is not</h2>

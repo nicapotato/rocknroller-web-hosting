@@ -35,6 +35,7 @@
         <a href="/demucs-stems/" aria-current="page">Stems</a>
         <a href="/keybinds/">Keybinds</a>
         <a href="/configurations/">Settings</a>
+        <a href="/changelog/">Changelog</a>
         <a href="/versions/">Versions</a>
       </nav>
 
@@ -167,21 +168,22 @@
           <code>*_p.psarc</code> or <code>*_m.psarc</code>.
         </li>
         <li>
-          Pick an <strong>output folder</strong> — this becomes your Rock N
-          Roller stems root.
+          Pick an <strong>output folder</strong>. Point it at
+          <code>{library}/stems</code> on the same library folder Rock N
+          Roller uses (or copy the six files there afterwards).
         </li>
         <li>
           Run separation. For
           <code>Eagles_Hotel-California_v1_1_p.psarc</code> it writes:
           <pre class="codeblock">
-{stems_root}/Eagles_Hotel-California_v1_1_p/
+{library}/stems/Eagles_Hotel-California_v1_1_p/
   drums.mp3  bass.mp3  other.mp3
   vocals.mp3  guitar.mp3  piano.mp3</pre>
         </li>
         <li>
-          In Rock N Roller Settings → <strong>Add STEMS folder</strong>, point
-          at that same <code>{stems_root}</code>, then resync. You can add up
-          to 10 stems roots, same as PSARC folders. Details:
+          In Rock N Roller Settings, bind that library folder (if you have
+          not already) and run <strong>Batch sync</strong>. Folder layout:
+          <a href="/changelog/#stems">changelog</a>. Settings:
           <a href="/configurations/#library">settings</a>.
         </li>
       </ol>
@@ -189,11 +191,11 @@
       <h2 id="layout">How they link to PSARCs</h2>
       <p>
         Rock N Roller takes the PSARC filename without <code>.psarc</code>,
-        looks for <code>{stems_root}/{that_name}/</code>, and requires
+        looks for <code>{library}/stems/{that_name}/</code>, and requires
         <strong>all six</strong> MP3s. Only then is the song marked
         <code>has_stems</code> in SQLite. Paths are indexed per song; your
-        PSARC and stem audio stay wherever you put them — the database only
-        stores metadata and the stems-folder list.
+        PSARC and stem audio stay on disk — the database only stores
+        metadata.
       </p>
       <p>
         Folder name must match the PSARC basename exactly. If the chart is

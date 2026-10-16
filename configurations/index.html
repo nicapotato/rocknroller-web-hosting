@@ -31,6 +31,7 @@
         <a href="/demucs-stems/">Stems</a>
         <a href="/keybinds/">Keybinds</a>
         <a href="/configurations/" aria-current="page">Settings</a>
+        <a href="/changelog/">Changelog</a>
         <a href="/versions/">Versions</a>
       </nav>
 
@@ -53,8 +54,29 @@
 
       <h2 id="library">Library &amp; stems</h2>
       <p>
-        Open <strong>Settings</strong> in the catalog nav. This is where you
-        point the app at your CDLC (and optional stem) folders.
+        Open <strong>Settings</strong> in the catalog nav. Point the app at
+        <strong>one library folder</strong>: a Rocksmith 2014 install if you
+        own the game, or any folder with <code>dlc/</code> and
+        <code>stems/</code>.         Steam defaults:
+        macOS
+        <code>~/Library/Application Support/Steam/steamapps/common/Rocksmith2014</code>,
+        Windows
+        <code>C:\Program Files (x86)\Steam\steamapps\common\Rocksmith2014</code>,
+        Linux
+        <code>~/.steam/steam/steamapps/common/Rocksmith2014</code>.
+        Settings in the app shows the expected path for your OS. Folder
+        layout:
+        <a href="/changelog/#0.2.0">0.2.0 changelog</a>.
+      </p>
+      <p>
+        <strong>Web player:</strong> Chrome will not open
+        <code>Program Files</code>, <code>AppData</code> or
+        <code>~/Library</code>, so the Steam paths above cannot be chosen in
+        the browser. Copy <code>songs.psarc</code> + <code>dlc/</code> (+
+        <code>stems/</code>) to a folder such as
+        <code>Documents/RockNRoller</code> and choose that. Details:
+        <a href="/features/#web-blocked-folders">Folders Chrome cannot
+        open</a>.
       </p>
       <table class="specs">
         <thead>
@@ -65,23 +87,34 @@
         </thead>
         <tbody>
           <tr>
-            <td>PSARC folders</td>
+            <td>Library folder</td>
             <td>
-              Up to <strong>10</strong> library roots. The first is the primary
-              content folder; the rest are extras. Remove drops a root and
-              resyncs the catalog.
+              One root. Charts are scanned recursively from
+              <code>dlc/</code> (<code>dlc/cdlc/…</code> is fine). Stem mixes
+              live in <code>stems/{psarc_basename}/</code> with six MP3s.
+              Clear drops the bound folder (files on disk stay).
             </td>
           </tr>
           <tr>
-            <td>Add PSARC folder</td>
+            <td>Choose / Change library folder</td>
             <td>
-              Pick a folder of <code>*_p.psarc</code> (PC) or
-              <code>*_m.psarc</code> (Mac) files. Both play on any computer.
-              If the same song exists as both, the catalog shows two rows and
-              tags the Mac one with <strong>M</strong>. Stems stay in
-              <code>{psarc_basename}/</code>, so <code>Foo_m/</code> and
-              <code>Foo_p/</code> do not share a folder. On the web this uses
-              Chromium’s folder picker (read-only).
+              Pick that root. If you own Rocksmith 2014, choose the Steam
+              <code>Rocksmith2014</code> folder itself, not its
+              <code>dlc/</code> subfolder (on desktop the picker opens there
+              when it exists, else in <code>steamapps/common</code>).
+              Otherwise choose any folder — <code>dlc/</code> and
+              <code>stems/</code> are created if missing. PC
+              <code>*_p.psarc</code> and Mac <code>*_m.psarc</code> both play
+              on any computer. On the web this uses Chromium’s folder picker
+              (read-only), which refuses system and app-data folders — use a
+              copy outside them.
+            </td>
+          </tr>
+          <tr>
+            <td>Open folder</td>
+            <td>
+              Reveal the bound library in Finder or Explorer so you can drop
+              charts into <code>dlc/</code>. Desktop only.
             </td>
           </tr>
           <tr>
@@ -92,21 +125,11 @@
             </td>
           </tr>
           <tr>
-            <td>Resync library</td>
+            <td>Batch sync / Resync library</td>
             <td>
-              Rescan PSARCs (and stems). Unchanged files are skipped via the
-              size/mtime cache; new or modified charts are re-parsed.
-            </td>
-          </tr>
-          <tr>
-            <td>Add STEMS folder</td>
-            <td>
-              Add a Demucs-style stems root (up to 10, like PSARC folders):
-              <code>{folder}/{psarc_basename}/drums.mp3</code> …
-              <code>piano.mp3</code> (six stems). Web mounts each under
-              <code>/weblib/&lt;folder name&gt;</code>;
-              <code>?demo=stems</code> adds
-              <code>/weblib/DemoStems</code> without replacing user folders.
+              Rescan <code>dlc/</code> (recursive) and <code>stems/</code>.
+              Unchanged files are skipped via the size/mtime cache; new or
+              modified charts are re-parsed.
             </td>
           </tr>
           <tr>
