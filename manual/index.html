@@ -190,9 +190,10 @@
       <h2>What it does</h2>
       <p>
         Point it at a folder of CDLC <code>.psarc</code> files on your disk and
-        it renders the charts on a 3D highway with audio, practice speed control
-        (pitch-preserving time stretch), per-arrangement tuning info, playlists
-        and profiles.
+        it renders the charts on a 3D highway (with measure bar lines and capo
+        marks) or a wrapping TabSheet, with audio, practice speed control
+        (pitch-preserving time stretch), lead / rhythm / bass / combo
+        arrangements, per-arrangement tuning info, playlists and profiles.
       </p>
 
       <h2>Your files stay on disk</h2>
@@ -213,6 +214,16 @@
         pthreads via <code>SharedArrayBuffer</code>), which needs a
         cross-origin-isolated page — something the site sets up automatically,
         but Chromium is still the supported target for the full library flow.
+      </p>
+      <p>
+        Chrome also refuses system and app-data folders
+        (<code>Program Files</code>, <code>AppData</code>,
+        <code>~/Library</code>) — exactly where Steam installs Rocksmith 2014.
+        For the web player, copy <code>songs.psarc</code> and
+        <code>dlc/</code> to an ordinary folder such as
+        <code>Documents/RockNRoller</code> and pick that
+        (<a href="#features-web-blocked-folders">details</a>). Desktop builds
+        read the Steam folder directly.
       </p>
 
       <h2>What it is not</h2>
@@ -246,7 +257,10 @@
         How Rock N Roller solves its harder problems: local CDLC, catalog
         search, practice speed and section loops, Demucs stems, left-handed /
         inverted highway layout, a 3D chart whose camera math and note clock
-        stay locked to the audio callback, and a Chords + Lyrics sheet for
+        stay locked to the audio callback, a wrapping TabSheet that infers
+        rhythm notation from the same beat map the highway uses for bar
+        lines, capo indication from the arrangement manifest, lead / rhythm /
+        bass / combo (and bonus) parts, and a Chords + Lyrics sheet for
         following names with the words — from one C + raylib codebase on macOS,
         Windows, and WebAssembly.
       </p>
@@ -262,6 +276,7 @@
         <li><a href="#features-loop">Section loop</a></li>
         <li><a href="#stems">Stems &amp; Demucs</a></li>
         <li><a href="#features-lefty">Left-handed &amp; string order</a></li>
+        <li><a href="#features-arrangements">Lead, rhythm, bass, combo</a></li>
         <li><a href="#features-long-songs">Long songs without blowing RAM</a></li>
         <li>
           <a href="#features-highway">3D highway</a>
@@ -269,11 +284,14 @@
             <li><a href="#features-highway-world">World space &amp; fret math</a></li>
             <li><a href="#features-highway-trig">Camera, frustum, trigonometry</a></li>
             <li><a href="#features-highway-draw">What a frame draws</a></li>
+            <li><a href="#features-highway-bars">Bar lines (measure starts)</a></li>
             <li><a href="#features-highway-psarc">Notes in PSARC / SNG</a></li>
             <li><a href="#features-highway-threads">Load, audio, and raylib threads</a></li>
             <li><a href="#features-highway-sync">How the chart locks to audio</a></li>
           </ol>
         </li>
+        <li><a href="#features-tabsheet">TabSheet</a></li>
+        <li><a href="#features-capo">Capo indication</a></li>
         <li><a href="#features-chords-lyrics">Chords + Lyrics</a></li>
         <li><a href="#features-threading">Keeping the UI smooth</a></li>
         <li><a href="#features-size">What ships</a></li>
@@ -503,8 +521,13 @@
             <td><code>instruments="…"</code></td>
             <td>
               Arrangements present: <code>v</code> vocals, <code>l</code> lead,
-              <code>r</code> rhythm, <code>b</code> bass. Optional per-arrangement
-              tuning: <code>l-E Standard</code>, <code>b-Drop D</code>
+              <code>r</code> rhythm, <code>b</code> bass, <code>c</code> combo
+              (lead + rhythm on one chart). Bonus parts: <code>+l</code>,
+              <code>+r</code>, <code>+b</code>, <code>+c</code> (any extra of
+              that type), <code>+l2</code> (at least two bonus leads),
+              <code>+</code> (any bonus). Optional per-arrangement tuning:
+              <code>l-E Standard</code>, <code>c-Drop D</code>,
+              <code>+r-Drop D</code>
             </td>
           </tr>
           <tr>
@@ -776,6 +799,76 @@
         <a href="#settings-cell">settings</a>.
       </p>
 
+      <h2 id="features-arrangements">Lead, rhythm, bass, combo</h2>
+      <p>
+        A Rocksmith archive can ship more than one guitar-family chart.
+        Rock N Roller reads the <strong>manifest next to each SNG</strong>
+        (<code>ArrangementName</code>, <code>bonusArr</code>,
+        <code>represent</code>) and maps each part to a fixed slot. Filenames
+        are only a fallback when there is no manifest.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Slot</th>
+            <th>Letter</th>
+            <th>What it is</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Vocals</td>
+            <td><code>V</code></td>
+            <td>Lyric syllables (karaoke / Chords + Lyrics)</td>
+          </tr>
+          <tr>
+            <td>Lead</td>
+            <td><code>L</code></td>
+            <td>Primary lead arrangement</td>
+          </tr>
+          <tr>
+            <td>Rhythm</td>
+            <td><code>R</code></td>
+            <td>Primary rhythm arrangement</td>
+          </tr>
+          <tr>
+            <td>Bass</td>
+            <td><code>B</code></td>
+            <td>Primary bass (4 strings)</td>
+          </tr>
+          <tr>
+            <td>Combo</td>
+            <td><code>C</code></td>
+            <td>
+              Lead and rhythm authored on <em>one</em> chart — a single
+              arrangement between the usual lead and rhythm parts, not a
+              merge of the two SNGs at runtime
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <strong>Combo</strong> is its own <code>ArrangementName</code>
+        (<code>Combo</code> / <code>*_combo*.sng</code>). It sits in the
+        instrument dropdown after Lead / Rhythm / Bass (those three are
+        always listed, and show <strong>N/A</strong> when the song lacks
+        them). Combo and bonus rows appear only when the archive has them.
+        Bonus / alternate parts of each type fill extra slots:
+        <code>+L</code>, <code>+L2</code>, <code>+R</code>, <code>+B</code>,
+        <code>+C</code>, … The catalog INSTR column prints
+        <code>V L R B C</code>, then dimmed bonus tags; a narrow column
+        collapses extras into one <code>+</code>.
+      </p>
+      <p>
+        Saved layouts store integer source ids (1–4 unchanged, 5 = combo,
+        10+ = bonus), so older saves load as they did. The same letters
+        drive <code>instruments="…"</code> — see
+        <a href="#features-search">catalog search</a>. Any guitar-family slot
+        (lead, rhythm, bass, combo, or a bonus) can flip between the
+        <a href="#features-highway">3D highway</a> and
+        <a href="#features-tabsheet">TabSheet</a>.
+      </p>
+
       <h2 id="features-long-songs">Long songs without blowing RAM</h2>
       <p>
         A long chart can be huge if kept fully renderer-ready. Songs over
@@ -1024,11 +1117,12 @@
           per pane or shift the lens).
         </li>
         <li>
-          Draw in a fixed depth order: lane surface → hit bar → fret wires →
-          glass chord frames → sustain ribbons (depth-write off) → string
-          wires → gem halos / ghost repeats → solid gem bodies → open slabs
-          (depth test off so far bars do not flicker against the faded
-          lane).
+          Draw in a fixed depth order: lane surface →
+          <a href="#features-highway-bars">bar lines</a> → hit bar → fret wires →
+          capo shade / capo bar → glass chord frames → sustain ribbons
+          (depth-write off) → string wires → gem halos / ghost repeats →
+          solid gem bodies → open slabs (depth test off so far bars do not
+          flicker against the faded lane).
         </li>
         <li>
           Restore the 2D ortho matrix and overlay SDF fret numbers, chord
@@ -1090,6 +1184,38 @@
         at a single full-window neck.
       </p>
 
+      <h3 id="features-highway-bars">Bar lines (measure starts)</h3>
+      <p>
+        Each <strong>measure</strong> in the chart is one horizontal strip
+        across the 3D lane — a cyan line that travels toward the hit bar
+        with the notes. It is not a beat tick. A 4/4 bar therefore shows
+        one line every four beats, not one per beat.
+      </p>
+      <p>
+        The source is the SNG <strong>ebeat</strong> table (16 bytes per
+        row: time, measure, beat, phrase iteration, mask). Every beat
+        stores a 0-based bar number in <code>measure</code>, so that field
+        repeats for the whole bar and cannot mark a downbeat on its own.
+        Only <code>mask &amp; 1</code>
+        (<code>BEAT_FIRST_OF_MEASURE</code>) does. On copy into the GUI,
+        those downbeats keep a 1-based bar number; other beats get
+        <code>measure = −1</code>. Charts with no mask bits fall back to
+        “the bar number changed.” The same downbeats become TabSheet
+        measures — see <a href="#features-tabsheet">TabSheet</a>.
+      </p>
+      <p>
+        At draw time the highway walks beats in
+        <code>[song_timer − behind, song_timer + ahead]</code>, skips any
+        beat that is not a downbeat, and also skips a downbeat sitting on
+        the strike line (the hit bar already marks “now”). Each remaining
+        downbeat becomes <code>z = −Δt · time_scale</code>, a pair of
+        lane-width quads (soft halo + brighter core) in the same cyan as
+        the highway rails. Thickness and alpha grow with distance so a
+        far bar stays readable instead of fading to a hairline. Cell
+        Settings can hide them
+        (<strong>Bar lines (measure starts)</strong>, on by default).
+      </p>
+
       <h3 id="features-highway-psarc">Notes in PSARC / SNG</h3>
       <p>
         A <code>*_p.psarc</code> (PC) or <code>*_m.psarc</code> (Mac) is a
@@ -1105,8 +1231,17 @@
         <strong>SNG</strong> (not XML):
       </p>
       <ul>
-        <li><code>*lead*.sng</code>, <code>*rhythm*.sng</code>, <code>*bass*.sng</code></li>
+        <li>
+          <code>*lead*.sng</code>, <code>*rhythm*.sng</code>,
+          <code>*bass*.sng</code>, and when present
+          <code>*combo*.sng</code> (lead + rhythm on one chart — see
+          <a href="#features-arrangements">arrangements</a>)
+        </li>
         <li><code>*vocals*.sng</code> for lyrics</li>
+        <li>
+          Bonus / alternate parts of each type
+          (<code>*lead2*.sng</code>, <code>+R</code>, <code>+C</code>, …)
+        </li>
       </ul>
       <p>
         An SNG file on disk is still encrypted. Header magic <code>0x4A</code>,
@@ -1326,7 +1461,117 @@
         The draw call is then just geometry:
         <code>highway_3d_draw(inst, song_timer, pane)</code>. Same
         <code>song_timer</code> drives lyrics, the seek bar, section loop,
-        and every instrument cell, so four highways cannot drift apart.
+        TabSheet’s playhead, and every instrument cell, so four highways
+        cannot drift apart.
+      </p>
+
+      <h2 id="features-tabsheet">TabSheet</h2>
+      <p>
+        TabSheet is a wrapping, EXPLORE-style guitar tab for one instrument
+        cell. The 3D highway is live sight-reading; TabSheet is the page you
+        pause on to see a whole section at once. Click the
+        <strong>TAB</strong> toggle next to the cell’s instrument button
+        (shown as <strong>T</strong> in compact headers). It flips that
+        cell between 3D and TabSheet and stays filled while tab is on.
+        Picking another instrument keeps the current view, so
+        <strong>2 Tall</strong> can show the highway on top and the tab
+        below — including on a <a href="#features-arrangements">combo</a> part.
+      </p>
+      <p>
+        Saved as <code>source:viz</code> with <code>viz = 4</code>. Tab
+        zoom is its own cell setting (50–250%), stored as
+        <code>tab_zoom</code>. The Cell Settings <strong>Zoom</strong>
+        slider edits tab scale while the cell is on TAB, and highway zoom
+        while it is on the highway — they do not share a value. Details:
+        <a href="#settings-cell">settings</a>.
+      </p>
+      <p>
+        The page is a dark staff (6 strings, 4 on bass) with
+        string-colored fret numbers, the same palette as the highway.
+        Measures pack left to right, then wrap. One bar number sits in
+        the left margin of each row. The current bar is highlighted; a
+        playhead walks through it. Click a bar to seek to its start
+        (header, footer, and dropdown clicks never fall through). Wheel
+        or shift-drag scrolls; follow resumes after a few seconds.
+      </p>
+      <p>
+        Techniques sit on the note: slides, hammers / pulls
+        (<strong>H</strong> / <strong>P</strong> in the lane above the
+        staff), bend <code>^n</code> and vibrato <code>~</code> as a
+        small raised suffix after the digit, mute <code>X</code>,
+        harmonics, and vertical chord names. A sustain or slide tail
+        stops short of the next note on that string. Busy bars widen
+        until neighbouring digits no longer collide (up to 3× the base
+        width, or one full row). Time stays linear inside each bar, so
+        the playhead and the rhythm stems share the same
+        <code>x</code>.
+      </p>
+
+      <h3 id="features-tabsheet-rhythm">How the musical notation is determined</h3>
+      <p>
+        SNG charts give <em>note times</em> and a <em>beat grid</em>, not
+        written note values. There is no Guitar Pro duration field to
+        draw. <code>chart_rhythm_build</code> (a port of
+        <a href="https://github.com/arpan2711/quickRS-player" rel="noopener">quickRS</a>
+        <code>rhythm.rs</code>) infers the rhythm row under the staff:
+      </p>
+      <ol>
+        <li>
+          <strong>Snap.</strong> Each distinct onset (the notes of a
+          chord share one) snaps to the nearest sixteenth of its beat,
+          or to an eighth-triplet slot when that fits the beat clearly
+          better.
+        </li>
+        <li>
+          <strong>Length.</strong> A note lasts until the next onset. A
+          short note before a long gap becomes the note (sustain decides
+          how long it rings, at least to the end of its beat) plus
+          rests.
+        </li>
+        <li>
+          <strong>Notation.</strong> Each note or rest splits at bar
+          lines (and at the beat when it starts off the beat), then is
+          written greedily as whole / half / quarter / eighth /
+          sixteenth / 32nd values with dots. Split notes are tied.
+          Neighbouring eighths-or-shorter in the same beat are beamed;
+          a rest breaks the beam. A <code>3</code> sits under triplet
+          beats.
+        </li>
+      </ol>
+      <p>
+        The bar grid itself is the same SNG downbeats that draw
+        <a href="#features-highway-bars">highway bar lines</a>:
+        <code>BEAT_FIRST_OF_MEASURE</code> starts a measure, so a 4/4
+        bar holds four beats. Fret numbers and stems are both placed at
+        the <strong>snapped</strong> time, so a note played just before
+        a downbeat is written on that downbeat, in the same bar as its
+        rhythm symbol. When a note sounds, its digit and its rhythm
+        symbol flash brighter (colour only — glyphs never grow) and fade
+        across the written length.
+      </p>
+
+      <h2 id="features-capo">Capo indication</h2>
+      <p>
+        Capo fret comes from the arrangement manifest
+        (<code>CapoFret</code>), per part — a bonus chart can differ
+        from the primary. <code>0</code> means none. Sync stores the
+        song-level value on the catalog row so the library can show it
+        without reopening the PSARC.
+      </p>
+      <p>
+        In the catalog a capo song gets a purple
+        <strong>C<em>n</em></strong> pill (e.g. <code>C4</code>) next to
+        the official / stems / Mac tags. On the 3D highway the same
+        purple marks the neck: the stretch from the nut to the capo is
+        shaded, a bar sits 72% of the way across that fret, and a
+        <strong>CAPO n</strong> label rides the bar in screen space.
+        Open-string pulses stop at the capo fret instead of the nut, so
+        a ringing open string does not cross the clamp.
+      </p>
+      <p>
+        TabSheet still prints the chart’s authored fret numbers (Rocksmith
+        already writes them relative to the capo). The catalog pill and
+        the highway bar are how you see that a clamp is on.
       </p>
 
       <h2 id="features-chords-lyrics">Chords + Lyrics</h2>
@@ -1941,8 +2186,8 @@
 <h1>Settings</h1>
       <p>
         What the different options mean — library folders and stems in the
-        catalog Settings screen, autoplay, and the per-cell highway / lyrics
-        controls while a song is open.
+        catalog Settings screen, autoplay, and the per-cell highway /
+        TabSheet / lyrics controls while a song is open.
       </p>
 
       <ol class="toc">
@@ -2193,8 +2438,14 @@
         </thead>
         <tbody>
           <tr>
-            <td>Zoom</td>
-            <td>Camera distance / highway scale</td>
+            <td>Zoom / Tab zoom</td>
+            <td>
+              While the cell is on the 3D highway: camera distance / highway
+              scale. While it is on <strong>TAB</strong>: TabSheet page
+              scale. The two values are stored separately
+              (<code>zoom</code> vs <code>tab_zoom</code>) and do not copy
+              across when you flip the toggle.
+            </td>
             <td>0.5–2.5</td>
             <td>1.0</td>
           </tr>
@@ -2209,6 +2460,17 @@
             <td>How many seconds of notes are drawn ahead of the strike line</td>
             <td>1.5–6.0 s</td>
             <td>3.0 s</td>
+          </tr>
+          <tr>
+            <td>Bar lines (measure starts)</td>
+            <td>
+              Horizontal cyan strips on the 3D highway at each SNG
+              downbeat — one line per bar, not per beat. Same beat map
+              as TabSheet measures. See
+              <a href="#features-highway-bars">features § bar lines</a>.
+            </td>
+            <td>off / on</td>
+            <td>on</td>
           </tr>
           <tr>
             <td>Lyric size</td>
@@ -2276,16 +2538,24 @@
           <tr>
             <td>Cell source</td>
             <td>
-              What that pane shows: Empty, Lead, Rhythm, Bass, or Lyrics.
+              What that pane shows: Empty, Lead, Rhythm, Bass, Combo
+              (lead + rhythm on one chart, listed only when the song has
+              it), bonus parts (<code>+L</code>, <code>+R</code>, …), or
+              Lyrics. See
+              <a href="#features-arrangements">features § arrangements</a>.
             </td>
           </tr>
           <tr>
             <td>Cell viz</td>
             <td>
-              How the pane is drawn. Instrument cells:
-              <strong>2D</strong>, <strong>3D</strong>, or
-              <strong>3D + Lyrics</strong> (inline lyric strip; no chord
-              names). Lyrics cells: <strong>Lyrics</strong> or
+              How the pane is drawn. Instrument cells flip with the
+              header <strong>TAB</strong> toggle: <strong>3D</strong>
+              highway or wrapping <strong>TabSheet</strong> (rhythm
+              notation inferred from note times + the SNG beat grid;
+              see <a href="#features-tabsheet">features § TabSheet</a>).
+              <strong>3D + Lyrics</strong> is the inline lyric strip on
+              the highway (no chord names). Lyrics cells:
+              <strong>Lyrics</strong> or
               <strong>Chords + Lyrics</strong> (named chords above the
               words). See
               <a href="#features-chords-lyrics">features § Chords + Lyrics</a>.

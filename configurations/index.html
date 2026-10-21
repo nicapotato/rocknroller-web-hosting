@@ -38,8 +38,8 @@
       <h1>Settings</h1>
       <p>
         What the different options mean — library folders and stems in the
-        catalog Settings screen, autoplay, and the per-cell highway / lyrics
-        controls while a song is open.
+        catalog Settings screen, autoplay, and the per-cell highway /
+        TabSheet / lyrics controls while a song is open.
       </p>
 
       <ol class="toc">
@@ -290,8 +290,14 @@
         </thead>
         <tbody>
           <tr>
-            <td>Zoom</td>
-            <td>Camera distance / highway scale</td>
+            <td>Zoom / Tab zoom</td>
+            <td>
+              While the cell is on the 3D highway: camera distance / highway
+              scale. While it is on <strong>TAB</strong>: TabSheet page
+              scale. The two values are stored separately
+              (<code>zoom</code> vs <code>tab_zoom</code>) and do not copy
+              across when you flip the toggle.
+            </td>
             <td>0.5–2.5</td>
             <td>1.0</td>
           </tr>
@@ -306,6 +312,17 @@
             <td>How many seconds of notes are drawn ahead of the strike line</td>
             <td>1.5–6.0 s</td>
             <td>3.0 s</td>
+          </tr>
+          <tr>
+            <td>Bar lines (measure starts)</td>
+            <td>
+              Horizontal cyan strips on the 3D highway at each SNG
+              downbeat — one line per bar, not per beat. Same beat map
+              as TabSheet measures. See
+              <a href="/features/#highway-bars">features § bar lines</a>.
+            </td>
+            <td>off / on</td>
+            <td>on</td>
           </tr>
           <tr>
             <td>Lyric size</td>
@@ -373,16 +390,24 @@
           <tr>
             <td>Cell source</td>
             <td>
-              What that pane shows: Empty, Lead, Rhythm, Bass, or Lyrics.
+              What that pane shows: Empty, Lead, Rhythm, Bass, Combo
+              (lead + rhythm on one chart, listed only when the song has
+              it), bonus parts (<code>+L</code>, <code>+R</code>, …), or
+              Lyrics. See
+              <a href="/features/#arrangements">features § arrangements</a>.
             </td>
           </tr>
           <tr>
             <td>Cell viz</td>
             <td>
-              How the pane is drawn. Instrument cells:
-              <strong>2D</strong>, <strong>3D</strong>, or
-              <strong>3D + Lyrics</strong> (inline lyric strip; no chord
-              names). Lyrics cells: <strong>Lyrics</strong> or
+              How the pane is drawn. Instrument cells flip with the
+              header <strong>TAB</strong> toggle: <strong>3D</strong>
+              highway or wrapping <strong>TabSheet</strong> (rhythm
+              notation inferred from note times + the SNG beat grid;
+              see <a href="/features/#tabsheet">features § TabSheet</a>).
+              <strong>3D + Lyrics</strong> is the inline lyric strip on
+              the highway (no chord names). Lyrics cells:
+              <strong>Lyrics</strong> or
               <strong>Chords + Lyrics</strong> (named chords above the
               words). See
               <a href="/features/#chords-lyrics">features § Chords + Lyrics</a>.
