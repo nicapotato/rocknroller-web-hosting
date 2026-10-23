@@ -72,11 +72,13 @@
     var sizeHtml = sizeText
       ? '<span class="zip-size"> · ' + sizeText + "</span>"
       : "";
+    var label = /\.tar\.gz$/i.test(entry.zip_url) ? "tar.gz" : "zip";
     return (
       "<td>" +
       '<a class="zip-link" href="' +
       entry.zip_url +
-      '">zip' +
+      '">' +
+      label +
       sizeHtml +
       "</a>" +
       shaBlock(entry.sha256) +
@@ -541,6 +543,7 @@
           zipCell(p.macos_arm64 || p.macos) +
           zipCell(p.macos_x86_64) +
           zipCell(p.windows_x86_64 || p.windows) +
+          zipCell(p.linux_x86_64 || p.linux) +
           "</tr>"
         );
       });
