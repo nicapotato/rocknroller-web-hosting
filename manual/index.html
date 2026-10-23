@@ -238,7 +238,7 @@
       <p>
         Play in the browser at <a href="https://rocknroller.nicapotato.com/latest/">/latest</a> (Chromium
         required), or grab desktop builds for macOS (Apple Silicon and
-        Intel) and Windows from the <a href="https://rocknroller.nicapotato.com/versions/">versions page</a> or
+        Intel), Windows, and Linux x86_64 from the <a href="https://rocknroller.nicapotato.com/versions/">versions page</a> or
         <a href="https://nicapotato.itch.io/rocknroller" rel="noopener">itch.io</a>.
         Desktop builds read <code>.psarc</code> folders from disk without the
         browser folder API.
@@ -262,13 +262,13 @@
         lines, capo indication from the arrangement manifest, lead / rhythm /
         bass / combo (and bonus) parts, and a Chords + Lyrics sheet for
         following names with the words — from one C + raylib codebase on macOS,
-        Windows, and WebAssembly.
+        Windows, Linux x86_64, and WebAssembly.
       </p>
 
       <ol class="toc">
         <li><a href="#features-stack">Stack &amp; platforms</a></li>
         <li><a href="#features-library">Library that stays on your disk (0.2.0)</a></li>
-        <li><a href="#features-sqlite">SQLite on disk (macOS / Windows)</a></li>
+        <li><a href="#features-sqlite">SQLite on disk (macOS / Windows / Linux)</a></li>
         <li><a href="#features-search">Catalog search &amp; query language</a></li>
         <li><a href="#features-web-files">Browser library access</a></li>
         <li><a href="#features-wasm">Multithreaded wasm</a></li>
@@ -303,7 +303,7 @@
         <a href="https://signalsmith-audio.co.uk/code/stretch/" rel="noopener">Signalsmith Stretch</a>)
         on <a href="https://www.raylib.com" rel="noopener">raylib 6.0</a>.
         One CMake project builds macOS (Apple Silicon and Intel), Windows x64,
-        and Emscripten wasm from the same commit — platform differences stay
+        Linux x86_64, and Emscripten wasm from the same commit — platform differences stay
         in small shims for paths, dialogs, and threading.
       </p>
       <p>
@@ -395,7 +395,7 @@
       <p>
         Every playable <code>*_p.psarc</code> (PC) and
         <code>*_m.psarc</code> (Mac) under <code>dlc/</code> is catalogued,
-        including nested folders. Either file plays on macOS or Windows.
+        including nested folders. Either file plays on macOS, Windows, or Linux.
         Organize however you like:
       </p>
       <pre class="codeblock"><code>dlc/
@@ -430,7 +430,7 @@
         pick a song, not from XML at runtime.
       </p>
 
-      <h2 id="features-sqlite">SQLite on disk (macOS / Windows)</h2>
+      <h2 id="features-sqlite">SQLite on disk (macOS / Windows / Linux)</h2>
       <p>
         On desktop, the database is a normal file on your machine — not in the
         cloud, not inside the app bundle. The state directory is created on
@@ -1224,7 +1224,7 @@
         archive flag 4 and AES-encrypts the TOC with the same key on both
         platforms; CDLC usually does not. The reader decrypts when needed,
         inflates each entry on demand, and never needs the XML toolkit files
-        at runtime. Either file plays on macOS or Windows.
+        at runtime. Either file plays on macOS, Windows, or Linux.
       </p>
       <p>
         Chart data lives in <code>songs/bin/…</code> as binary
@@ -2261,7 +2261,7 @@
           <tr>
             <td>Open folder</td>
             <td>
-              Reveal the bound library in Finder or Explorer so you can drop
+              Reveal the bound library in Finder, Explorer, or the Linux file manager so you can drop
               charts into <code>dlc/</code>. Desktop only.
             </td>
           </tr>
