@@ -1,0 +1,98 @@
+<!-- Paste into the itch.io description editor in HTML mode (<>). -->
+<h1>Rock N Roller 0.2.2</h1>
+
+<p>A freeware guitar-practice app that plays Rocksmith-format <code>.psarc</code> charts from your own computer — PC <code>*_p.psarc</code> and Mac <code>*_m.psarc</code>, on either operating system. Your library stays on disk; nothing is uploaded. Built around freeware CDLC from the <a href="https://customsforge.com">CustomsForge</a> community.</p>
+
+<p>Charts draw on a 3D highway (measure bars and capo marks) or a wrapping TabSheet, with audio, pitch-preserving practice speed (0.3×–3.0×), section loops, lead / rhythm / bass / combo (and bonus) parts, Chords + Lyrics, playlists, and profiles.</p>
+
+<p>Not affiliated with Ubisoft or Rocksmith. This app does not host or distribute official DLC. It reads chart files you already have.</p>
+
+<h2>Play</h2>
+
+<ul>
+  <li>About: <a href="https://rocknroller.nicapotato.com/">https://rocknroller.nicapotato.com/</a></li>
+  <li>Play (your library): <a href="https://rocknroller.nicapotato.com/latest/">https://rocknroller.nicapotato.com/latest/</a></li>
+  <li>This version: <a href="https://rocknroller.nicapotato.com/0.2.2/">https://rocknroller.nicapotato.com/0.2.2/</a></li>
+  <li>Demo charts: <a href="https://rocknroller.nicapotato.com/latest/?demo=songs">https://rocknroller.nicapotato.com/latest/?demo=songs</a></li>
+  <li>Demo charts + stems: <a href="https://rocknroller.nicapotato.com/latest/?demo=stems">https://rocknroller.nicapotato.com/latest/?demo=stems</a></li>
+  <li>Desktop downloads: <a href="https://rocknroller.nicapotato.com/versions/">https://rocknroller.nicapotato.com/versions/</a></li>
+  <li>Settings: <a href="https://rocknroller.nicapotato.com/configurations/">https://rocknroller.nicapotato.com/configurations/</a></li>
+  <li>Keybinds: <a href="https://rocknroller.nicapotato.com/keybinds/">https://rocknroller.nicapotato.com/keybinds/</a></li>
+  <li>Stems &amp; Demucs: <a href="https://rocknroller.nicapotato.com/demucs-stems/">https://rocknroller.nicapotato.com/demucs-stems/</a></li>
+  <li>Library folder: <a href="https://rocknroller.nicapotato.com/changelog/">https://rocknroller.nicapotato.com/changelog/</a></li>
+  <li>Features: <a href="https://rocknroller.nicapotato.com/features/">https://rocknroller.nicapotato.com/features/</a></li>
+  <li>Manual (PDF): <a href="https://rocknroller.nicapotato.com/rocknroller-manual.pdf">https://rocknroller.nicapotato.com/rocknroller-manual.pdf</a></li>
+</ul>
+
+<p>Web play needs Chrome or Edge. Nothing is preloaded: open Play, then point Settings at your library. <code>?demo=songs</code> and <code>?demo=stems</code> are optional curated downloads (stems is the larger one).</p>
+
+<p>Desktop builds: macOS Apple Silicon, macOS Intel, and Windows — also on this itch page. Desktop reads the Steam folder directly.</p>
+
+<h2>Library folder</h2>
+
+<p>Settings stores <strong>one</strong> folder: a Rocksmith 2014 install, or any folder with the same layout. Choose that folder, not <code>dlc/</code> itself, then <strong>Batch sync</strong>.</p>
+
+<pre><code>MyLibrary/
+  songs.psarc   # optional; audio for Rocksmith 1 import packs
+  dlc/          # *_p.psarc and *_m.psarc, subfolders included
+  stems/        # optional Demucs mixes, one folder per chart</code></pre>
+
+<p><strong>If you own Rocksmith 2014</strong>, choose the Steam <code>Rocksmith2014</code> folder:</p>
+
+<ul>
+  <li>macOS: <code>~/Library/Application Support/Steam/steamapps/common/Rocksmith2014</code></li>
+  <li>Windows: <code>C:\Program Files (x86)\Steam\steamapps\common\Rocksmith2014</code></li>
+  <li>Linux: <code>~/.steam/steam/steamapps/common/Rocksmith2014</code></li>
+</ul>
+
+<p>Official DLC already lives in <code>dlc/</code>. Custom charts can sit beside it or under <code>dlc/cdlc/</code>. <strong>Open folder</strong> (desktop) reveals that root so you can drop CDLC in.</p>
+
+<p><strong>If you do not own the game</strong>, create any folder. The app adds <code>dlc/</code> and <code>stems/</code> if they are missing. Put charts in <code>dlc/</code> and choose the parent.</p>
+
+<p><code>dlc/</code> is scanned recursively. Hidden folders are skipped. Archives sitting next to <code>dlc/</code> (not inside it) are not catalogued. After you add or move charts, Batch sync again.</p>
+
+<p><strong>Web player:</strong> Chrome will not open <code>Program Files</code>, <code>AppData</code>, or <code>~/Library</code> — where Steam installs the game. Copy <code>songs.psarc</code>, <code>dlc/</code>, and <code>stems/</code> to an ordinary folder such as <code>Documents/RockNRoller</code> and choose that. The browser grant is read-only.</p>
+
+<h2>Inside a song</h2>
+
+<ul>
+  <li><kbd>Space</kbd> or <kbd>K</kbd> — pause / resume</li>
+  <li><kbd>J</kbd> / <kbd>L</kbd> — seek backward / forward 10 seconds</li>
+  <li><kbd>,</kbd> — go to the song start (or the section-loop start). Already near that start, or a quick second press, skips to the previous song</li>
+  <li><kbd>.</kbd> — next song in the queue</li>
+  <li><kbd>←</kbd> / <kbd>→</kbd> — speed presets 0.50 → 0.80 → 1.00 → 1.25 → 1.50 → 2.00</li>
+  <li><kbd>[</kbd> / <kbd>]</kbd> — speed ±0.1× (clamped 0.3–3.0). Click the speed number to type a value</li>
+  <li><kbd>P</kbd> — toggle section loop (seeks to that section). <kbd>Enter</kbd> or <kbd>O</kbd> jumps back to the loop start</li>
+  <li><kbd>Z</kbd> — zen mode: the highway fills the window</li>
+  <li><kbd>Esc</kbd> — close a popup, cancel speed typing, or return to the catalog. Audio keeps playing. Esc does not quit</li>
+</ul>
+
+<p>Catalog (search not focused): <kbd>↑</kbd> / <kbd>↓</kbd> move the selection, <kbd>Enter</kbd> plays it. In the search field, <kbd>Esc</kbd> clears and unfocuses.</p>
+
+<h2>Search</h2>
+
+<p>Bare words match title, artist, album, year, and tuning. Inside quotes, comma means AND and <code>|</code> means OR.</p>
+
+<ul>
+  <li><code>artist="Rush" instruments="l, b"</code> — Rush charts with both lead and bass</li>
+  <li><code>tuning="Drop D"</code> — or per part, <code>instruments="l-E Standard"</code> (<code>v</code> <code>l</code> <code>r</code> <code>b</code> <code>c</code>; <code>+l</code> is a bonus lead)</li>
+  <li><code>stems="true"</code> — all six stem MP3s indexed</li>
+  <li><code>psarc="m"</code> — Mac archives only. <code>psarc="p|m"</code> — either</li>
+  <li><code>other="false"</code> — CDLC. <code>other="true"</code> — other / official Rocksmith DLC</li>
+</ul>
+
+<h2>Stems</h2>
+
+<p>Mute the chart guitar and play over the band. Separation runs offline in <a href="https://nicapotato.itch.io/demucs-mlx-app">Demucs MLX</a> — macOS Apple Silicon, or Windows x64 (NVIDIA GPU recommended). Point its output at <code>{library}/stems</code>, then Batch sync.</p>
+
+<p>All six MP3s are required. The folder name is the chart filename without <code>.psarc</code>:</p>
+
+<pre><code>stems/Eagles_Hotel-California_v1_1_p/
+  drums.mp3  bass.mp3  other.mp3
+  vocals.mp3  guitar.mp3  piano.mp3</code></pre>
+
+<p>In a song, <strong>Stems</strong> sets each fader from 0–200%. Practice speed still holds pitch.</p>
+
+<h2>Support</h2>
+
+<p>NICAPOTATO Discord: <a href="https://discord.gg/RdxyMHs3XQ">https://discord.gg/RdxyMHs3XQ</a></p>
