@@ -63,20 +63,21 @@
 
       <section class="manual-section" id="about">
 <h1>About</h1>
-<p>
-        A freeware guitar-practice app that plays Rocksmith-format
-        <code>.psarc</code> charts from your own computer — PC
-        <code>*_p.psarc</code> and Mac <code>*_m.psarc</code>, on either
-        operating system. Your personal library stays on disk; the app never
-        uploads it. Built around freeware CDLC from
-        the
+<p class="lede">
+        A free guitar and bass practice app for your Rocksmith songs. Pick a
+        song and you are playing along in under two seconds, on a 3D note
+        highway or scrolling tab, with the band, lyrics, and practice tools
+        around you.
+      </p>
+      <p>
+        Rock N Roller plays Rocksmith-format <code>.psarc</code> charts from
+        your own computer: official Rocksmith 2014 DLC you already own, or
+        freeware custom songs (CDLC) from the
         <a href="https://customsforge.com" rel="noopener">CustomsForge</a>
-        community. Grant a local folder of your own CDLC to play. Optional curated
-        demos load from our CDN only when you open Play with
-        <code>?demo=songs</code> (charts) or <code>?demo=stems</code>
-        (charts + stem mixes; larger download). How to generate your own stems
-        and mix them in-game:
-        <a href="#stems">stems &amp; Demucs</a>.
+        community. PC <code>*_p.psarc</code> and Mac <code>*_m.psarc</code>
+        files both play on every platform. Your library stays on your disk and
+        is never uploaded. Want to look around first? The demo buttons below
+        load a few curated songs from our CDN.
       </p>
 
       <div class="btn-row">
@@ -122,6 +123,13 @@
             <img
               class="btn__icon"
               src="/assets/icons/apple.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+            <img
+              class="btn__icon"
+              src="/assets/icons/linux.svg"
               alt=""
               width="24"
               height="24"
@@ -175,6 +183,168 @@
         </a>
       </div>
 
+      <div class="callout">
+        <p class="callout__title">Bring your own guitar tone</p>
+        <p>
+          Rock N Roller has <strong>no guitar cable or microphone input</strong>.
+          It plays the song and shows you the chart; it does not listen to
+          your guitar, make it sound like an amp, or grade your playing. Your
+          guitar sound comes from your own rig:
+        </p>
+        <ul>
+          <li>a real amp, or headphones on a practice amp, or</li>
+          <li>
+            an audio interface into amp software such as BIAS FX, GarageBand,
+            Logic Pro, Guitar Rig or Neural DSP, running alongside Rock N
+            Roller.
+          </li>
+        </ul>
+        <p>
+          A Rocksmith Real Tone Cable works with that software too: it shows
+          up as an ordinary USB audio input. And because the app never
+          listens, there is no input latency to calibrate.
+        </p>
+      </div>
+
+      <h2 id="about-core-features">Core features</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>Playing in under 2 seconds</h3>
+          <p>
+            Pick a song and the chart is moving in under two seconds. No
+            intro videos, no menus to click through. Rocksmith 2014 takes a
+            good minute or two to get you playing.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>3D highway or TabSheet</h3>
+          <p>
+            The note highway you know from Rocksmith, with chord shapes and
+            fret numbers. Or flip any part to <strong>TabSheet</strong>: a
+            page of guitar tab with rhythm notation, bends, slides and
+            hammer-ons. Click a bar to jump there.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Every part of the song</h3>
+          <p>
+            Lead, Rhythm, Bass, Combo (lead and rhythm on one chart) and
+            bonus arrangements, plus <strong>Lyrics</strong> as karaoke or
+            with the chord names written above the words.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Built-in stems</h3>
+          <p>
+            Split any song into drums, bass, guitar, vocals, piano and other
+            with Demucs, right inside the app. Mute the guitar and play over
+            the band, or solo a part to learn it by ear.
+          </p>
+          <p>
+            Uses your GPU where it can (Apple Silicon, or any Windows GPU),
+            and can always run on the CPU instead.
+            <a class="more" href="#stems">How stems work</a>
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Layouts you can resize</h3>
+          <p>
+            One part full screen, two side by side, or four at once. Drag the
+            line between cells to resize them; double-click it to reset.
+            <strong>Zen</strong> mode hides everything but the chart.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Practice tools</h3>
+          <p>
+            Slow a song down to 0.3× or speed it up to 3× without changing
+            its pitch, loop a tricky section, and line songs up in playlists.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Your songs, your disk</h3>
+          <p>
+            Plays official Rocksmith 2014 DLC you own and community custom
+            songs, PC or Mac files. Point it at your Rocksmith folder, or
+            drop a single <code>.psarc</code> on the window to play it now.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Left-handed friendly</h3>
+          <p>
+            Left-handed fretting, and low E on the top or bottom of the
+            highway. Saved per profile, so a household can share one install.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3>Free, everywhere</h3>
+          <p>
+            Play in Chrome or Edge with nothing to install, or download for
+            macOS (10.15 Catalina and newer, Intel and Apple Silicon),
+            Windows or Linux. No account, no sign-in.
+          </p>
+        </div>
+      </div>
+
+      <h2 id="about-vs-rocksmith">Coming from Rocksmith 2014?</h2>
+      <p>
+        Rock N Roller reads the same song files, but it is a practice player,
+        not a game. Here is what to expect:
+      </p>
+      <div class="versions-scroll">
+        <table class="specs">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Rocksmith 2014</th>
+              <th>Rock N Roller</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Launch to first note</td>
+              <td>About 1–2 minutes</td>
+              <td>Under 2 seconds</td>
+            </tr>
+            <tr>
+              <td>Guitar sound</td>
+              <td>Built-in amps through the Real Tone Cable</td>
+              <td>Your own amp or amp software</td>
+            </tr>
+            <tr>
+              <td>Note detection and scores</td>
+              <td>Yes</td>
+              <td>No: you play along, the app keeps time</td>
+            </tr>
+            <tr>
+              <td>Chart views</td>
+              <td>3D highway</td>
+              <td>3D highway or TabSheet, up to four parts at once</td>
+            </tr>
+            <tr>
+              <td>Stems</td>
+              <td>No</td>
+              <td>Built-in Demucs, six stems with their own volume</td>
+            </tr>
+            <tr>
+              <td>Slow down</td>
+              <td>Riff Repeater</td>
+              <td>0.3×–3× on the whole song, pitch held, section loop</td>
+            </tr>
+            <tr>
+              <td>Custom songs</td>
+              <td>Needs a patched game</td>
+              <td>Plays them as they are</td>
+            </tr>
+            <tr>
+              <td>Platforms</td>
+              <td>Windows, macOS</td>
+              <td>Web, macOS, Windows, Linux</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <h2>Trailer</h2>
       <div class="video-embed">
         <iframe
@@ -187,14 +357,157 @@
       </div>
 <a class="print-link" href="https://www.youtube.com/watch?v=mZiZ-eMecio">Watch trailer — youtube.com/watch?v=mZiZ-eMecio</a>
 
-      <h2>What it does</h2>
+      <h2 id="about-tour">A quick tour</h2>
       <p>
-        Point it at a folder of CDLC <code>.psarc</code> files on your disk and
-        it renders the charts on a 3D highway (with measure bar lines and capo
-        marks) or a wrapping TabSheet, with audio, practice speed control
-        (pitch-preserving time stretch), lead / rhythm / bass / combo
-        arrangements, per-arrangement tuning info, playlists and profiles.
+        Screenshots from the desktop app. Click any image to open it full
+        size.
       </p>
+
+      <figure class="shot">
+        <a href="https://rocknroller.nicapotato.com/assets/promo/full-layout.jpg">
+          <img
+            src="/assets/promo/full-layout.jpg"
+            alt="One 3D bass highway filling the window, with karaoke lyrics in the top-right corner and the playback bar along the bottom"
+            width="1728"
+            height="1040"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          <strong>The 3D highway.</strong> Notes fly toward the strings; the
+          numbers along the bottom are frets. Lyrics follow along in the
+          corner. The bar at the bottom holds play / pause, skip, shuffle, the
+          seek bar, speed and volume.
+        </figcaption>
+      </figure>
+
+      <figure class="shot">
+        <a href="https://rocknroller.nicapotato.com/assets/promo/tabsheet.jpg">
+          <img
+            src="/assets/promo/tabsheet.jpg"
+            alt="TabSheet view: rows of guitar tab with coloured fret numbers, hammer-on and pull-off marks, and rhythm notation under each bar"
+            width="1728"
+            height="1042"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          <strong>TabSheet.</strong> Press the <strong>TAB</strong> button on
+          any part to read it as tab instead. The current bar is highlighted
+          with a playhead, and the rhythm under each bar is worked out from
+          the song's beat. Click a bar to jump to it.
+        </figcaption>
+      </figure>
+
+      <figure class="shot">
+        <a href="https://rocknroller.nicapotato.com/assets/promo/4-cell-layout.jpg">
+          <img
+            src="/assets/promo/4-cell-layout.jpg"
+            alt="Four highways in a two-by-two grid: lead, rhythm and two bass views, with chord diagrams and lyrics"
+            width="1728"
+            height="1043"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          <strong>Four parts at once.</strong> Lead, rhythm and bass side by
+          side, each with its own tuning label and settings cog. Handy for a
+          band practising together, or for seeing how the parts lock in.
+        </figcaption>
+      </figure>
+
+      <div class="shot-grid">
+        <figure class="shot">
+          <a href="https://rocknroller.nicapotato.com/assets/promo/2-tall-layout.jpg">
+            <img
+              src="/assets/promo/2-tall-layout.jpg"
+              alt="Two tall cells side by side: lead and rhythm highways with chord diagrams"
+              width="1728"
+              height="1040"
+              loading="lazy"
+            />
+          </a>
+          <figcaption>
+            <strong>Two tall.</strong> Lead and rhythm next to each other.
+          </figcaption>
+        </figure>
+        <figure class="shot">
+          <a href="https://rocknroller.nicapotato.com/assets/promo/2-wide-layout.jpg">
+            <img
+              src="/assets/promo/2-wide-layout.jpg"
+              alt="Two wide cells stacked: lead highway with lyrics on top, bass highway below"
+              width="1728"
+              height="1038"
+              loading="lazy"
+            />
+          </a>
+          <figcaption>
+            <strong>Two wide.</strong> Lead on top, bass underneath.
+          </figcaption>
+        </figure>
+      </div>
+      <p>
+        Pick a layout from the <strong>LAYOUT</strong> button, then drag the
+        line between cells to give one part more room. Double-click the line
+        to put it back in the middle. Each layout remembers its own sizes.
+      </p>
+
+      <figure class="shot">
+        <a href="https://rocknroller.nicapotato.com/assets/promo/stems.jpg">
+          <img
+            src="/assets/promo/stems.jpg"
+            alt="Stems queue screen: one song separating on the GPU at 33 percent, another queued, with output folder and MP3 bitrate settings below"
+            width="1728"
+            height="1008"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          <strong>Stems queue.</strong> Right-click songs in the library and
+          choose <strong>Add to stems queue</strong>. Rock N Roller splits
+          each one into six tracks in the background while you keep playing.
+          Afterwards the <strong>Stems</strong> button in the playback bar
+          gives every track its own volume slider.
+        </figcaption>
+      </figure>
+
+      <figure class="shot">
+        <a href="https://rocknroller.nicapotato.com/assets/promo/catalog.jpg">
+          <img
+            src="/assets/promo/catalog.jpg"
+            alt="Song library: rows with album art, title, artist, album, year, available parts, length and tuning, under a search bar"
+            width="1728"
+            height="1040"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          <strong>Your library.</strong> Every song with album art, year,
+          length, tuning and the parts it has (<strong>V</strong> vocals,
+          <strong>L</strong> lead, <strong>R</strong> rhythm,
+          <strong>B</strong> bass). Search by name or filter by tuning, part
+          or stems, e.g. <code>tuning="Drop D"</code>. Albums and Artists
+          views are a click away.
+        </figcaption>
+      </figure>
+
+      <figure class="shot">
+        <a href="https://rocknroller.nicapotato.com/assets/promo/settings.jpg">
+          <img
+            src="/assets/promo/settings.jpg"
+            alt="Settings screen with Library, Play one file, Profile, Playback and Text panels"
+            width="1728"
+            height="1040"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          <strong>Settings.</strong> Point it at your Rocksmith 2014 folder
+          (plus any extra folders of songs), play a single file without
+          adding it, switch to left-handed or flip string order, choose what
+          happens when a song ends, and make the text bigger.
+        </figcaption>
+      </figure>
 
       <h2>Your files stay on disk</h2>
       <p>
@@ -237,11 +550,53 @@
       <h2>Platforms</h2>
       <p>
         Play in the browser at <a href="https://rocknroller.nicapotato.com/latest/">/latest</a> (Chromium
-        required), or grab desktop builds for macOS (Apple Silicon and
-        Intel), Windows, and Linux x86_64 from the <a href="https://rocknroller.nicapotato.com/versions/">versions page</a> or
+        required), or grab desktop builds from the
+        <a href="https://rocknroller.nicapotato.com/versions/">versions page</a> or
         <a href="https://nicapotato.itch.io/rocknroller" rel="noopener">itch.io</a>.
         Desktop builds read <code>.psarc</code> folders from disk without the
         browser folder API.
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Runs on</th>
+            <th>Stem separation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>macOS Apple Silicon</td>
+            <td>macOS 11 Big Sur or newer</td>
+            <td>GPU (Metal)</td>
+          </tr>
+          <tr>
+            <td>macOS Intel</td>
+            <td>macOS 10.15 Catalina or newer</td>
+            <td>CPU</td>
+          </tr>
+          <tr>
+            <td>Windows</td>
+            <td>Windows x64</td>
+            <td>GPU (NVIDIA, AMD or Intel via DirectML), or CPU</td>
+          </tr>
+          <tr>
+            <td>Linux</td>
+            <td>x86_64, X11 or Wayland, OpenGL 3.3</td>
+            <td>CPU</td>
+          </tr>
+          <tr>
+            <td>Web</td>
+            <td>Chrome or Edge</td>
+            <td>None (plays stems you already have)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        Each desktop platform has two downloads. The standard build is about
+        4&nbsp;MB. The <strong>stems</strong> build adds the Demucs separator
+        and is about 125–195&nbsp;MB; pick it if you want to make stems. Both
+        play stems you already have.
       </p>
 
       <h2>Bugs, support, feedback</h2>
@@ -302,8 +657,10 @@
         The app is C17 (plus one C++17 wrapper for
         <a href="https://signalsmith-audio.co.uk/code/stretch/" rel="noopener">Signalsmith Stretch</a>)
         on <a href="https://www.raylib.com" rel="noopener">raylib 6.0</a>.
-        One CMake project builds macOS (Apple Silicon and Intel), Windows x64,
-        Linux x86_64, and Emscripten wasm from the same commit — platform differences stay
+        One CMake project builds macOS (Apple Silicon from 11.0, Intel from
+        10.15 Catalina), Windows x64, Linux x86_64, and Emscripten wasm from
+        the same commit, each desktop target with an optional Demucs stems
+        variant — platform differences stay
         in small shims for paths, dialogs, and threading.
       </p>
       <p>
@@ -743,19 +1100,17 @@
         See <a href="#keybinds">keybinds</a>.
       </p>
 
-      <h2 id="features-stems">Stems &amp; Demucs MLX</h2>
+      <h2 id="features-stems">Stems &amp; Demucs</h2>
       <p>
         Stem mode mixes six isolated tracks (drums, bass, other, vocals,
-        guitar, piano) with per-stem faders. Separation runs offline in the
-        companion
-        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
-          >Demucs MLX</a
-        >
-        app (macOS Apple Silicon via MLX, or Windows x64 via NVIDIA CUDA), then
-        Rock N Roller matches
-        <code>{library}/stems/{psarc_basename}/</code> and streams the six MP3s.
-        Full workflow, Mac vs Windows size/speed, folder layout, mixer, and
-        <code>?demo=stems</code>:
+        guitar, piano) with per-stem faders. The desktop
+        <strong>stems</strong> builds separate songs in-app with Demucs
+        <code>htdemucs_6s</code>: a queue that spawns one worker process per
+        song (mlx-c on Metal for Apple Silicon; ONNX Runtime on Intel macOS,
+        Linux, and Windows, where DirectML can use the GPU). Output lands in
+        <code>{library}/stems/{psarc_basename}/</code>, the same folder
+        playback matches, and streams as six MP3s. Workflow, per-platform
+        devices, folder layout, mixer, and <code>?demo=stems</code>:
         <a href="#stems">stems page</a>.
       </p>
 
@@ -1687,27 +2042,62 @@
         the usual “drill this four bars” workflow.
       </p>
       <p>
-        Separation does <strong>not</strong> run inside Rock N Roller. It is
-        done offline with the companion
-        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
-          >Demucs MLX Audio Stemmer</a
-        >, then the game mixes what it finds.
+        The desktop <strong>stems</strong> builds separate songs themselves.
+        Right-click a song in the library, choose
+        <strong>Add to stems queue</strong>, and Rock N Roller runs Demucs in
+        the background while you keep playing. Every desktop platform has a
+        stems build: macOS (Apple Silicon and Intel), Windows and Linux.
+      </p>
+      <p>
+        The standard desktop builds and the web player cannot separate, but
+        they play any stems you already have. To make stems without the
+        stems build, use the standalone
+        <a href="#stems-standalone">Demucs App</a>.
       </p>
 
-      <div class="btn-row">
-        <a
-          class="btn"
-          href="https://nicapotato.itch.io/demucs-mlx-app"
-          rel="noopener"
-        >
+      <figure class="shot">
+        <a href="https://rocknroller.nicapotato.com/assets/promo/stems.jpg">
           <img
-            class="btn__icon"
-            src="/assets/icons/itchdotio.svg"
-            alt=""
-            width="24"
-            height="24"
+            src="/assets/promo/stems.jpg"
+            alt="Stems queue screen: one song separating on the GPU at 33 percent, another queued, with output folder and MP3 bitrate settings below"
+            width="1728"
+            height="1008"
+            loading="lazy"
           />
-          Get Demucs MLX
+        </a>
+        <figcaption>
+          <strong>Stems queue.</strong> One song separating on the GPU, the
+          next one waiting. Settings for the output folder, MP3 bitrate and
+          batch size sit underneath.
+        </figcaption>
+      </figure>
+
+      <div class="btn-row">
+        <a class="btn" href="https://rocknroller.nicapotato.com/versions/">
+          <span class="btn__icons" aria-hidden="true">
+            <img
+              class="btn__icon"
+              src="/assets/icons/windows.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+            <img
+              class="btn__icon"
+              src="/assets/icons/apple.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+            <img
+              class="btn__icon"
+              src="/assets/icons/linux.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+          </span>
+          Get stems build
         </a>
         <a class="btn" href="https://rocknroller.nicapotato.com/latest/?demo=stems">
           <img
@@ -1721,110 +2111,126 @@
         </a>
       </div>
 
-      <div class="itch-embed">
-        <iframe
-          title="Demucs MLX Audio Stemmer App on itch.io"
-          loading="lazy"
-          frameborder="0"
-          src="https://itch.io/embed/4869317?bg_color=0d0d0d&amp;fg_color=e8eaed&amp;link_color=ffde44&amp;border_color=0d0d0d"
-          width="552"
-          height="167"
-          ><a href="https://nicapotato.itch.io/demucs-mlx-app"
-            >Demucs MLX Audio Stemmer App by nicapotato</a
-          ></iframe
-        >
-      </div>
-<a class="print-link" href="https://nicapotato.itch.io/demucs-mlx-app">Demucs MLX on itch.io — nicapotato.itch.io/demucs-mlx-app</a>
-
       <ol class="toc">
-        <li><a href="#stems-companion">Companion app</a></li>
+        <li><a href="#stems-built-in">Built-in separation</a></li>
         <li><a href="#stems-workflow">Stemming workflow</a></li>
         <li><a href="#stems-layout">How they link to PSARCs</a></li>
         <li><a href="#stems-mixer">Mixer in Rock N Roller</a></li>
         <li><a href="#stems-search">Find songs that have stems</a></li>
+        <li><a href="#stems-standalone">Standalone Demucs App</a></li>
         <li><a href="#stems-web">Try it on the web</a></li>
       </ol>
 
-      <h2 id="stems-companion">Companion app</h2>
+      <h2 id="stems-built-in">Built-in separation</h2>
       <p>
-        Same raylib GUI on both platforms; the neural-net worker is what
-        changes. Default model is Demucs <code>htdemucs_6s</code> (the six
-        stems above). Input can be MP3, WAV, OGG, FLAC, M4A, or a Rocksmith
-        <code>*_p.psarc</code> / <code>*_m.psarc</code> (it extracts the
-        chart’s audio first; Mac audio lives under <code>audio/mac</code>).
+        The stems builds bundle Meta's Demucs <code>htdemucs_6s</code> model
+        (the six stems above) and a native worker for each platform. Each
+        song runs in its own worker process, so a crash or a cancel never
+        takes the player down with it. The audio comes straight out of the
+        <code>.psarc</code>; you do not export anything first.
       </p>
       <table class="specs">
         <thead>
           <tr>
-            <th></th>
-            <th>macOS Apple Silicon</th>
-            <th>Windows x64</th>
+            <th>Stems build</th>
+            <th>Separator</th>
+            <th>Runs on</th>
+            <th>Download</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Backend</td>
-            <td>demucs-mlx (MLX + Metal)</td>
-            <td>Official Meta Demucs + PyTorch CUDA</td>
+            <td>macOS Apple Silicon</td>
+            <td>mlx-c</td>
+            <td>GPU (Metal)</td>
+            <td>~126&nbsp;MB</td>
           </tr>
           <tr>
-            <td>Download</td>
-            <td>~132&nbsp;MB</td>
-            <td>~2&nbsp;GB (ships the CUDA runtime)</td>
+            <td>macOS Intel (10.15+)</td>
+            <td>ONNX Runtime</td>
+            <td>CPU</td>
+            <td>~172&nbsp;MB</td>
           </tr>
           <tr>
-            <td>Speed</td>
+            <td>Windows x64</td>
+            <td>ONNX Runtime</td>
             <td>
-              Far faster than realtime (about 73× on an M4 Max for 4-stem
-              <code>htdemucs</code>). Unified memory; no extra GPU.
+              GPU through DirectML (NVIDIA, AMD or Intel), or CPU
             </td>
-            <td>
-              NVIDIA GPU recommended (~5–7&nbsp;GB VRAM for 6-stem). CPU works
-              but is slow (a 4-minute track can take about a minute). AMD/Intel
-              GPUs fall back to CPU.
-            </td>
+            <td>~185&nbsp;MB</td>
           </tr>
           <tr>
-            <td>Needs</td>
-            <td>Apple Silicon Mac. Unsigned: <code>xattr -cr "DemucsMLX.app"</code></td>
-            <td>
-              Recent NVIDIA <strong>driver</strong> (not a CUDA toolkit).
-              SmartScreen: More info → Run anyway.
-            </td>
+            <td>Linux x86_64</td>
+            <td>ONNX Runtime</td>
+            <td>CPU</td>
+            <td>~193&nbsp;MB</td>
           </tr>
         </tbody>
       </table>
       <p>
-        The Windows zip is large because MLX does not run on Windows, so the
-        worker bundles PyTorch’s CUDA kernels. You do not install a CUDA
-        toolkit. 3–4&nbsp;GB cards may run out of VRAM on the default 6-stem
-        segments.
+        Apple Silicon keeps the MLX worker because it is faster there than
+        ONNX. The standard (non-stems) builds are about 4&nbsp;MB; the extra
+        size is the model and its runtime. Downloads:
+        <a href="https://rocknroller.nicapotato.com/versions/">versions</a> or
+        <a href="https://nicapotato.itch.io/rocknroller" rel="noopener">itch.io</a>
+        (the <code>-stems</code> channels).
       </p>
+      <p>
+        The <strong>STEMS SETTINGS</strong> panel under the queue has:
+      </p>
+      <ul>
+        <li>
+          <strong>Output folder</strong>: defaults to
+          <code>{library}/stems</code>, which is where Rock N Roller looks for
+          stems. <strong>Open</strong> reveals it on disk.
+        </li>
+        <li>
+          <strong>Device</strong> (Windows and Linux): GPU or CPU. If the GPU
+          fails, that song stops with an error; switch to CPU and press
+          <strong>Start stem queue</strong> again. CPU is slower but always
+          works.
+        </li>
+        <li>
+          <strong>MP3 bitrate</strong>: 128, 192 (default), 256 or 320&nbsp;kbps.
+        </li>
+        <li>
+          <strong>Batch size</strong> (default 8): lower uses less GPU
+          memory; higher is faster on bigger GPUs and M-series Pro / Max chips.
+        </li>
+      </ul>
 
       <h2 id="stems-workflow">Stemming workflow</h2>
       <ol>
         <li>
-          In Demucs MLX, add an MP3/WAV <em>or</em> a Rocksmith
-          <code>*_p.psarc</code> or <code>*_m.psarc</code>.
+          Download the <strong>stems</strong> build for your platform from
+          <a href="https://rocknroller.nicapotato.com/versions/">versions</a>.
         </li>
         <li>
-          Pick an <strong>output folder</strong>. Point it at
-          <code>{library}/stems</code> on the same library folder Rock N
-          Roller uses (or copy the six files there afterwards).
+          Bind your library folder in Settings and scan it, if you have not
+          already (<a href="#settings-library">settings</a>).
         </li>
         <li>
-          Run separation. For
-          <code>Eagles_Hotel-California_v1_1_p.psarc</code> it writes:
+          In <strong>LIBRARY</strong>, right-click a song and choose
+          <strong>Add to stems queue</strong> (songs that already have stems
+          offer <strong>Re-stem</strong>). While a song without stems is
+          playing, the <strong>Stems</strong> button in the playback bar
+          offers <strong>Stem song</strong> too.
+        </li>
+        <li>
+          Open the <strong>STEMS</strong> tab and press
+          <strong>Start stem queue</strong>. Progress shows in the queue and
+          in the top bar, so you can go back to playing. <strong>Stop after
+          current</strong>, <strong>Cancel all</strong> and
+          <strong>Clear finished</strong> manage the list.
+        </li>
+        <li>
+          Each finished song is marked as having stems straight away; no
+          re-sync needed. For
+          <code>Eagles_Hotel-California_v1_1_p.psarc</code> the worker writes:
           <pre class="codeblock">
 {library}/stems/Eagles_Hotel-California_v1_1_p/
   drums.mp3  bass.mp3  other.mp3
   vocals.mp3  guitar.mp3  piano.mp3</pre>
-        </li>
-        <li>
-          In Rock N Roller Settings, bind that library folder (if you have
-          not already) and run <strong>Batch sync</strong>. Folder layout:
-          <a href="https://rocknroller.nicapotato.com/changelog/#stems">changelog</a>. Settings:
-          <a href="#settings-library">settings</a>.
         </li>
       </ol>
 
@@ -1880,6 +2286,112 @@
         Full query language:
         <a href="#features-search">features</a>.
       </p>
+
+      <h2 id="stems-standalone">Standalone Demucs App</h2>
+      <p>
+        <a href="https://nicapotato.itch.io/demucs-app" rel="noopener"
+          >Demucs App</a
+        >
+        is the same separator as the stems builds, in its own window. Use it
+        when you play Rock N Roller on the web or from a standard download.
+        It takes MP3, WAV, OGG, FLAC, M4A, or a Rocksmith
+        <code>.psarc</code>, and writes the same six-file folders.
+      </p>
+      <div class="itch-embed">
+        <iframe
+          title="Demucs App on itch.io"
+          loading="lazy"
+          frameborder="0"
+          src="https://itch.io/embed/4869317?bg_color=0d0d0d&amp;fg_color=e8eaed&amp;link_color=ffde44&amp;border_color=0d0d0d"
+          width="552"
+          height="167"
+          ><a href="https://nicapotato.itch.io/demucs-app">Demucs App by nicapotato</a></iframe
+        >
+      </div>
+<a class="print-link" href="https://nicapotato.itch.io/demucs-app">Demucs App on itch.io — nicapotato.itch.io/demucs-app</a>
+      <p>
+        Download the build for your machine. These are the same workers the
+        Rock N Roller stems builds use:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Download</th>
+            <th>Separator</th>
+            <th>Runs on</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              macOS Apple Silicon<br />
+              <code>demucs-mlx-c-arm-mac-silicon.zip</code>
+            </td>
+            <td>mlx-c</td>
+            <td>GPU (Metal). macOS 13 or newer.</td>
+          </tr>
+          <tr>
+            <td>
+              macOS Intel<br />
+              <code>demucs-onnx-mac-x64.zip</code>
+            </td>
+            <td>ONNX Runtime</td>
+            <td>CPU. macOS 13 or newer.</td>
+          </tr>
+          <tr>
+            <td>
+              Windows x64<br />
+              <code>demucs-onnx-windows.zip</code>
+            </td>
+            <td>ONNX Runtime</td>
+            <td>GPU through DirectML (NVIDIA, AMD or Intel), or CPU</td>
+          </tr>
+          <tr>
+            <td>
+              Linux x64<br />
+              <code>demucs-onnx-linux-x64.zip</code>
+            </td>
+            <td>ONNX Runtime</td>
+            <td>CPU. X11 or Wayland, OpenGL 3.3.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        The Mac apps are unsigned. If macOS blocks one, run
+        <code>xattr -cr</code> on
+        <code>DemucsMlxCArmMacSilicon.app</code> or
+        <code>DemucsOnnxMac.app</code>, then open it again.
+      </p>
+      <ol>
+        <li>
+          <strong>Add files</strong>, or drop them on the window. A
+          <code>.psarc</code> is fine; the app pulls the song audio out itself.
+        </li>
+        <li>
+          Set <strong>Output folder</strong> to
+          <code>{library}/stems</code> (the folder Rock N Roller already
+          scans). If you leave it alone, files go to
+          <code>Documents/psarc/stems</code>.
+        </li>
+        <li>
+          Leave <strong>Format</strong> on MP3. Rock N Roller only picks up
+          the six MP3s.
+        </li>
+        <li>
+          On Windows, <strong>Device</strong> chooses GPU or CPU. If the GPU
+          fails, that file stops; switch to CPU and press <strong>Start</strong>
+          again. Apple Silicon always uses the GPU. Intel Mac and Linux run
+          on the CPU.
+        </li>
+        <li>
+          Press <strong>Start</strong>.
+          <code>Eagles_Hotel-California_v1_1_p.psarc</code> becomes
+          <code>stems/Eagles_Hotel-California_v1_1_p/</code> with
+          <code>drums</code>, <code>bass</code>, <code>other</code>,
+          <code>vocals</code>, <code>guitar</code> and <code>piano</code>.
+          Then <strong>Batch sync</strong> in Rock N Roller.
+        </li>
+      </ol>
 
       <h2 id="stems-web">Try it on the web</h2>
       <p>
@@ -2570,8 +3082,9 @@
         popup can turn stem mode on and set per-stem levels
         (drums, bass, other, vocals, guitar, piano). Each fader runs
         <strong>0–2.0</strong> (default 1.0) so you can boost or mute parts
-        for practice. Stem separation itself is offline (Demucs); the app only
-        mixes what it finds. See <a href="#stems">stems &amp; Demucs</a>.
+        for practice. The desktop stems builds make the six MP3s in-app
+        (Demucs, from the <strong>STEMS</strong> tab); every build mixes any
+        it finds. See <a href="#stems">stems &amp; Demucs</a>.
       </p>
 
       <p class="fineprint">

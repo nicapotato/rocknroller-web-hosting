@@ -108,7 +108,7 @@ def add_print_fallbacks(html: str, source: Path) -> str:
         return (
             f"{block}\n"
             f'<a class="print-link" href="{url}">'
-            f"Demucs MLX on itch.io — {label}</a>"
+            f"Demucs App on itch.io — {label}</a>"
         )
 
     html = VIDEO_RE.sub(video_sub, html)

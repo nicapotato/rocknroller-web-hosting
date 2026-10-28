@@ -1,5 +1,6 @@
 /* Builds the versions table from the apps S3 catalog (single Rock N Roller
- * entry): wasm (browser play) + desktop zips (macOS arm64/x86_64, Windows).
+ * entry): wasm (browser play) + desktop zips (macOS arm64/x86_64, Windows,
+ * Linux), each with its *_stems (Demucs) variant listed under it.
  * Browser play links use path style (/0.1.35/, /latest/); desktop zips
  * download straight from S3. Fails loudly if the catalog cannot be fetched.
  * "Toggle SHA Key" expands/collapses every SHA-256 (truncated by default).
@@ -66,22 +67,35 @@
     );
   }
 
-  function zipCell(entry) {
-    if (!entry || !entry.zip_url) return '<td class="na">—</td>';
+  function zipLink(entry, prefix) {
     var sizeText = formatBytes(entry.size_bytes);
     var sizeHtml = sizeText
       ? '<span class="zip-size"> · ' + sizeText + "</span>"
       : "";
     var label = /\.tar\.gz$/i.test(entry.zip_url) ? "tar.gz" : "zip";
     return (
-      "<td>" +
       '<a class="zip-link" href="' +
       entry.zip_url +
       '">' +
+      prefix +
       label +
       sizeHtml +
       "</a>" +
-      shaBlock(entry.sha256) +
+      shaBlock(entry.sha256)
+    );
+  }
+
+  /** Standard build, plus the Demucs stems build underneath when the release has one. */
+  function zipCell(entry, stems) {
+    var hasMain = entry && entry.zip_url;
+    var hasStems = stems && stems.zip_url;
+    if (!hasMain && !hasStems) return '<td class="na">—</td>';
+    return (
+      "<td>" +
+      (hasMain ? zipLink(entry, "") : "") +
+      (hasStems
+        ? '<div class="zip-stems">' + zipLink(stems, "stems ") + "</div>"
+        : "") +
       "</td>"
     );
   }
@@ -540,10 +554,10 @@
           (released || "—") +
           "</td>" +
           playCell(v, p.wasm) +
-          zipCell(p.macos_arm64 || p.macos) +
-          zipCell(p.macos_x86_64) +
-          zipCell(p.windows_x86_64 || p.windows) +
-          zipCell(p.linux_x86_64 || p.linux) +
+          zipCell(p.macos_arm64 || p.macos, p.macos_arm64_stems) +
+          zipCell(p.macos_x86_64, p.macos_x86_64_stems) +
+          zipCell(p.windows_x86_64 || p.windows, p.windows_x86_64_stems) +
+          zipCell(p.linux_x86_64 || p.linux, p.linux_x86_64_stems) +
           "</tr>"
         );
       });

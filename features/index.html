@@ -85,8 +85,10 @@
         The app is C17 (plus one C++17 wrapper for
         <a href="https://signalsmith-audio.co.uk/code/stretch/" rel="noopener">Signalsmith Stretch</a>)
         on <a href="https://www.raylib.com" rel="noopener">raylib 6.0</a>.
-        One CMake project builds macOS (Apple Silicon and Intel), Windows x64,
-        Linux x86_64, and Emscripten wasm from the same commit — platform differences stay
+        One CMake project builds macOS (Apple Silicon from 11.0, Intel from
+        10.15 Catalina), Windows x64, Linux x86_64, and Emscripten wasm from
+        the same commit, each desktop target with an optional Demucs stems
+        variant — platform differences stay
         in small shims for paths, dialogs, and threading.
       </p>
       <p>
@@ -526,19 +528,17 @@
         See <a href="/keybinds/">keybinds</a>.
       </p>
 
-      <h2 id="stems">Stems &amp; Demucs MLX</h2>
+      <h2 id="stems">Stems &amp; Demucs</h2>
       <p>
         Stem mode mixes six isolated tracks (drums, bass, other, vocals,
-        guitar, piano) with per-stem faders. Separation runs offline in the
-        companion
-        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
-          >Demucs MLX</a
-        >
-        app (macOS Apple Silicon via MLX, or Windows x64 via NVIDIA CUDA), then
-        Rock N Roller matches
-        <code>{library}/stems/{psarc_basename}/</code> and streams the six MP3s.
-        Full workflow, Mac vs Windows size/speed, folder layout, mixer, and
-        <code>?demo=stems</code>:
+        guitar, piano) with per-stem faders. The desktop
+        <strong>stems</strong> builds separate songs in-app with Demucs
+        <code>htdemucs_6s</code>: a queue that spawns one worker process per
+        song (mlx-c on Metal for Apple Silicon; ONNX Runtime on Intel macOS,
+        Linux, and Windows, where DirectML can use the GPU). Output lands in
+        <code>{library}/stems/{psarc_basename}/</code>, the same folder
+        playback matches, and streams as six MP3s. Workflow, per-platform
+        devices, folder layout, mixer, and <code>?demo=stems</code>:
         <a href="/demucs-stems/">stems page</a>.
       </p>
 

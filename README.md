@@ -17,7 +17,7 @@ the pages are a thin same-origin shell and the game bytes stream from S3.
 | `/0.1.35/?demo=songs` | specific version + demo PSARCs |
 | `/versions/` | version × platform table (web play + desktop zips) |
 | `/features/` | technical feature breakdown (language, wasm, threading, …) |
-| `/demucs-stems/` | Demucs companion app + stem folder layout / mixer |
+| `/demucs-stems/` | Built-in Demucs (stems builds), standalone app, stem folder layout / mixer |
 | `/keybinds/` | keyboard shortcuts (catalog + in-song) |
 | `/configurations/` | what Settings / play options mean |
 | `/changelog/` | library folder convention (Rocksmith root, `dlc/`, `stems/`) |

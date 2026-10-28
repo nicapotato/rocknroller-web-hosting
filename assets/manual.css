@@ -164,9 +164,29 @@
     page-break-inside: avoid;
   }
 
-  figure.hw-fig {
+  figure.hw-fig,
+  figure.shot,
+  .feature-card,
+  .callout {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  figure.shot,
+  .feature-card,
+  .callout {
+    color: #121212;
+    box-shadow: 2px 2px 0 0 #0d0d0d;
+  }
+
+  .callout {
+    border-color: #e53935;
+  }
+
+  .feature-card h3,
+  .callout__title,
+  figure.shot figcaption strong:first-child {
+    color: #0d0d0d;
   }
 
   .manual-section + .manual-section {

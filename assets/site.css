@@ -363,6 +363,116 @@ kbd {
   box-shadow: 2px 2px 0 0 var(--rnr-red);
 }
 
+.lede {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.callout {
+  margin: 1rem 6px 1.5rem 0;
+  padding: 0.9rem 1rem;
+  background: var(--surface);
+  border: 2px solid var(--rnr-red);
+  border-left: 8px solid var(--rnr-red);
+  box-shadow: var(--shadow-lg);
+}
+
+.callout > :first-child {
+  margin-top: 0;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+.callout__title {
+  font-family: var(--font-pixel);
+  -webkit-font-smoothing: none;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--rnr-yellow);
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 1rem 6px 1.5rem 0;
+}
+
+.feature-card {
+  padding: 0.85rem 1rem 0.9rem;
+  background: var(--surface);
+  border: var(--pixel-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 24px;
+  line-height: 1.1;
+  color: var(--rnr-yellow);
+}
+
+.feature-card h3::before {
+  display: none;
+}
+
+.feature-card p {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.feature-card p + p {
+  margin-top: 0.5rem;
+}
+
+.feature-card .more {
+  font-size: 0.85rem;
+}
+
+figure.shot {
+  margin: 1rem 6px 1.5rem 0;
+  background: var(--surface);
+  border: var(--pixel-border);
+  box-shadow: var(--shadow-lg);
+}
+
+figure.shot a {
+  display: block;
+  line-height: 0;
+}
+
+/* Downscaled screenshots: the global pixelated rendering would alias them. */
+figure.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: auto;
+}
+
+figure.shot figcaption {
+  padding: 0.7rem 0.9rem 0.8rem;
+  font-size: 0.92rem;
+  border-top: var(--pixel-border);
+}
+
+figure.shot figcaption strong:first-child {
+  color: var(--rnr-yellow);
+}
+
+.shot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 1rem 6px 1rem 0;
+}
+
+.shot-grid figure.shot {
+  margin: 0;
+}
+
 .toc {
   columns: 2;
   column-gap: 2rem;
@@ -653,6 +763,12 @@ table.versions .zip-size {
 
 table.versions .zip-link:hover .zip-size {
   color: inherit;
+}
+
+table.versions .zip-stems {
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--pixel-line);
 }
 
 /* SHA-256 under each artifact. */

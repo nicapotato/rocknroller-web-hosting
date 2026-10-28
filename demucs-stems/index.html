@@ -6,7 +6,7 @@
     <title>Stems &amp; Demucs — Rock N Roller</title>
     <meta
       name="description"
-      content="Split Rocksmith CDLC into six Demucs stems on Mac (MLX) or Windows (CUDA), then mix them in Rock N Roller."
+      content="Split Rocksmith songs into six Demucs stems inside Rock N Roller on macOS, Windows and Linux, then mix them while you play."
     />
     <link rel="icon" type="image/png" href="/rocknroller-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -48,27 +48,62 @@
         the usual “drill this four bars” workflow.
       </p>
       <p>
-        Separation does <strong>not</strong> run inside Rock N Roller. It is
-        done offline with the companion
-        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
-          >Demucs MLX Audio Stemmer</a
-        >, then the game mixes what it finds.
+        The desktop <strong>stems</strong> builds separate songs themselves.
+        Right-click a song in the library, choose
+        <strong>Add to stems queue</strong>, and Rock N Roller runs Demucs in
+        the background while you keep playing. Every desktop platform has a
+        stems build: macOS (Apple Silicon and Intel), Windows and Linux.
+      </p>
+      <p>
+        The standard desktop builds and the web player cannot separate, but
+        they play any stems you already have. To make stems without the
+        stems build, use the standalone
+        <a href="#standalone">Demucs App</a>.
       </p>
 
-      <div class="btn-row">
-        <a
-          class="btn"
-          href="https://nicapotato.itch.io/demucs-mlx-app"
-          rel="noopener"
-        >
+      <figure class="shot">
+        <a href="/assets/promo/stems.jpg">
           <img
-            class="btn__icon"
-            src="/assets/icons/itchdotio.svg"
-            alt=""
-            width="24"
-            height="24"
+            src="/assets/promo/stems.jpg"
+            alt="Stems queue screen: one song separating on the GPU at 33 percent, another queued, with output folder and MP3 bitrate settings below"
+            width="1728"
+            height="1008"
+            loading="lazy"
           />
-          Get Demucs MLX
+        </a>
+        <figcaption>
+          <strong>Stems queue.</strong> One song separating on the GPU, the
+          next one waiting. Settings for the output folder, MP3 bitrate and
+          batch size sit underneath.
+        </figcaption>
+      </figure>
+
+      <div class="btn-row">
+        <a class="btn" href="/versions/">
+          <span class="btn__icons" aria-hidden="true">
+            <img
+              class="btn__icon"
+              src="/assets/icons/windows.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+            <img
+              class="btn__icon"
+              src="/assets/icons/apple.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+            <img
+              class="btn__icon"
+              src="/assets/icons/linux.svg"
+              alt=""
+              width="24"
+              height="24"
+            />
+          </span>
+          Get stems build
         </a>
         <a class="btn" href="/latest/?demo=stems">
           <img
@@ -82,109 +117,126 @@
         </a>
       </div>
 
-      <div class="itch-embed">
-        <iframe
-          title="Demucs MLX Audio Stemmer App on itch.io"
-          loading="lazy"
-          frameborder="0"
-          src="https://itch.io/embed/4869317?bg_color=0d0d0d&amp;fg_color=e8eaed&amp;link_color=ffde44&amp;border_color=0d0d0d"
-          width="552"
-          height="167"
-          ><a href="https://nicapotato.itch.io/demucs-mlx-app"
-            >Demucs MLX Audio Stemmer App by nicapotato</a
-          ></iframe
-        >
-      </div>
-
       <ol class="toc">
-        <li><a href="#companion">Companion app</a></li>
+        <li><a href="#built-in">Built-in separation</a></li>
         <li><a href="#workflow">Stemming workflow</a></li>
         <li><a href="#layout">How they link to PSARCs</a></li>
         <li><a href="#mixer">Mixer in Rock N Roller</a></li>
         <li><a href="#search">Find songs that have stems</a></li>
+        <li><a href="#standalone">Standalone Demucs App</a></li>
         <li><a href="#web">Try it on the web</a></li>
       </ol>
 
-      <h2 id="companion">Companion app</h2>
+      <h2 id="built-in">Built-in separation</h2>
       <p>
-        Same raylib GUI on both platforms; the neural-net worker is what
-        changes. Default model is Demucs <code>htdemucs_6s</code> (the six
-        stems above). Input can be MP3, WAV, OGG, FLAC, M4A, or a Rocksmith
-        <code>*_p.psarc</code> / <code>*_m.psarc</code> (it extracts the
-        chart’s audio first; Mac audio lives under <code>audio/mac</code>).
+        The stems builds bundle Meta's Demucs <code>htdemucs_6s</code> model
+        (the six stems above) and a native worker for each platform. Each
+        song runs in its own worker process, so a crash or a cancel never
+        takes the player down with it. The audio comes straight out of the
+        <code>.psarc</code>; you do not export anything first.
       </p>
       <table class="specs">
         <thead>
           <tr>
-            <th></th>
-            <th>macOS Apple Silicon</th>
-            <th>Windows x64</th>
+            <th>Stems build</th>
+            <th>Separator</th>
+            <th>Runs on</th>
+            <th>Download</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Backend</td>
-            <td>demucs-mlx (MLX + Metal)</td>
-            <td>Official Meta Demucs + PyTorch CUDA</td>
+            <td>macOS Apple Silicon</td>
+            <td>mlx-c</td>
+            <td>GPU (Metal)</td>
+            <td>~126&nbsp;MB</td>
           </tr>
           <tr>
-            <td>Download</td>
-            <td>~132&nbsp;MB</td>
-            <td>~2&nbsp;GB (ships the CUDA runtime)</td>
+            <td>macOS Intel (10.15+)</td>
+            <td>ONNX Runtime</td>
+            <td>CPU</td>
+            <td>~172&nbsp;MB</td>
           </tr>
           <tr>
-            <td>Speed</td>
+            <td>Windows x64</td>
+            <td>ONNX Runtime</td>
             <td>
-              Far faster than realtime (about 73× on an M4 Max for 4-stem
-              <code>htdemucs</code>). Unified memory; no extra GPU.
+              GPU through DirectML (NVIDIA, AMD or Intel), or CPU
             </td>
-            <td>
-              NVIDIA GPU recommended (~5–7&nbsp;GB VRAM for 6-stem). CPU works
-              but is slow (a 4-minute track can take about a minute). AMD/Intel
-              GPUs fall back to CPU.
-            </td>
+            <td>~185&nbsp;MB</td>
           </tr>
           <tr>
-            <td>Needs</td>
-            <td>Apple Silicon Mac. Unsigned: <code>xattr -cr "DemucsMLX.app"</code></td>
-            <td>
-              Recent NVIDIA <strong>driver</strong> (not a CUDA toolkit).
-              SmartScreen: More info → Run anyway.
-            </td>
+            <td>Linux x86_64</td>
+            <td>ONNX Runtime</td>
+            <td>CPU</td>
+            <td>~193&nbsp;MB</td>
           </tr>
         </tbody>
       </table>
       <p>
-        The Windows zip is large because MLX does not run on Windows, so the
-        worker bundles PyTorch’s CUDA kernels. You do not install a CUDA
-        toolkit. 3–4&nbsp;GB cards may run out of VRAM on the default 6-stem
-        segments.
+        Apple Silicon keeps the MLX worker because it is faster there than
+        ONNX. The standard (non-stems) builds are about 4&nbsp;MB; the extra
+        size is the model and its runtime. Downloads:
+        <a href="/versions/">versions</a> or
+        <a href="https://nicapotato.itch.io/rocknroller" rel="noopener">itch.io</a>
+        (the <code>-stems</code> channels).
       </p>
+      <p>
+        The <strong>STEMS SETTINGS</strong> panel under the queue has:
+      </p>
+      <ul>
+        <li>
+          <strong>Output folder</strong>: defaults to
+          <code>{library}/stems</code>, which is where Rock N Roller looks for
+          stems. <strong>Open</strong> reveals it on disk.
+        </li>
+        <li>
+          <strong>Device</strong> (Windows and Linux): GPU or CPU. If the GPU
+          fails, that song stops with an error; switch to CPU and press
+          <strong>Start stem queue</strong> again. CPU is slower but always
+          works.
+        </li>
+        <li>
+          <strong>MP3 bitrate</strong>: 128, 192 (default), 256 or 320&nbsp;kbps.
+        </li>
+        <li>
+          <strong>Batch size</strong> (default 8): lower uses less GPU
+          memory; higher is faster on bigger GPUs and M-series Pro / Max chips.
+        </li>
+      </ul>
 
       <h2 id="workflow">Stemming workflow</h2>
       <ol>
         <li>
-          In Demucs MLX, add an MP3/WAV <em>or</em> a Rocksmith
-          <code>*_p.psarc</code> or <code>*_m.psarc</code>.
+          Download the <strong>stems</strong> build for your platform from
+          <a href="/versions/">versions</a>.
         </li>
         <li>
-          Pick an <strong>output folder</strong>. Point it at
-          <code>{library}/stems</code> on the same library folder Rock N
-          Roller uses (or copy the six files there afterwards).
+          Bind your library folder in Settings and scan it, if you have not
+          already (<a href="/configurations/#library">settings</a>).
         </li>
         <li>
-          Run separation. For
-          <code>Eagles_Hotel-California_v1_1_p.psarc</code> it writes:
+          In <strong>LIBRARY</strong>, right-click a song and choose
+          <strong>Add to stems queue</strong> (songs that already have stems
+          offer <strong>Re-stem</strong>). While a song without stems is
+          playing, the <strong>Stems</strong> button in the playback bar
+          offers <strong>Stem song</strong> too.
+        </li>
+        <li>
+          Open the <strong>STEMS</strong> tab and press
+          <strong>Start stem queue</strong>. Progress shows in the queue and
+          in the top bar, so you can go back to playing. <strong>Stop after
+          current</strong>, <strong>Cancel all</strong> and
+          <strong>Clear finished</strong> manage the list.
+        </li>
+        <li>
+          Each finished song is marked as having stems straight away; no
+          re-sync needed. For
+          <code>Eagles_Hotel-California_v1_1_p.psarc</code> the worker writes:
           <pre class="codeblock">
 {library}/stems/Eagles_Hotel-California_v1_1_p/
   drums.mp3  bass.mp3  other.mp3
   vocals.mp3  guitar.mp3  piano.mp3</pre>
-        </li>
-        <li>
-          In Rock N Roller Settings, bind that library folder (if you have
-          not already) and run <strong>Batch sync</strong>. Folder layout:
-          <a href="/changelog/#stems">changelog</a>. Settings:
-          <a href="/configurations/#library">settings</a>.
         </li>
       </ol>
 
@@ -240,6 +292,111 @@
         Full query language:
         <a href="/features/#search">features</a>.
       </p>
+
+      <h2 id="standalone">Standalone Demucs App</h2>
+      <p>
+        <a href="https://nicapotato.itch.io/demucs-app" rel="noopener"
+          >Demucs App</a
+        >
+        is the same separator as the stems builds, in its own window. Use it
+        when you play Rock N Roller on the web or from a standard download.
+        It takes MP3, WAV, OGG, FLAC, M4A, or a Rocksmith
+        <code>.psarc</code>, and writes the same six-file folders.
+      </p>
+      <div class="itch-embed">
+        <iframe
+          title="Demucs App on itch.io"
+          loading="lazy"
+          frameborder="0"
+          src="https://itch.io/embed/4869317?bg_color=0d0d0d&amp;fg_color=e8eaed&amp;link_color=ffde44&amp;border_color=0d0d0d"
+          width="552"
+          height="167"
+          ><a href="https://nicapotato.itch.io/demucs-app">Demucs App by nicapotato</a></iframe
+        >
+      </div>
+      <p>
+        Download the build for your machine. These are the same workers the
+        Rock N Roller stems builds use:
+      </p>
+      <table class="specs">
+        <thead>
+          <tr>
+            <th>Download</th>
+            <th>Separator</th>
+            <th>Runs on</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              macOS Apple Silicon<br />
+              <code>demucs-mlx-c-arm-mac-silicon.zip</code>
+            </td>
+            <td>mlx-c</td>
+            <td>GPU (Metal). macOS 13 or newer.</td>
+          </tr>
+          <tr>
+            <td>
+              macOS Intel<br />
+              <code>demucs-onnx-mac-x64.zip</code>
+            </td>
+            <td>ONNX Runtime</td>
+            <td>CPU. macOS 13 or newer.</td>
+          </tr>
+          <tr>
+            <td>
+              Windows x64<br />
+              <code>demucs-onnx-windows.zip</code>
+            </td>
+            <td>ONNX Runtime</td>
+            <td>GPU through DirectML (NVIDIA, AMD or Intel), or CPU</td>
+          </tr>
+          <tr>
+            <td>
+              Linux x64<br />
+              <code>demucs-onnx-linux-x64.zip</code>
+            </td>
+            <td>ONNX Runtime</td>
+            <td>CPU. X11 or Wayland, OpenGL 3.3.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        The Mac apps are unsigned. If macOS blocks one, run
+        <code>xattr -cr</code> on
+        <code>DemucsMlxCArmMacSilicon.app</code> or
+        <code>DemucsOnnxMac.app</code>, then open it again.
+      </p>
+      <ol>
+        <li>
+          <strong>Add files</strong>, or drop them on the window. A
+          <code>.psarc</code> is fine; the app pulls the song audio out itself.
+        </li>
+        <li>
+          Set <strong>Output folder</strong> to
+          <code>{library}/stems</code> (the folder Rock N Roller already
+          scans). If you leave it alone, files go to
+          <code>Documents/psarc/stems</code>.
+        </li>
+        <li>
+          Leave <strong>Format</strong> on MP3. Rock N Roller only picks up
+          the six MP3s.
+        </li>
+        <li>
+          On Windows, <strong>Device</strong> chooses GPU or CPU. If the GPU
+          fails, that file stops; switch to CPU and press <strong>Start</strong>
+          again. Apple Silicon always uses the GPU. Intel Mac and Linux run
+          on the CPU.
+        </li>
+        <li>
+          Press <strong>Start</strong>.
+          <code>Eagles_Hotel-California_v1_1_p.psarc</code> becomes
+          <code>stems/Eagles_Hotel-California_v1_1_p/</code> with
+          <code>drums</code>, <code>bass</code>, <code>other</code>,
+          <code>vocals</code>, <code>guitar</code> and <code>piano</code>.
+          Then <strong>Batch sync</strong> in Rock N Roller.
+        </li>
+      </ol>
 
       <h2 id="web">Try it on the web</h2>
       <p>

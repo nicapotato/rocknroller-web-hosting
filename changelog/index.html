@@ -47,10 +47,48 @@
       </p>
 
       <ol class="toc">
+        <li><a href="#0.2.7">0.2.2 – 0.2.7 — Stems everywhere, layouts, Linux</a></li>
         <li><a href="#0.2.0">0.2.0 — One library folder</a></li>
         <li><a href="#web-folders">Web player folders</a></li>
         <li><a href="#sync-feedback">Sync and loading feedback</a></li>
       </ol>
+
+      <h2 id="0.2.7">0.2.2 – 0.2.7 — Stems everywhere, layouts, Linux</h2>
+      <ul>
+        <li>
+          <strong>Resizable layouts (0.2.7).</strong> Drag the line between
+          chart cells to resize them (20–80% of the window); double-click it
+          to reset. Sizes are saved per profile for each layout. Refreshed
+          font, icons and Settings screen.
+        </li>
+        <li>
+          <strong>Built-in stems on every desktop platform (0.2.6).</strong>
+          Each desktop platform now has a <code>-stems</code> download that
+          separates songs in-app with Demucs: Apple Silicon on the GPU
+          (Metal), Windows on the GPU through DirectML or on the CPU, Intel
+          macOS and Linux on the CPU. Apple Silicon got it first, in 0.2.2.
+          See <a href="/demucs-stems/#built-in">stems</a>.
+        </li>
+        <li>
+          <strong>Intel Macs back to macOS 10.15 Catalina (0.2.6).</strong>
+          The Intel build used to need macOS 15. Apple Silicon needs
+          macOS 11.
+        </li>
+        <li>
+          <strong>Extra song folders (0.2.6).</strong> Add any other folders
+          of <code>.psarc</code> files next to the Rocksmith library folder,
+          including on another disk.
+        </li>
+        <li>
+          <strong>Linux x86_64 (0.2.3).</strong> A <code>tar.gz</code> for
+          X11 or Wayland desktops with OpenGL 3.3.
+        </li>
+        <li>
+          <strong>TabSheet.</strong> Flip any instrument cell to wrapping tab
+          with inferred rhythm notation; see
+          <a href="/features/#tabsheet">features</a>.
+        </li>
+      </ul>
 
       <h2 id="0.2.0">0.2.0 — One library folder</h2>
       <p>
@@ -176,11 +214,12 @@
         keep separate stem folders.
       </p>
       <p>
-        Separation still runs offline in
-        <a href="https://nicapotato.itch.io/demucs-mlx-app" rel="noopener"
-          >Demucs MLX</a
-        >. Point its output at <code>{library}/stems</code>, or copy the six
-        files into the right basename folder, then Batch sync. Full mixer
+        The desktop stems builds write here by default (see
+        <a href="#0.2.7">0.2.7</a>). With the standalone
+        <a href="https://nicapotato.itch.io/demucs-app" rel="noopener"
+          >Demucs App</a
+        >, point its output at <code>{library}/stems</code>, or copy the
+        six files into the right basename folder, then Batch sync. Full mixer
         notes: <a href="/demucs-stems/">stems &amp; Demucs</a>.
       </p>
 

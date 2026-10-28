@@ -1,9 +1,17 @@
 <!-- Paste into the itch.io description editor in HTML mode (<>). -->
-<h1>Rock N Roller 0.2.2</h1>
+<h1>Rock N Roller 0.2.7</h1>
 
-<p>A freeware guitar-practice app that plays Rocksmith-format <code>.psarc</code> charts from your own computer — PC <code>*_p.psarc</code> and Mac <code>*_m.psarc</code>, on either operating system. Your library stays on disk; nothing is uploaded. Built around freeware CDLC from the <a href="https://customsforge.com">CustomsForge</a> community.</p>
+<p>A free guitar and bass practice app for your Rocksmith songs. Pick a song and you are playing along in under two seconds. It plays Rocksmith-format <code>.psarc</code> charts from your own computer: official Rocksmith 2014 DLC you own, or freeware CDLC from the <a href="https://customsforge.com">CustomsForge</a> community, PC <code>*_p.psarc</code> and Mac <code>*_m.psarc</code> on any platform. Your library stays on disk; nothing is uploaded.</p>
 
-<p>Charts draw on a 3D highway (measure bars and capo marks) or a wrapping TabSheet, with audio, pitch-preserving practice speed (0.3×–3.0×), section loops, lead / rhythm / bass / combo (and bonus) parts, Chords + Lyrics, playlists, and profiles.</p>
+<p><strong>Bring your own guitar tone.</strong> There is no guitar cable or microphone input, and no scoring: the app plays the song and shows the chart. Your guitar sound comes from a real amp, or an audio interface into amp software such as BIAS FX, GarageBand, Logic Pro, Guitar Rig or Neural DSP. A Rocksmith Real Tone Cable works as a USB input for those apps.</p>
+
+<ul>
+  <li>3D highway or wrapping TabSheet, per part</li>
+  <li>Lead, Rhythm, Bass, Combo and bonus parts, plus Lyrics and Chords + Lyrics</li>
+  <li>Resizable layouts: one, two, three or four parts on screen; drag the line between cells to resize</li>
+  <li>Built-in Demucs stems in the <code>-stems</code> downloads for macOS, Windows and Linux</li>
+  <li>Pitch-preserving practice speed (0.3×–3.0×), section loops, playlists, profiles, left-handed mode</li>
+</ul>
 
 <p>Not affiliated with Ubisoft or Rocksmith. This app does not host or distribute official DLC. It reads chart files you already have.</p>
 
@@ -12,7 +20,7 @@
 <ul>
   <li>About: <a href="https://rocknroller.nicapotato.com/">https://rocknroller.nicapotato.com/</a></li>
   <li>Play (your library): <a href="https://rocknroller.nicapotato.com/latest/">https://rocknroller.nicapotato.com/latest/</a></li>
-  <li>This version: <a href="https://rocknroller.nicapotato.com/0.2.2/">https://rocknroller.nicapotato.com/0.2.2/</a></li>
+  <li>This version: <a href="https://rocknroller.nicapotato.com/0.2.7/">https://rocknroller.nicapotato.com/0.2.7/</a></li>
   <li>Demo charts: <a href="https://rocknroller.nicapotato.com/latest/?demo=songs">https://rocknroller.nicapotato.com/latest/?demo=songs</a></li>
   <li>Demo charts + stems: <a href="https://rocknroller.nicapotato.com/latest/?demo=stems">https://rocknroller.nicapotato.com/latest/?demo=stems</a></li>
   <li>Desktop downloads: <a href="https://rocknroller.nicapotato.com/versions/">https://rocknroller.nicapotato.com/versions/</a></li>
@@ -26,9 +34,9 @@
 
 <p>Web play needs Chrome or Edge. Nothing is preloaded: open Play, then point Settings at your library. <code>?demo=songs</code> and <code>?demo=stems</code> are optional curated downloads (stems is the larger one).</p>
 
-<p>Desktop builds: macOS Apple Silicon, macOS Intel, Windows, and Linux x86_64 — also on this itch page. Desktop reads the Steam folder directly.</p>
+<p>Desktop builds: macOS Apple Silicon (macOS 11+), macOS Intel (10.15 Catalina+), Windows, and Linux x86_64 — also on this itch page. Each comes in a standard build (about 4&nbsp;MB) and a <code>-stems</code> build with Demucs built in (about 125–195&nbsp;MB). Desktop reads the Steam folder directly.</p>
 
-<p>The Linux build is a <code>tar.gz</code>. Extract it and run <code>./RockNRoller</code>. It needs an X11 or Wayland desktop with OpenGL 3.3. The folder picker uses <code>zenity</code> or <code>kdialog</code>; <strong>Open folder</strong> uses <code>xdg-open</code>. Like Windows, stem separation is not built in.</p>
+<p>The Linux build is a <code>tar.gz</code>. Extract it and run <code>./RockNRoller</code>. It needs an X11 or Wayland desktop with OpenGL 3.3. The folder picker uses <code>zenity</code> or <code>kdialog</code>; <strong>Open folder</strong> uses <code>xdg-open</code>.</p>
 
 <h2>Library folder</h2>
 
@@ -85,7 +93,7 @@
 
 <h2>Stems</h2>
 
-<p>Mute the chart guitar and play over the band. Separation runs offline in <a href="https://nicapotato.itch.io/demucs-mlx-app">Demucs MLX</a> — macOS Apple Silicon, or Windows x64 (NVIDIA GPU recommended). Point its output at <code>{library}/stems</code>, then Batch sync.</p>
+<p>Mute the chart guitar and play over the band. The <code>-stems</code> builds separate songs in-app: right-click a song in LIBRARY, choose <strong>Add to stems queue</strong>, then <strong>Start stem queue</strong> on the STEMS tab. Apple Silicon runs on the GPU (Metal); Windows on the GPU through DirectML (NVIDIA, AMD or Intel) or the CPU; Intel macOS and Linux on the CPU. Output goes to <code>{library}/stems</code>. Standard builds and the web player play existing stems; to make them there, use the standalone <a href="https://nicapotato.itch.io/demucs-app">Demucs App</a> (MLX on Apple Silicon, ONNX everywhere else) and Batch sync.</p>
 
 <p>All six MP3s are required. The folder name is the chart filename without <code>.psarc</code>:</p>
 
